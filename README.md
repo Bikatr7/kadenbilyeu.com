@@ -1,2 +1,2 @@
 # kadenbilyeu-com
- My personal portfolio, but better.
+My personal portfolio, but better.
