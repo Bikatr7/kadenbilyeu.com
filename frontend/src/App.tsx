@@ -9,14 +9,13 @@ import Footer from "./components/Footer.tsx";
 
 function App() 
 {
-    // navbar and footer goes *around* the container
     return (
         <ChakraProvider theme={theme}>
             <Navbar/>
             <Container maxW={'6xl'}>
                 <Router/>
-            <Footer/>
             </Container>
+            <Footer/>
 
         </ChakraProvider>
     );
