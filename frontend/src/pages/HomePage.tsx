@@ -11,6 +11,8 @@ import {
     Text
 } from "@chakra-ui/react";
 
+import { Tooltip, IconButton } from '@chakra-ui/react';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { IconBrandGithub } from '@tabler/icons-react';
 
 import face from '../assets/images/kadenbilyeu.png';
@@ -38,6 +40,19 @@ function Preface() {
         <Stack direction={{ base: 'column', md: 'row' }} bg="black">
             <Flex p={8} flex={1} align="center">
                 <Stack spacing={6} w="full" maxW="xl">
+                    <Tooltip 
+                        label="This site is currently under construction. Please check back periodically for updates. Thank you for your patience. For more information: https://github.com/Bikatr7/kadenbilyeu.com" 
+                        fontSize="md"
+                        placement="top-start"
+                        hasArrow
+                    >
+                        <IconButton
+                            aria-label="Site Information"
+                            icon={<InfoOutlineIcon />}
+                            variant="ghost"
+                            color="teal.500"
+                        />
+                    </Tooltip>
                     <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
                         <Text as="span" position="relative">
                             Kaden Bilyeu
