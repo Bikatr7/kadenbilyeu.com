@@ -1,4 +1,4 @@
-import { Box, Container, Flex, IconButton, Image, Stack, Text } from '@chakra-ui/react';
+import { Box, Container,Divider, Flex, IconButton, Image, Stack, Text } from '@chakra-ui/react';
 import { IconBrandGithub } from '@tabler/icons-react';
 import logo from '../assets/images/bikatr7_logo.png'
 
@@ -6,8 +6,9 @@ function Footer() {
     return (
         <Box
             bg="black"
-            color="silver"
+            color="white"
             width="100%">
+            <Divider />
             <Container
                 as={Stack}
                 maxW={'6xl'}

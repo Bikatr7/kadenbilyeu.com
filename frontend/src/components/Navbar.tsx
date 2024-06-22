@@ -12,7 +12,6 @@ import {
     PopoverTrigger,
     Stack,
     Text,
-    useColorModeValue,
     useDisclosure,
 } from '@chakra-ui/react';
 
@@ -26,14 +25,14 @@ export default function Navbar() {
     return (
         <Box>
             <Flex
-                bg={useColorModeValue('gray.900', 'black')}
-                color={useColorModeValue('white', 'gray.300')}
+                bg="black"
+                color="white"
                 minH={'60px'}
                 py={{ base: 2 }}
                 px={{ base: 4 }}
                 borderBottom={1}
                 borderStyle={'solid'}
-                borderColor={useColorModeValue('gray.700', 'gray.800')}
+                borderColor={'gray.800'}
                 align={'center'}>
                 <Container maxW={'6xl'}>
                     <Flex
@@ -73,10 +72,9 @@ export default function Navbar() {
 }
 
 const DesktopNav = () => {
-    const linkColor = useColorModeValue('gray.300', 'gray.300');
-    const linkHoverColor = useColorModeValue('yellow.500', 'yellow.400');
-    const popoverContentBgColor = useColorModeValue('gray.800', 'black');
-
+    const linkColor = "white"
+    const linkHoverColor = "yellow"
+    const popoverContentBgColor = "black"
     return (
         <Stack direction={'row'} spacing={4}>
             {NAV_ITEMS.map((navItem) => (
@@ -128,12 +126,12 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
             display={'block'}
             p={2}
             rounded={'md'}
-            _hover={{ bg: useColorModeValue('gray.700', 'gray.700') }}>
+            _hover={{ bg: "gray.700"}}>
             <Stack direction={'row'} align={'center'}>
                 <Box>
                     <Text
                         transition={'all .3s ease'}
-                        _groupHover={{ color: 'yellow.500' }}
+                        _groupHover={{ color: 'yellow' }}
                         fontWeight={500}>
                         {label}
                     </Text>
@@ -147,7 +145,7 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
                     justify={'flex-end'}
                     align={'center'}
                     flex={1}>
-                    <Icon color={'yellow.500'} w={5} h={5} as={ChevronRightIcon} />
+                    <Icon color={'yellow'} w={5} h={5} as={ChevronRightIcon} />
                 </Flex>
             </Stack>
         </Link>
@@ -157,7 +155,7 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
 const MobileNav = () => {
     return (
         <Stack
-            bg={useColorModeValue('gray.900', 'black')}
+            bg="black"
             p={4}
             display={{ md: 'none' }}>
             {NAV_ITEMS.map((navItem) => (
@@ -184,7 +182,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                 onClick={(e) => children && e.preventDefault()}>
                 <Text
                     fontWeight={600}
-                    color={useColorModeValue('gray.300', 'gray.300')}>
+                    color="white">
                     {label}
                 </Text>
                 {children && (
@@ -204,7 +202,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                     pl={4}
                     borderLeft={1}
                     borderStyle={'solid'}
-                    borderColor={useColorModeValue('gray.700', 'gray.700')}
+                    borderColor={'gray.700'}
                     align={'start'}>
                     {children &&
                         children.map((child) => (

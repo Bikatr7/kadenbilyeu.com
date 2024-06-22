@@ -21,21 +21,21 @@ function HomePage() {
     }, []);
 
     return (
-        <>
+        <Box bg="black" color="white" minHeight="100vh">
             <Preface />
             <Box position="relative" padding="10">
                 <Divider />
-                <AbsoluteCenter bg="gray.800" px="4" id="introduction">
+                <AbsoluteCenter bg="black" px="4" id="introduction">
                     Introduction
                 </AbsoluteCenter>
             </Box>
-        </>
+        </Box>
     );
 }
 
 function Preface() {
     return (
-        <Stack direction={{ base: 'column', md: 'row' }}>
+        <Stack direction={{ base: 'column', md: 'row' }} bg="black">
             <Flex p={8} flex={1} align="center">
                 <Stack spacing={6} w="full" maxW="xl">
                     <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
@@ -48,10 +48,10 @@ function Preface() {
                         Computer science student at UCCS focusing on incorporating AI, LLMs, data science, and NER/NLP into software for real-world applications.
                     </Text>
                     <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
-                        <Button rounded="full" bg="orange.400" color="white" as="a" href="#introduction" _hover={{ bg: 'orange.500' }}>
+                        <Button rounded="full" as="a" href="#introduction" _hover={{ color: 'yellow' }}>
                             More about me
                         </Button>
-                        <Button as="a" href="https://github.com/Bikatr7" leftIcon={<IconBrandGithub />} rounded="full">
+                        <Button as="a" href="https://github.com/Bikatr7" leftIcon={<IconBrandGithub />} rounded="full" _hover={{ color: 'yellow' }}>
                             My Github
                         </Button>
                     </Stack>
