@@ -17,10 +17,10 @@ export default defineConfig(({ mode }) =>
   return {
     plugins: [react()],
     build: {
-      sourcemap: true, // Enable source maps
+      sourcemap: true,
     },
     server: {
-      port: 5173, // Make sure this matches your development server port
+      port: 5173, 
     },
   }
 })
