@@ -1,13 +1,13 @@
 // Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com) (https://kadenbilyeu.com)
 // Use of this source code is governed by a GNU General Public License v3.0
 // license that can be found in the LICENSE file.
-
 import {
     Box,
     Button,
     Collapse,
     Container,
     Flex,
+    Heading,
     Icon,
     IconButton,
     Image,
@@ -117,15 +117,20 @@ const DesktopNav = () => {
                             <Link
                                 p={2}
                                 href={navItem.href ?? '#'}
-                                fontSize={'sm'}
-                                fontWeight={500}
-                                color={linkColor}
                                 _hover={{
                                     textDecoration: 'none',
-                                    color: linkHoverColor,
                                 }}
                                 onClick={(e) => navItem.children && e.preventDefault()}>
-                                {navItem.label}
+                                <Heading
+                                    as="h2"
+                                    fontSize={'md'}
+                                    fontWeight={500}
+                                    color={linkColor}
+                                    _hover={{
+                                        color: linkHoverColor,
+                                    }}>
+                                    {navItem.label}
+                                </Heading>
                             </Link>
                         </PopoverTrigger>
 
@@ -213,11 +218,13 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                     textDecoration: 'none',
                 }}
                 onClick={(e) => children && e.preventDefault()}>
-                <Text
+                <Heading
+                    as="h2"
+                    fontSize={'lg'}
                     fontWeight={600}
                     color="white">
                     {label}
-                </Text>
+                </Heading>
                 {children && (
                     <Icon
                         as={ChevronDownIcon}
