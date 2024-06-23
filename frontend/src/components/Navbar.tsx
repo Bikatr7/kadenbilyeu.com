@@ -48,16 +48,30 @@ export default function Navbar() {
                         justifyContent={'space-between'}
                         width={'100%'}
                     >
-                        <IconButton
-                            onClick={onToggle}
-                            icon={
-                                isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
-                            }
-                            variant={'ghost'}
-                            aria-label={'Toggle Navigation'}
-                        />
+                        <Flex alignItems={'center'}>
+                            <IconButton
+                                onClick={onToggle}
+                                icon={
+                                    isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
+                                }
+                                variant={'ghost'}
+                                aria-label={'Toggle Navigation'}
+                            />
 
-                        <Image src={logo} boxSize='30px' />
+                            <Image src={logo} boxSize='30px' ml={2} />
+                        </Flex>
+                        
+                        <Button
+                            as="a"
+                            bg="red.900"
+                            href="/assets/pdfs/May_2024_Kaden_Bilyeu_Resume.pdf"
+                            download="Kaden_Bilyeu_Resume_May_2024.pdf"
+                            rounded="full"
+                            _hover={{ color: 'yellow' }}
+                            _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
+                            ml={5}>
+                            Resume
+                        </Button>
                     </Flex>
                     <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align={'center'}>
                         <Image src={logo} boxSize='30px' display={{ base: 'none', md: 'block' }} />
