@@ -4,6 +4,7 @@
 
 import {
     Box,
+    Button,
     Collapse,
     Container,
     Flex,
@@ -58,11 +59,25 @@ export default function Navbar() {
 
                         <Image src={logo} boxSize='30px' />
                     </Flex>
-                    <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
+                    <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align={'center'}>
                         <Image src={logo} boxSize='30px' display={{ base: 'none', md: 'block' }} />
 
-                        <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
+                        <Flex display={{ base: 'none', md: 'flex' }} ml={10} align={'center'}>
                             <DesktopNav />
+                        </Flex>
+
+                        <Flex display={{ base: 'none', md: 'flex' }} ml='auto' align={'center'}>
+                            <Button
+                                as="a"
+                                bg="red.900"
+                                href="/assets/pdfs/May_2024_Kaden_Bilyeu_Resume.pdf"
+                                download="Kaden_Bilyeu_Resume_May_2024.pdf"
+                                rounded="full"
+                                _hover={{ color: 'yellow' }}
+                                _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
+                                ml={5}>
+                                Resume
+                            </Button>
                         </Flex>
                     </Flex>
                 </Container>
@@ -80,7 +95,7 @@ const DesktopNav = () => {
     const linkHoverColor = "yellow"
     const popoverContentBgColor = "black"
     return (
-        <Stack direction={'row'} spacing={4}>
+        <Stack direction={'row'} spacing={4} align={'center'}>
             {NAV_ITEMS.map((navItem) => (
                 <Box key={navItem.label}>
                     <Popover trigger={'hover'} placement={'bottom-start'}>
@@ -238,17 +253,17 @@ const NAV_ITEMS: Array<NavItem> = [
         {
             label: 'About Me',
             subLabel: 'Some information about me',
-            href: '/aboutme',
+            href: '#aboutme',
         },
         {
             label: 'About the Site',
             subLabel: 'Some information about the site',
-            href: '/aboutsite',
+            href: '#aboutsite',
         },
         ],
     },
     {
         label: 'Contact',
-        href: '/contact',
+        href: '#contact',
     }
 ];
