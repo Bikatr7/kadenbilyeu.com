@@ -1,8 +1,13 @@
+// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com) (https://kadenbilyeu.com)
+// Use of this source code is governed by a GNU General Public License v3.0
+// license that can be found in the LICENSE file.
 import {
     Box,
+    Button,
     Collapse,
     Container,
     Flex,
+    Heading,
     Icon,
     IconButton,
     Image,
@@ -43,22 +48,50 @@ export default function Navbar() {
                         justifyContent={'space-between'}
                         width={'100%'}
                     >
-                        <IconButton
-                            onClick={onToggle}
-                            icon={
-                                isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
-                            }
-                            variant={'ghost'}
-                            aria-label={'Toggle Navigation'}
-                        />
+                        <Flex alignItems={'center'}>
+                            <IconButton
+                                onClick={onToggle}
+                                icon={
+                                    isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
+                                }
+                                variant={'ghost'}
+                                aria-label={'Toggle Navigation'}
+                            />
 
-                        <Image src={logo} boxSize='30px' />
+                            <Image src={logo} boxSize='30px' ml={2} />
+                        </Flex>
+                        
+                        <Button
+                            as="a"
+                            bg="red.900"
+                            href="/assets/pdfs/May_2024_Kaden_Bilyeu_Resume.pdf"
+                            download="Kaden_Bilyeu_Resume_May_2024.pdf"
+                            rounded="full"
+                            _hover={{ color: 'yellow' }}
+                            _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
+                            ml={5}>
+                            Resume
+                        </Button>
                     </Flex>
-                    <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
+                    <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align={'center'}>
                         <Image src={logo} boxSize='30px' display={{ base: 'none', md: 'block' }} />
 
-                        <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
+                        <Flex display={{ base: 'none', md: 'flex' }} ml={10} align={'center'}>
                             <DesktopNav />
+                        </Flex>
+
+                        <Flex display={{ base: 'none', md: 'flex' }} ml='auto' align={'center'}>
+                            <Button
+                                as="a"
+                                bg="red.900"
+                                href="/assets/pdfs/May_2024_Kaden_Bilyeu_Resume.pdf"
+                                download="Kaden_Bilyeu_Resume_May_2024.pdf"
+                                rounded="full"
+                                _hover={{ color: 'yellow' }}
+                                _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
+                                ml={5}>
+                                Resume
+                            </Button>
                         </Flex>
                     </Flex>
                 </Container>
@@ -76,7 +109,7 @@ const DesktopNav = () => {
     const linkHoverColor = "yellow"
     const popoverContentBgColor = "black"
     return (
-        <Stack direction={'row'} spacing={4}>
+        <Stack direction={'row'} spacing={4} align={'center'}>
             {NAV_ITEMS.map((navItem) => (
                 <Box key={navItem.label}>
                     <Popover trigger={'hover'} placement={'bottom-start'}>
@@ -84,15 +117,20 @@ const DesktopNav = () => {
                             <Link
                                 p={2}
                                 href={navItem.href ?? '#'}
-                                fontSize={'sm'}
-                                fontWeight={500}
-                                color={linkColor}
                                 _hover={{
                                     textDecoration: 'none',
-                                    color: linkHoverColor,
                                 }}
                                 onClick={(e) => navItem.children && e.preventDefault()}>
-                                {navItem.label}
+                                <Heading
+                                    as="h2"
+                                    fontSize={'md'}
+                                    fontWeight={500}
+                                    color={linkColor}
+                                    _hover={{
+                                        color: linkHoverColor,
+                                    }}>
+                                    {navItem.label}
+                                </Heading>
                             </Link>
                         </PopoverTrigger>
 
@@ -180,11 +218,13 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                     textDecoration: 'none',
                 }}
                 onClick={(e) => children && e.preventDefault()}>
-                <Text
+                <Heading
+                    as="h2"
+                    fontSize={'lg'}
                     fontWeight={600}
                     color="white">
                     {label}
-                </Text>
+                </Heading>
                 {children && (
                     <Icon
                         as={ChevronDownIcon}
@@ -234,17 +274,17 @@ const NAV_ITEMS: Array<NavItem> = [
         {
             label: 'About Me',
             subLabel: 'Some information about me',
-            href: '/aboutme',
+            href: '#aboutme',
         },
         {
             label: 'About the Site',
             subLabel: 'Some information about the site',
-            href: '/aboutsite',
+            href: '#aboutsite',
         },
         ],
     },
     {
         label: 'Contact',
-        href: '/contact',
+        href: '#contact',
     }
 ];
