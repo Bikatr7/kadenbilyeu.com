@@ -8,9 +8,9 @@ import {
     Divider
 } from "@chakra-ui/react";
 
-function NamedDivider({ name }: { name: string }) {
+function NamedDivider({ name, id }: { name: string; id: string }) {
     return (
-        <Box position="relative" padding="10">
+        <Box id={id} position="relative" padding="10">
             <Divider />
             <AbsoluteCenter bg="black" px="4">
                 {name}
