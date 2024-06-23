@@ -2,7 +2,10 @@
 // Use of this source code is governed by a GNU General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// react
 import { useEffect } from 'react';
+
+// chakra-ui
 import {
     Box,
     Button,
@@ -20,10 +23,18 @@ import {
     PopoverHeader,
     PopoverBody
 } from "@chakra-ui/react";
+
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import { IconBrandGithub, IconBrandTwitter, IconBrandLinkedin, IconMail } from '@tabler/icons-react';
-import face from '../assets/images/kadenbilyeu.png';
+
+// icons and images
+import { IconBrandGithub, IconBrandTwitter, IconBrandLinkedin, IconMail} from '@tabler/icons-react';
+
+import face from '../assets/images/personals/kadenbilyeu.png';
+import python_logo from '../assets/images/skills/python_logo.png';
+
+// custom components
 import NamedDivider from '../components/NamedDivider';
+import Skill from '../components/Skill';
 
 function HomePage() {
     useEffect(() => {
@@ -37,6 +48,7 @@ function HomePage() {
             <Introduction />
             <NamedDivider name="Projects" id="projects" />
             <NamedDivider name="Skills" id="skills" />
+            <SkillsSection />
             <NamedDivider name="About Me" id="aboutme" />
         </Box>
     );
@@ -114,6 +126,20 @@ function Introduction() {
                     Github
                 </Button>
             </Stack>
+        </Box>
+    );
+}
+
+function SkillsSection() {
+    return (
+        <Box
+            display="grid"
+            gridTemplateColumns="repeat(auto-fit, minmax(200px, 1fr))"
+            gap={4}
+            justifyItems="center"
+            p={4}
+        >
+            <Skill name="Python" image={python_logo} />
         </Box>
     );
 }

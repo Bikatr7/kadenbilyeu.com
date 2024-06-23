@@ -2,9 +2,13 @@
 // Use of this source code is governed by a GNU General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// chakra-ui imports
 import { Box, Container,Divider, Flex, IconButton, Image, Stack, Text } from '@chakra-ui/react';
+
+// icons and images
 import { IconBrandGithub } from '@tabler/icons-react';
-import logo from '../assets/images/bikatr7_logo.png'
+
+import logo from '../assets/images/personals/bikatr7_logo.png'
 
 function Footer() {
     return (
