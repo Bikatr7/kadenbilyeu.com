@@ -59,9 +59,14 @@ function Contact() {
                     </Stack>
                 </Box>
             </Flex>
-            <Box textAlign="center" mr={20}>
+            <Box textAlign="center" ml={5} mr={20}>
                 <Text fontSize="md" color="gray.500">
-                    Dummy paragraph.
+                    Feel free to reach out about anything! I'm always open to new opportunities and collaborations. I'm also looking for internships and job opportunities in software development.
+                </Text>
+            </Box>
+            <Box textAlign="left" ml={9} mr={50} mt={4} mb={100}>
+                <Text fontSize="md" color="gray.500">
+                    And if email isn't your thing, feel free to reach out to me on discord or any of my other socials!
                 </Text>
             </Box>
         </Box>
