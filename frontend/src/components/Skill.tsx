@@ -7,7 +7,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 
 interface SkillProps {
     name: string;
-    image: string | React.ReactNode;
+    image?: string | React.ReactNode;
 }
 
 const Skill: React.FC<SkillProps> = ({ name, image }) => {
@@ -15,6 +15,7 @@ const Skill: React.FC<SkillProps> = ({ name, image }) => {
         <Flex
             direction="row"
             align="center"
+            justifyContent={!image ? "center" : "flex-start"}
             bg="gray.800"
             color="white"
             p={4}
@@ -25,13 +26,15 @@ const Skill: React.FC<SkillProps> = ({ name, image }) => {
             width="100%"
             _hover={{ bg: "gray.700" }}
         >
-            <Box mr={3}>
-                {typeof image === 'string' ? (
-                    <img src={image} alt={`${name} logo`} style={{ width: '30px', height: '30px' }} />
-                ) : (
-                    <Box style={{ width: '30px', height: '30px' }}>{image}</Box>
-                )}
-            </Box>
+            {image && (
+                <Box mr={3}>
+                    {typeof image === 'string' ? (
+                        <img src={image} alt={`${name} logo`} style={{ width: '30px', height: '30px' }} />
+                    ) : (
+                        <Box style={{ width: '30px', height: '30px' }}>{image}</Box>
+                    )}
+                </Box>
+            )}
             <Text fontSize="md" fontWeight="bold">
                 {name}
             </Text>
