@@ -78,6 +78,8 @@ function HomePage() {
             <NamedDivider name="Skills" id="skills" />
             <SkillsSection />
             <NamedDivider name="About Me" id="aboutme" />
+            <NamedDivider name="About The Site" id="aboutsite" />
+            <NamedDivider name="Contact" id="contact" />
         </Box>
     );
 }
