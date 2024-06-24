@@ -15,14 +15,13 @@ const Skill: React.FC<SkillProps> = ({ name, image }) => {
         <Flex
             direction="row"
             align="center"
-            justifyContent={!image ? "center" : "flex-start"}
             bg="gray.800"
             color="white"
             p={4}
             borderRadius="full"
             boxShadow="lg"
             m={2}
-            maxWidth="150px"
+            maxWidth="200px"
             width="100%"
             _hover={{ bg: "gray.700" }}
         >
@@ -35,7 +34,7 @@ const Skill: React.FC<SkillProps> = ({ name, image }) => {
                     )}
                 </Box>
             )}
-            <Text fontSize="md" fontWeight="bold">
+            <Text fontSize="md" fontWeight="bold" textAlign="center">
                 {name}
             </Text>
         </Flex>
