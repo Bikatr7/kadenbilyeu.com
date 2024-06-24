@@ -2,12 +2,14 @@
 // Use of this source code is governed by a GNU General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// react
 import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 
+// pages
 import HomePage from './pages/HomePage';
 
 const routes = [
-    { path: '/', element: <HomePage/> },
+    { path: '*', element: <HomePage/> },
 ];
 
 const router = createBrowserRouter(routes);

@@ -1,6 +1,8 @@
 // Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com) (https://kadenbilyeu.com)
 // Use of this source code is governed by a GNU General Public License v3.0
 // license that can be found in the LICENSE file.
+
+// chakra-ui imports
 import {
     Box,
     Button,
@@ -20,9 +22,10 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 
+// icons and images
 import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 
-import logo from '../assets/images/bikatr7_logo.png';
+import logo from '../assets/images/personals/bikatr7_logo.png';
 
 export default function Navbar() {
     const { isOpen, onToggle } = useDisclosure();

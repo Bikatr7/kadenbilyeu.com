@@ -2,10 +2,17 @@
 // Use of this source code is governed by a GNU General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// react
 import { useState, useEffect } from 'react';
-import Router from "./Router.tsx";
+
+// chakra-ui
 import { ChakraProvider, Container, Box } from "@chakra-ui/react";
-import theme from "./theme.ts"; 
+
+// root components
+import Router from "./Router.tsx";
+import theme from "./theme.ts";
+
+// custom components
 import Navbar from "./components/Navbar.tsx";
 import Footer from "./components/Footer.tsx";
 import LoadingAnimation from "./components/LoadingAnimation.tsx";
