@@ -28,7 +28,7 @@ import face from '../assets/images/personals/kadenbilyeu.png';
 
 function Preface() {
     return (
-        <Stack direction={{ base: 'column', md: 'row' }} bg="black">
+        <Stack direction={{ base: 'column', md: 'row' }} bg="black" id="home">
             <Flex p={8} flex={1} align="center">
                 <Stack spacing={6} w="full" maxW="xl">
                     <Popover>
@@ -59,7 +59,7 @@ function Preface() {
                         Computer science student at UCCS focusing on incorporating AI, LLMs, data science, and NER/NLP into software for real-world applications.
                     </Text>
                     <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
-                        <Button rounded="full" as="a" href="/aboutme" _hover={{ color: 'yellow' }}>
+                        <Button rounded="full" as="a" href="#aboutme" _hover={{ color: 'yellow' }}>
                             More about me
                         </Button>
                         <Button as="a" href="https://github.com/Bikatr7" leftIcon={<IconBrandGithub />} rounded="full" _hover={{ color: 'yellow' }}>

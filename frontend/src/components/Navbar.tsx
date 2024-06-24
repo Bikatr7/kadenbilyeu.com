@@ -269,7 +269,16 @@ interface NavItem {
 const NAV_ITEMS: Array<NavItem> = [
     {
         label: 'Home',
-        href: '/',
+        href: '#home',
+    },
+    {
+        label: 'Projects',
+        href: '#projects',
+
+    },
+    {
+        label: 'Skills',
+        href: '#skills',
     },
     {
         label: 'About',
