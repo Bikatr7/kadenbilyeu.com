@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // react
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 // chakra-ui
 import {
@@ -15,6 +15,7 @@ import {
     Stack,
     Text,
     IconButton,
+    Collapse,
     Popover,
     PopoverTrigger,
     PopoverContent,
@@ -35,6 +36,7 @@ import python_logo from '../assets/images/skills/python_logo.png';
 // custom components
 import NamedDivider from '../components/NamedDivider';
 import Skill from '../components/Skill';
+
 
 function HomePage() {
     useEffect(() => {
@@ -131,15 +133,80 @@ function Introduction() {
 }
 
 function SkillsSection() {
+    const [showMore, setShowMore] = useState(false);
+
+    const handleToggle = () => setShowMore(!showMore);
+
     return (
         <Box
-            display="grid"
-            gridTemplateColumns="repeat(auto-fit, minmax(200px, 1fr))"
-            gap={4}
-            justifyItems="center"
+            display="flex"
+            flexWrap="wrap"
+            justifyContent="center"
             p={4}
         >
+            {/* Programming Languages */}
             <Skill name="Python" image={python_logo} />
+            <Skill name="Java" />
+            <Skill name="JavaScript" />
+            <Skill name="TypeScript" />
+            <Skill name="C" />
+            <Skill name="C++" />
+            <Skill name="R" />
+            <Skill name="HTML" />
+            <Skill name="CSS" />
+            
+            {/* Databases */}
+            <Skill name="MySQL" />
+            <Skill name="Oracle SQL" />
+            <Skill name="PL/SQL" />
+
+            {/* Tools & Platforms */}
+            <Skill name="Git" />
+            <Skill name="Docker" />
+            <Skill name="FastAPI" />
+            <Skill name="Flask" />
+            <Skill name="React" />
+
+            {/* Methodologies */}
+            <Skill name="Agile" />
+
+            <Collapse in={showMore} animateOpacity>
+                <Box
+                    display="flex"
+                    flexWrap="wrap"
+                    justifyContent="center"
+                >
+                    {/* Additional Tools & Libraries */}
+                    <Skill name="OpenAI API" />
+                    <Skill name="DeepL API" />
+                    <Skill name="discord.py" />
+                    <Skill name="Gradio" />
+                    <Skill name="spaCy" />
+                    <Skill name="PIL/Pillow" />
+                    <Skill name="Vite" />
+                    
+                    {/* Concepts */}
+                    <Skill name="OOP" />
+                    <Skill name="UI/UX" />
+                    <Skill name="CI/CD" />
+                    <Skill name="API Integration" />
+
+                    {/* Soft Skills */}
+                    <Skill name="Teamwork" />
+                    
+                </Box>
+            </Collapse>
+            <Button 
+                onClick={handleToggle} 
+                mt={4} 
+                alignSelf="center" 
+                _hover={{ color: 'yellow' }} 
+                rounded={'full'}
+                colorScheme="teal"
+                variant="outline"
+            >
+                {showMore ? "Show Less" : "Show More"}
+            </Button>
         </Box>
     );
 }
