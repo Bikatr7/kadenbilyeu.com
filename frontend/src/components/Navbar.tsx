@@ -131,6 +131,7 @@ const DesktopNav = () => {
                                     color={linkColor}
                                     _hover={{
                                         color: linkHoverColor,
+                                        transform: 'scale(1.1)',
                                     }}>
                                     {navItem.label}
                                 </Heading>
@@ -225,7 +226,8 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                     as="h2"
                     fontSize={'lg'}
                     fontWeight={600}
-                    color="white">
+                    color="white"
+                    _hover={{ transform: 'scale(1.1)', color: 'yellow' }}>
                     {label}
                 </Heading>
                 {children && (
@@ -249,7 +251,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                     align={'start'}>
                     {children &&
                         children.map((child) => (
-                            <Link key={child.label} py={2} href={child.href}>
+                            <Link key={child.label} py={2} href={child.href} _hover={{color: 'yellow', textDecoration: 'none'}}>
                                 {child.label}
                             </Link>
                         ))}
