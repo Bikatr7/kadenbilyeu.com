@@ -23,7 +23,7 @@ const Skill: React.FC<SkillProps> = ({ name, image }) => {
             m={2}
             maxWidth="200px"
             width="100%"
-            _hover={{ bg: "gray.700" }}
+            _hover={{ bg: "gray.700", transform: 'scale(1.05)'}}
         >
             {image && (
                 <Box mr={3}>

@@ -32,10 +32,10 @@ function Preface() {
                         Computer science student at UCCS focusing on incorporating AI, LLMs, data science, and NER/NLP into software for real-world applications.
                     </Text>
                     <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
-                        <Button rounded="full" as="a" href="#aboutme" _hover={{ color: 'yellow' }}>
+                        <Button rounded="full" as="a" href="#aboutme" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                             More about me
                         </Button>
-                        <Button as="a" href="https://github.com/Bikatr7" leftIcon={<IconBrandGithub />} rounded="full" _hover={{ color: 'yellow' }}>
+                        <Button as="a" href="https://github.com/Bikatr7" leftIcon={<IconBrandGithub />} rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                             My Github
                         </Button>
                     </Stack>

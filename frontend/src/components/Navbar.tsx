@@ -70,7 +70,7 @@ export default function Navbar() {
                             href="/assets/pdfs/May_2024_Kaden_Bilyeu_Resume.pdf"
                             download="Kaden_Bilyeu_Resume_May_2024.pdf"
                             rounded="full"
-                            _hover={{ color: 'yellow' }}
+                            _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                             _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
                             ml={5}>
                             Resume
@@ -90,7 +90,7 @@ export default function Navbar() {
                                 href="/assets/pdfs/May_2024_Kaden_Bilyeu_Resume.pdf"
                                 download="Kaden_Bilyeu_Resume_May_2024.pdf"
                                 rounded="full"
-                                _hover={{ color: 'yellow' }}
+                                _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                                 _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
                                 ml={5}>
                                 Resume

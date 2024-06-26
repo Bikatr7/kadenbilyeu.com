@@ -116,7 +116,7 @@ function Skills() {
             <Box textAlign="center" mt={4}>
                 <Button 
                     onClick={handleToggle} 
-                    _hover={{ color: 'yellow' }} 
+                    _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}
                     rounded={'full'}
                     colorScheme="teal"
                     variant="outline"
