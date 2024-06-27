@@ -84,10 +84,10 @@ const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, 
                                 {title}
                             </Text>
                             <br />
-                            <Text color="gray.500" as="span" fontSize="sm" mt={2}>
-                                {subtitle}
-                            </Text>
                         </Heading>
+                        <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
+                            {subtitle}
+                        </Text>
                         <Wrap>
                             {tags && tags.map(tag => (
                                 <WrapItem key={tag} css={tagAnimation}>
