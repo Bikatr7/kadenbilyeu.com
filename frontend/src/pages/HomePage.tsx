@@ -14,10 +14,11 @@ import NamedDivider from '../components/NamedDivider';
 // sections
 import Preface from '../sections/Preface';
 import Introduction from '../sections/Introduction';
+import Projects from '../sections/Projects';
 import Skills from '../sections/Skills';
-import Contact from '../sections/Contact';
 import AboutMe from '../sections/AboutMe';
 import AboutSite from '../sections/AboutSite';
+import Contact from '../sections/Contact';
 
 function HomePage() {
     useEffect(() => {
@@ -30,6 +31,7 @@ function HomePage() {
             <NamedDivider name="Introduction" id="introduction" />
             <Introduction />
             <NamedDivider name="Projects" id="projects" />
+            <Projects />
             <NamedDivider name="Skills" id="skills" />
             <Skills />
             <NamedDivider name="About Me" id="aboutme" />

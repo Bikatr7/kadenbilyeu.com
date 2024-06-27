@@ -38,21 +38,21 @@ function Contact() {
                     </Text>
                     <Stack spacing={4} justifyContent="flex-start">
                         <Stack direction={{ base: 'column', md: 'row' }} spacing={4} justifyContent="flex-start">
-                            <Button as="a" href="mailto:kadenbilyeu@proton.me" leftIcon={<IconMail />} rounded="full" _hover={{ color: 'yellow' }} variant="outline">
+                            <Button as="a" href="mailto:kadenbilyeu@proton.me" leftIcon={<IconMail />} rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}} variant="outline">
                                 Mail
                             </Button>
-                            <Button as="a" href="https://linkedin.com/in/kadenbilyeu" leftIcon={<IconBrandLinkedin />} rounded="full" _hover={{ color: 'yellow' }} variant="outline">
+                            <Button as="a" href="https://linkedin.com/in/kadenbilyeu" leftIcon={<IconBrandLinkedin />} rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}} variant="outline">
                                 LinkedIn
                             </Button>
-                            <Button as="a" href="https://github.com/Bikatr7" leftIcon={<IconBrandGithub />} rounded="full" _hover={{ color: 'yellow' }} variant="outline">
+                            <Button as="a" href="https://github.com/Bikatr7" leftIcon={<IconBrandGithub />} rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}} variant="outline">
                                 GitHub
                             </Button>
                         </Stack>
                         <Stack direction="row" spacing={4} justifyContent="center">
-                            <Button as="a" href="https://discord.com" leftIcon={<IconBrandDiscord />} rounded="full" _hover={{ color: 'yellow' }} variant="outline">
+                            <Button as="a" href="https://discord.com" leftIcon={<IconBrandDiscord />} rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}} variant="outline">
                                 Discord
                             </Button>
-                            <Button as="a" href="https://twitter.com/kadenbilyeu0" leftIcon={<IconBrandTwitter />} rounded="full" _hover={{ color: 'yellow' }} variant="outline">
+                            <Button as="a" href="https://twitter.com/kadenbilyeu0" leftIcon={<IconBrandTwitter />} rounded="full"_hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}} variant="outline">
                                 Twitter
                             </Button>
                         </Stack>

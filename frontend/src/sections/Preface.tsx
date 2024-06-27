@@ -9,19 +9,10 @@ import {
     Flex,
     Heading,
     Stack,
-    Text,
-    IconButton,
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
-    PopoverArrow,
-    PopoverCloseButton,
-    PopoverHeader,
-    PopoverBody
+    Text
 } from "@chakra-ui/react";
 
 // icons and images
-import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { IconBrandGithub} from '@tabler/icons-react';
 
 import face from '../assets/images/personals/kadenbilyeu.png';
@@ -31,24 +22,6 @@ function Preface() {
         <Stack direction={{ base: 'column', md: 'row' }} bg="black" id="home">
             <Flex p={8} flex={1} align="center">
                 <Stack spacing={6} w="full" maxW="xl">
-                    <Popover>
-                        <PopoverTrigger>
-                            <IconButton
-                                aria-label="Site Information"
-                                icon={<InfoOutlineIcon />}
-                                variant="ghost"
-                                color="teal.500"
-                            />
-                        </PopoverTrigger>
-                        <PopoverContent>
-                            <PopoverArrow />
-                            <PopoverCloseButton />
-                            <PopoverHeader>Site Information</PopoverHeader>
-                            <PopoverBody>
-                                This site is currently under construction. Please check back periodically for updates. Thank you for your patience. For more information, visit https://github.com/Bikatr7/kadenbilyeu.com
-                            </PopoverBody>
-                        </PopoverContent>
-                    </Popover>
                     <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
                         <Text as="span" position="relative">
                             Kaden Bilyeu
@@ -59,10 +32,10 @@ function Preface() {
                         Computer science student at UCCS focusing on incorporating AI, LLMs, data science, and NER/NLP into software for real-world applications.
                     </Text>
                     <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
-                        <Button rounded="full" as="a" href="#aboutme" _hover={{ color: 'yellow' }}>
+                        <Button rounded="full" as="a" href="#aboutme" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                             More about me
                         </Button>
-                        <Button as="a" href="https://github.com/Bikatr7" leftIcon={<IconBrandGithub />} rounded="full" _hover={{ color: 'yellow' }}>
+                        <Button as="a" href="https://github.com/Bikatr7" leftIcon={<IconBrandGithub />} rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                             My Github
                         </Button>
                     </Stack>

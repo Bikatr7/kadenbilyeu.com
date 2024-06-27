@@ -70,7 +70,7 @@ export default function Navbar() {
                             href="/assets/pdfs/May_2024_Kaden_Bilyeu_Resume.pdf"
                             download="Kaden_Bilyeu_Resume_May_2024.pdf"
                             rounded="full"
-                            _hover={{ color: 'yellow' }}
+                            _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                             _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
                             ml={5}>
                             Resume
@@ -90,7 +90,7 @@ export default function Navbar() {
                                 href="/assets/pdfs/May_2024_Kaden_Bilyeu_Resume.pdf"
                                 download="Kaden_Bilyeu_Resume_May_2024.pdf"
                                 rounded="full"
-                                _hover={{ color: 'yellow' }}
+                                _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                                 _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
                                 ml={5}>
                                 Resume
@@ -131,6 +131,7 @@ const DesktopNav = () => {
                                     color={linkColor}
                                     _hover={{
                                         color: linkHoverColor,
+                                        transform: 'scale(1.1)',
                                     }}>
                                     {navItem.label}
                                 </Heading>
@@ -225,7 +226,8 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                     as="h2"
                     fontSize={'lg'}
                     fontWeight={600}
-                    color="white">
+                    color="white"
+                    _hover={{ transform: 'scale(1.1)', color: 'yellow' }}>
                     {label}
                 </Heading>
                 {children && (
@@ -249,7 +251,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                     align={'start'}>
                     {children &&
                         children.map((child) => (
-                            <Link key={child.label} py={2} href={child.href}>
+                            <Link key={child.label} py={2} href={child.href} _hover={{color: 'yellow', textDecoration: 'none'}}>
                                 {child.label}
                             </Link>
                         ))}
