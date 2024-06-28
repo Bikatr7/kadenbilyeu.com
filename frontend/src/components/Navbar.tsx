@@ -27,6 +27,8 @@ import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@ch
 
 import logo from '../assets/images/personals/bikatr7_logo.png';
 
+import resume from '../assets/pdfs/July_2024_Kaden_Bilyeu_Resume.pdf';
+
 export default function Navbar() {
     const { isOpen, onToggle } = useDisclosure();
 
@@ -67,8 +69,8 @@ export default function Navbar() {
                         <Button
                             as="a"
                             bg="red.900"
-                            href="/assets/pdfs/May_2024_Kaden_Bilyeu_Resume.pdf"
-                            download="Kaden_Bilyeu_Resume_May_2024.pdf"
+                            href={resume}
+                            download="Kaden_Bilyeu_Resume_July_2024.pdf"
                             rounded="full"
                             _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                             _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
@@ -87,8 +89,8 @@ export default function Navbar() {
                             <Button
                                 as="a"
                                 bg="red.900"
-                                href="/assets/pdfs/May_2024_Kaden_Bilyeu_Resume.pdf"
-                                download="Kaden_Bilyeu_Resume_May_2024.pdf"
+                                href={resume}
+                                download="Kaden_Bilyeu_Resume_July_2024.pdf"
                                 rounded="full"
                                 _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                                 _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
