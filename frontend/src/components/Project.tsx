@@ -74,8 +74,8 @@ const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, 
         <>
         <Box mb={20}>
             <Stack direction={{ base: 'column', md: reverse ? 'row-reverse' : 'row' }} mt={10} marginBottom={25}>
-                <Flex flex={1}>
-                    <Image boxSize={400} alt={imageAlt} objectFit="cover" src={imageUrl} css={imageAnimation} />
+                <Flex flex={1} justifyContent="center">
+                    <Image boxSize={{ base: '300px', md: '400px' }} alt={imageAlt} objectFit="cover" src={imageUrl} css={imageAnimation} />
                 </Flex>
                 <Flex p={8} flex={1} align="center">
                     <Stack spacing={6} w="full" maxW="xl">
@@ -97,19 +97,19 @@ const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, 
                                 </WrapItem>
                             ))}
                         </Wrap>
-                        <Stack direction={{ base: 'column', md: 'row' }} spacing={4} align="center">
+                        <Stack direction="row" spacing={4} align="center">
                             {linkUrl && (
-                                <Link href={linkUrl} isExternal _hover={{color:"yellow"}} css={iconAnimation} _active={{ transform: 'scale(0.95)'}}>
+                                <Link href={linkUrl} isExternal _hover={{ color: "yellow" }} css={iconAnimation} _active={{ transform: 'scale(0.95)' }}>
                                     <IconExternalLink cursor="pointer" />
                                 </Link>
                             )}
                             {githubUrl && (
-                                <Link href={githubUrl} isExternal _hover={{color:"yellow"}} css={iconAnimation} _active={{ transform: 'scale(0.95)'}}>
+                                <Link href={githubUrl} isExternal _hover={{ color: "yellow" }} css={iconAnimation} _active={{ transform: 'scale(0.95)' }}>
                                     <IconBrandGithub cursor="pointer" />
                                 </Link>
                             )}
                             {documentationUrl && (
-                                <Link href={documentationUrl} isExternal _hover={{color:"yellow"}} css={iconAnimation} _active={{ transform: 'scale(0.95)'}}>
+                                <Link href={documentationUrl} isExternal _hover={{ color: "yellow" }} css={iconAnimation} _active={{ transform: 'scale(0.95)' }}>
                                     <IconBook cursor="pointer" />
                                 </Link>
                             )}
