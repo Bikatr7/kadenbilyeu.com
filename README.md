@@ -40,8 +40,8 @@ I welcome contributions to my site and corrections to any inaccuracies found on 
 
 ## **License**<a name="license"></a>
 
-This site (kadenbilyeu.com) is licensed under the GNU General Public License (GPL). You can find the full text of the license in the [LICENSE](License.md) file.
+This site (kadenbilyeu.com) is licensed under the GNU Affero General Public License (AGPLv3). You can find the full text of the license in the [LICENSE](License.md) file.
 
-The GPL is a copyleft license that promotes the principles of open-source software. It ensures that any derivative works based on this project must also be distributed under the same GPL license. This license grants you the freedom to use, modify, and distribute the software.
+The AGPLv3 is a copyleft license that promotes the principles of open-source software. It ensures that any derivative works based on this project, as well as any software that interacts with users over a network, must also be distributed under the same AGPLv3 license. This license grants you the freedom to use, modify, and distribute the software.
 
-Please note that this information is a brief summary of the GPL. For a detailed understanding of your rights and obligations under this license, please refer to the full license text.
+Please note that this information is a brief summary of the AGPLv3. For a detailed understanding of your rights and obligations under this license, please refer to the full license text.
