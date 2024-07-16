@@ -8,7 +8,7 @@ import { Box, Container,Divider, Flex, IconButton, Image, Stack, Text } from '@c
 // icons and images
 import { IconBrandGithub } from '@tabler/icons-react';
 
-import logo from '../assets/images/personals/bikatr7_logo.png'
+import logo from '../assets/images/personals/bikatr7_logo.webp';
 
 function Footer() {
     return (

@@ -25,7 +25,7 @@ import {
 // icons and images
 import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 
-import logo from '../assets/images/personals/bikatr7_logo.png';
+import logo from '../assets/images/personals/bikatr7_logo.webp';
 
 import resume from '../assets/pdfs/July_2024_Kaden_Bilyeu_Resume.pdf';
 
@@ -63,7 +63,7 @@ export default function Navbar() {
                                 aria-label={'Toggle Navigation'}
                             />
 
-                            <Image src={logo} boxSize='30px' ml={2} />
+                            <Image src={logo} boxSize='30px' ml={2} alt = "Bikatr7 (Kaden Bilyeu) Logo" />
                         </Flex>
                         
                         <Button
@@ -79,7 +79,7 @@ export default function Navbar() {
                         </Button>
                     </Flex>
                     <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align={'center'}>
-                        <Image src={logo} boxSize='30px' display={{ base: 'none', md: 'block' }} />
+                        <Image src={logo} boxSize='30px' display={{ base: 'none', md: 'block' }} alt = "Bikatr7 (Kaden Bilyeu) Logo" />
 
                         <Flex display={{ base: 'none', md: 'flex' }} ml={10} align={'center'}>
                             <DesktopNav />
