@@ -28,10 +28,10 @@ function Footer() {
                 <Flex display={{ base: 'flex', md: 'none' }} width="100%" justify="space-between" align="center">
                     <IconButton as='a' href='https://github.com/Bikatr7' aria-label='Github' icon={<IconBrandGithub />} />
                     <Text textAlign="center">© 2024 Kaden Bilyeu (Bikatr7). All rights reserved</Text>
-                    <Image src={logo} boxSize='30px' />
+                    <Image src={logo} boxSize='30px' alt = "Kaden Bilyeu (Bikatr7) Logo" />
                 </Flex>
                 <Flex display={{ base: 'none', md: 'flex' }} width="100%" justify="space-between" align="center">
-                    <Image src={logo} boxSize='30px' />
+                    <Image src={logo} boxSize='30px' alt = "Kaden Bilyeu (Bikatr7) Logo" />
                     <Text textAlign="center" flex="1">© 2024 Kaden Bilyeu (Bikatr7). All rights reserved</Text>
                     <IconButton as='a' href='https://github.com/Bikatr7' aria-label='Github' icon={<IconBrandGithub />} />
                 </Flex>
