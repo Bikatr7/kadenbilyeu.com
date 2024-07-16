@@ -15,7 +15,7 @@ import {
 // icons and images
 import { IconBrandGithub, IconBrandTwitter, IconBrandLinkedin, IconMail, IconBrandDiscord} from '@tabler/icons-react';
 
-import face from '../assets/images/personals/kadenbilyeu.png';
+import face from '../assets/images/personals/kadenbilyeu.webp';
 
 function Contact() {
     return (

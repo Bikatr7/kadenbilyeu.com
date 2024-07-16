@@ -100,17 +100,17 @@ const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, 
                         <Stack direction="row" spacing={4} align="center">
                             {linkUrl && (
                                 <Link href={linkUrl} isExternal _hover={{ color: "yellow" }} css={iconAnimation} _active={{ transform: 'scale(0.95)' }}>
-                                    <IconExternalLink cursor="pointer" />
+                                    <IconExternalLink cursor="pointer" aria-label='External Link' />
                                 </Link>
                             )}
                             {githubUrl && (
                                 <Link href={githubUrl} isExternal _hover={{ color: "yellow" }} css={iconAnimation} _active={{ transform: 'scale(0.95)' }}>
-                                    <IconBrandGithub cursor="pointer" />
+                                    <IconBrandGithub cursor="pointer" aria-label='GitHub Link' />
                                 </Link>
                             )}
                             {documentationUrl && (
                                 <Link href={documentationUrl} isExternal _hover={{ color: "yellow" }} css={iconAnimation} _active={{ transform: 'scale(0.95)' }}>
-                                    <IconBook cursor="pointer" />
+                                    <IconBook cursor="pointer" aria-label='Documentation Link' />
                                 </Link>
                             )}
                         </Stack>

@@ -3,11 +3,11 @@
 // license that can be found in the LICENSE file.
 
 // logos
-import easytl_logo from '../assets/images/logos/easytl_logo.png';
-import kairyou_logo from '../assets/images/logos/kairyou_logo.png';
-import kakusui_logo from '../assets/images/logos/kakusui_logo.png';
-import kudasai_logo from '../assets/images/logos/kudasai_logo.png';
-import seisen_logo from '../assets/images/logos/seisen_logo.png';
+import easytl_logo from '../assets/images/logos/easytl_logo.webp';
+import kairyou_logo from '../assets/images/logos/kairyou_logo.webp';
+import kakusui_logo from '../assets/images/logos/kakusui_logo.webp';
+import kudasai_logo from '../assets/images/logos/kudasai_logo.webp';
+import seisen_logo from '../assets/images/logos/seisen_logo.webp';
 
 // custom components
 import Project from '../components/Project';
