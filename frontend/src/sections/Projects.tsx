@@ -3,6 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // logos
+import elucidate_logo from '../assets/images/logos/elucidate_logo.webp';
 import easytl_logo from '../assets/images/logos/easytl_logo.webp';
 import kairyou_logo from '../assets/images/logos/kairyou_logo.webp';
 import kakusui_logo from '../assets/images/logos/kakusui_logo.webp';
@@ -15,6 +16,17 @@ import Project from '../components/Project';
 function Projects() {
     return (
         <>
+
+            <Project
+                title="Elucidate"
+                subtitle="Smarter Translations through LLM Self-Evaluation"
+                imageUrl={elucidate_logo}
+                imageAlt="Elucidate Logo"
+                linkUrl="https://kakusui.org/elucidate"
+                githubUrl="https://github.com/Kakusui/Elucidate"
+                tags={["Open Source", "Python", "OpenAI", "Gemini", "Anthropic"]}
+                reverse={true}
+            />
             <Project
                 title="EasyTL"
                 subtitle="Seamless Multi-API Translation: Simplifying Language Barriers with DeepL, OpenAI, Gemini, Google Translate and More!"

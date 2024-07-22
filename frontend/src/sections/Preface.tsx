@@ -19,7 +19,7 @@ import face from '../assets/images/personals/kadenbilyeu.webp';
 
 function Preface() {
     return (
-        <Stack direction={{ base: 'column', md: 'row' }} bg="black" id="home">
+        <Stack direction={{ base: 'column', md: 'row' }} bg="black" id="home" paddingTop={5} >
             <Flex p={8} flex={1} align="center">
                 <Stack spacing={6} w="full" maxW="xl">
                     <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
@@ -42,7 +42,7 @@ function Preface() {
                 </Stack>
             </Flex>
             <Flex flex={1}>
-                <Image boxSize={400} alt="Kaden Bilyeu's Profile Picture" objectFit="cover" src={face} />
+                <Image boxSize={400} alt="Kaden Bilyeu's Profile Picture" objectFit="cover" src={face} borderRadius={"full"} />
             </Flex>
         </Stack>
     );
