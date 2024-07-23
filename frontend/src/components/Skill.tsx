@@ -4,6 +4,8 @@
 
 // chakra-ui imports
 import { Box, Flex, Text } from '@chakra-ui/react';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/opacity.css'; // Using opacity effect instead of blur
 
 interface SkillProps {
     name: string;
@@ -28,7 +30,13 @@ const Skill: React.FC<SkillProps> = ({ name, image }) => {
             {image && (
                 <Box mr={3}>
                     {typeof image === 'string' ? (
-                        <img src={image} alt={`${name} logo`} style={{ width: '30px', height: '30px' }} />
+                        <LazyLoadImage
+                            src={image}
+                            alt={`${name} logo`}
+                            effect="opacity"
+                            width={30}
+                            height={30}
+                        />
                     ) : (
                         <Box style={{ width: '30px', height: '30px' }}>{image}</Box>
                     )}

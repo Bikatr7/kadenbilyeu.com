@@ -6,10 +6,7 @@
 import { useState } from 'react';
 
 // chakra-ui
-import {
-    Box,
-    Button
-} from "@chakra-ui/react";
+import { Box, Button, SimpleGrid } from "@chakra-ui/react";
 
 // logos
 import agile_logo from '../assets/images/skills/agile_logo.webp';
@@ -77,36 +74,23 @@ const skillData = [
     { name: "Teamwork" },
 ];
 
+
 function Skills() {
     const [showMore, setShowMore] = useState(false);
-    const [visibleSkills, setVisibleSkills] = useState(skillData.slice(0, 18));
-
-    const handleToggle = () => {
-        setShowMore(!showMore);
-        if (!showMore) {
-            setVisibleSkills(skillData); // Show all skills
-        } else {
-            setVisibleSkills(skillData.slice(0, 18)); // Show initial skills
-        }
-    };
+    const visibleSkills = showMore ? skillData : skillData.slice(0, 15);
 
     return (
         <Box p={4}>
-            <Box
-                display="grid"
-                gridTemplateColumns="repeat(auto-fill, minmax(180px, 1fr))"
-                gap={4}
-                justifyItems="center"
-                width="100%"
-            >
+            <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
                 {visibleSkills.map((skill, index) => (
                     <Skill key={index} name={skill.name} image={skill.image} />
                 ))}
-            </Box>
+            </SimpleGrid>
             <Box textAlign="center" mt={4}>
                 <Button 
-                    onClick={handleToggle} 
-                    _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}
+                    onClick={() => setShowMore(!showMore)} 
+                    _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
+                    _active={{ transform: 'scale(0.99)' }}
                     rounded={'full'}
                     colorScheme="teal"
                     variant="outline"
@@ -117,5 +101,6 @@ function Skills() {
         </Box>
     );
 }
+
 
 export default Skills;
