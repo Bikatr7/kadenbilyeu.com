@@ -33,7 +33,6 @@ function HomePage() {
     const toggleContent = () => {
         setShowContent(!showContent);
         if (!contentLoaded) {
-            // Start loading the content
             setContentLoaded(true);
         }
     };
