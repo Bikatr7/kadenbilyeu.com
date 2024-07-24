@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // react
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 
 // chakra-ui
 import { ChakraProvider, Container, Box } from "@chakra-ui/react";
@@ -21,20 +21,15 @@ function App()
 {
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 2000);
-
-        return () => clearTimeout(timer);
-    }, []);
+    const handleLoadingComplete = () => {
+        setIsLoading(false);
+    };
 
     return (
         <ChakraProvider theme={theme}>
             <Box bg="black" minH="100vh">
-                {isLoading ? (
-                    <LoadingAnimation />
-                ) : (
+                {isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
+                {!isLoading && (
                     <>
                         <Navbar/>
                         <Container maxW={'6xl'}>

@@ -1,8 +1,4 @@
-// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com) (https://kadenbilyeu.com)
-// Use of this source code is governed by an GNU Affero General Public License v3.0
-// license that can be found in the LICENSE file.
-
-// chakra-ui
+import { useEffect, useState } from 'react';
 import { Box, Text, keyframes } from '@chakra-ui/react';
 
 const textFadeIn = keyframes`
@@ -15,7 +11,31 @@ const backgroundTransition = keyframes`
   100% { background-color: black; }
 `;
 
-const LoadingAnimation: React.FC = () => {
+const LoadingAnimation: React.FC<{ onLoadingComplete: () => void }> = ({ onLoadingComplete }) => {
+  const [showAnimation, setShowAnimation] = useState(false);
+
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    const lastVisit = localStorage.getItem('lastVisit');
+
+    if (lastVisit !== today) {
+      setShowAnimation(true);
+      localStorage.setItem('lastVisit', today);
+      const timer = setTimeout(() => {
+        setShowAnimation(false);
+        onLoadingComplete();
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    } else {
+      onLoadingComplete();
+    }
+  }, [onLoadingComplete]);
+
+  if (!showAnimation) {
+    return null;
+  }
+
   return (
     <Box 
       position="absolute" 
