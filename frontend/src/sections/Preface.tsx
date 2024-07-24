@@ -17,7 +17,14 @@ import { IconBrandGithub} from '@tabler/icons-react';
 
 import face from '../assets/images/personals/kadenbilyeu.webp';
 
-function Preface() {
+
+function Preface({ showContent, toggleContent }: { showContent: boolean, toggleContent: () => void }) {
+    const handleClick = () => {
+        if (!showContent) {
+            toggleContent();
+        }
+    };
+
     return (
         <Stack direction={{ base: 'column', md: 'row' }} bg="black" id="home" paddingTop={5} >
             <Flex p={8} flex={1} align="center">
@@ -32,8 +39,18 @@ function Preface() {
                         Computer science student at UCCS focusing on incorporating AI, LLMs, data science, and NER/NLP into software for real-world applications.
                     </Text>
                     <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
-                        <Button rounded="full" as="a" href="#aboutme" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
+                        <Button 
+                            rounded="full" 
+                            as="a" 
+                            href={showContent ? "#aboutme" : undefined} 
+                            onClick={handleClick}
+                            _hover={{ color: 'yellow', transform: 'scale(1.01)'}}
+                            _active={{ transform: 'scale(0.99)'}}
+                        >
                             More about me
+                        </Button>
+                        <Button as="a" href="/blog" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
+                            Blog (Coming Soon)
                         </Button>
                         <Button as="a" href="https://github.com/Bikatr7" leftIcon={<IconBrandGithub />} rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                             My Github

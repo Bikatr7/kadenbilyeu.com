@@ -6,23 +6,34 @@
 import { useState} from 'react';
 
 // chakra-ui
-import { ChakraProvider, Container, Box } from "@chakra-ui/react";
+import { ChakraProvider, Box, Container} from "@chakra-ui/react";
 
 // root components
-import Router from "./Router.tsx";
 import theme from "./theme.ts";
 
 // custom components
 import Navbar from "./components/Navbar.tsx";
 import Footer from "./components/Footer.tsx";
-import LoadingAnimation from "./components/LoadingAnimation.tsx";
+import LoadingAnimation from './components/LoadingAnimation.tsx';
+
+import Router from './Router.tsx';
+
 
 function App() 
 {
     const [isLoading, setIsLoading] = useState(true);
+    const [showContent, setShowContent] = useState(false);
+    const [contentLoaded, setContentLoaded] = useState(false);
 
     const handleLoadingComplete = () => {
         setIsLoading(false);
+    };
+
+    const toggleContent = () => {
+        setShowContent(!showContent);
+        if (!contentLoaded) {
+            setContentLoaded(true);
+        }
     };
 
     return (
@@ -32,8 +43,12 @@ function App()
                 {!isLoading && (
                     <>
                         <Navbar/>
-                        <Container maxW={'6xl'}>
-                            <Router/>
+                        <Container maxW="6xl">
+                            <Router 
+                                showContent={showContent} 
+                                toggleContent={toggleContent} 
+                                contentLoaded={contentLoaded} 
+                            />
                         </Container>
                         <Footer/>
                     </>

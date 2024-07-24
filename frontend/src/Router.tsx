@@ -9,16 +9,16 @@ import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import BlogPage from './pages/BlogPage';
 
-const routes = [
-    { path: '/', element: <HomePage/> },
-    { path: '/blog', element: <BlogPage/> }, 
-];
-
-const router = createBrowserRouter(routes);
-
-function Router() 
+function Router({ showContent, toggleContent, contentLoaded }: { showContent: any, toggleContent: any, contentLoaded: any }) 
 {
-    return <RouterProvider router={router}/>;
+    const routes = [
+        { path: '/', element: <HomePage showContent={showContent} toggleContent={toggleContent} contentLoaded={contentLoaded} /> },
+        { path: '/blog', element: <BlogPage /> },
+    ];
+
+    const router = createBrowserRouter(routes);
+
+    return <RouterProvider router={router} />;
 }
 
 export default Router;
