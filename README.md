@@ -19,16 +19,13 @@ Built with React, Vite, and Typescript
 
 ## **Setting Up A Local Build**<a name="setting-up-a-local-build"></a>
 
-```bash
-cd frontend
-
-npm i
-
-npm run dev
-
-```
-
-This will start the frontend build on localhost:5173.
+1. Clone the repo, make sure you are using the correct branch (currently `production`)
+2. Navigate to the `backend` directory. `cd backend`. Inside is the python backend.
+3. Run the setup script with the local argument. This will install all requirements and setup the local env `python setup.py local`.
+4. Run the server. For local `uvicorn main:app --reload --port 5000`
+5. Open a new terminal and navigate to the `frontend` directory. `cd frontend`. Inside is the react (vite) frontend.
+6. First install all required packages, these are in `package.json`. Do `npm i`. Then run the dev server with `npm run dev`
+7. Website will be on localhost:5173 (frontend) and localhost:5000 (backend)
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -37,7 +37,7 @@ def setup_local_environment() -> None:
     env_to_key_local = {
         "ADMIN_USER": "admin",
         "ADMIN_PASS_HASH": "$2b$12$wOtWoEqVCCT6lARGKj6aJOSMKKel.R6r5c2ibzGV.k4dKzEjT5m4O",
-        "TOTP_SECRET": "MV1ZGTJ5DI2PBBLJ6YDVTNTMCREFP4EW",
+        "TOTP_SECRET": "JBSWY3DPEHPK3PXP",
         "NODE_ENV": "development",
     }
 

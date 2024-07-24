@@ -75,6 +75,11 @@ assert TOTP_SECRET, "TOTP_SECRET environment variable not set"
 
 def verify_credentials(credentials:HTTPBasicCredentials):
     if(not(credentials.username == ADMIN_USER and pwd_context.verify(credentials.password, ADMIN_PASS_HASH))):
+        print(credentials.username)
+        print(ADMIN_USER)
+        print(credentials.password)
+        print(ADMIN_PASS_HASH)
+        print(pwd_context.verify(credentials.password, ADMIN_PASS_HASH))
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -90,3 +95,8 @@ def verify_totp(data:TOTPVerify, user:str = Depends(get_current_user)):
     if(not totp.verify(data.code)):
         raise HTTPException(status_code=400, detail="Invalid TOTP code")
     return {"message": "TOTP code is valid"}
+
+@app.post("/verify-credentials")
+def verify_user_credentials(credentials:HTTPBasicCredentials = Depends(security)):
+    verify_credentials(credentials)
+    return {"message": "Credentials are valid"}

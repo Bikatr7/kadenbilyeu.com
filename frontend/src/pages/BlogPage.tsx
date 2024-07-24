@@ -1,55 +1,44 @@
-import { useEffect, useRef } from 'react';
-import { Box, Text } from "@chakra-ui/react";
+// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com) (https://kadenbilyeu.com)
+// Use of this source code is governed by an GNU Affero General Public License v3.0
+// license that can be found in the LICENSE file.
 
-function BlogPage() {
-    useEffect(() => {
-        document.title = 'Kaden Bilyeu | Blog';
-    }, []);
+import { useState } from 'react';
+import { Box, Text, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Input, useDisclosure } from "@chakra-ui/react";
+import BlogBackground from "../components/BlogBackground";
 
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+const BlogPage: React.FC = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        const setCanvasSize = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        };
-
-        setCanvasSize();
-        window.addEventListener('resize', setCanvasSize);
-
-        const animate = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw dots
-            const dotSpacing = 35;
-            ctx.fillStyle = 'rgba(128, 128, 128, 0.5)';
-            for (let x = 0; x < canvas.width; x += dotSpacing) {
-                for (let y = 0; y < canvas.height; y += dotSpacing) {
-                    ctx.beginPath();
-                    ctx.arc(x, y, 1, 0, Math.PI * 2);
-                    ctx.fill();
+    const handleLogin = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/verify-credentials', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Basic ' + btoa(username + ':' + password),
+                    'Content-Type': 'application/json'
                 }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.message === 'Credentials are valid') {
+                    alert('Login successful!');
+                    onClose();
+                }
+            } else {
+                setError('Incorrect username or password');
             }
-
-            requestAnimationFrame(animate);
-        };
-
-        animate();
-
-        return () => {
-            window.removeEventListener('resize', setCanvasSize);
-        };
-    }, []);
+        } catch (error) {
+            setError('An error occurred. Please try again.');
+        }
+    };
 
     return (
         <Box bg="black" color="white" minHeight="100vh" position="relative" overflow="hidden">
-            <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
+            <BlogBackground />
             <Box 
                 position="absolute" 
                 top="50%" 
@@ -65,6 +54,43 @@ function BlogPage() {
             >
                 <Text fontSize="4xl" color="yellow">Coming Soon</Text>
             </Box>
+            <Button position="absolute" top="1rem" right="1rem" onClick={onOpen} zIndex="2">
+                Login
+            </Button>
+            <Modal isOpen={isOpen} onClose={onClose} isCentered>
+                <ModalOverlay />
+                <ModalContent bg="black" color="gray.500" border="2px solid gray.500">
+                    <ModalHeader borderBottom="1px solid gray.500">Login</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Input
+                            placeholder="Username"
+                            mb={4}
+                            borderColor="gray.500"
+                            focusBorderColor="gray.500"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <Input
+                            placeholder="Password"
+                            type="password"
+                            borderColor="gray.500"
+                            focusBorderColor="gray.500"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        {error && <Text color="red.500" mt={2}>{error}</Text>}
+                    </ModalBody>
+                    <ModalFooter borderTop="1px solid gray.500">
+                        <Button colorScheme="gray" mr={3} onClick={onClose}>
+                            Close
+                        </Button>
+                        <Button variant="outline" borderColor="gray.500" color="gray.500" onClick={handleLogin}>
+                            Login
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </Box>
     );
 }
