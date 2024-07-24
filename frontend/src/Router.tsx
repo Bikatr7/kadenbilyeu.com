@@ -7,9 +7,11 @@ import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 
 // pages
 import HomePage from './pages/HomePage';
+import BlogPage from './pages/BlogPage';
 
 const routes = [
-    { path: '*', element: <HomePage/> },
+    { path: '/', element: <HomePage/> },
+    { path: '/blog', element: <BlogPage/> }, 
 ];
 
 const router = createBrowserRouter(routes);
