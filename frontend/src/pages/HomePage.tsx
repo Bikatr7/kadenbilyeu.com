@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // react
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 
 // chakra-ui
 import { Box, Spinner } from "@chakra-ui/react";
@@ -22,24 +22,10 @@ const AboutMe = lazy(() => import('../sections/AboutMe'));
 const AboutSite = lazy(() => import('../sections/AboutSite'));
 const Contact = lazy(() => import('../sections/Contact'));
 
-function HomePage() {
-    const [showContent, setShowContent] = useState(false);
-    const [contentLoaded, setContentLoaded] = useState(false);
-    
-    useEffect(() => {
-        document.title = 'Kaden Bilyeu | Home';
-    }, []);
-
-    const toggleContent = () => {
-        setShowContent(!showContent);
-        if (!contentLoaded) {
-            setContentLoaded(true);
-        }
-    };
-
+function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean }) {
     return (
         <Box bg="black" color="white" minHeight="100vh">
-            <Preface />
+            <Preface showContent={showContent} toggleContent={toggleContent} />
             <NamedDivider name="Introduction" id="introduction" />
             <Introduction />
             
