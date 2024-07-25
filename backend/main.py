@@ -21,7 +21,6 @@ from pydantic import BaseModel
 
 import pyotp
 
-
 import jwt
 from jwt import PyJWTError
 
