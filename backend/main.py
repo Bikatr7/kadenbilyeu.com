@@ -17,14 +17,20 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from passlib.context import CryptContext
 
-
-
 from pydantic import BaseModel
 
 import pyotp
 
 import jwt
 from jwt import PyJWTError
+
+from sqlalchemy.orm import Session
+
+## custom modules
+from . import schemas, crud
+from .dependencies import get_db
+
+## I promise I will clean this up backend code up later. I'm just trying to get it to work for now.
 
 
 TOKEN_ALGORITHM = "HS256"
@@ -214,3 +220,54 @@ def refresh_token(refresh_token: str = Cookie(None)):
         max_age=TOKEN_EXPIRE_MINUTES
     )
     return response
+
+@app.post("/blog/", response_model=schemas.BlogPost)
+def create_blog_post(
+    blog_post:schemas.BlogPostCreate, 
+    db:Session = Depends(get_db), 
+    current_user:str = Depends(get_current_active_user)):
+
+    return crud.create_blog_post(db=db, blog_post=blog_post)
+
+@app.get("/blog/", response_model=list[schemas.BlogPost])
+def read_blog_posts(
+    skip:int = 0, 
+    limit:int = 10, 
+    db:Session = Depends(get_db), 
+    current_user:str = Depends(get_current_active_user)):
+
+    return crud.get_blog_posts(db, skip=skip, limit=limit)
+
+@app.get("/blog/{blog_post_id}", response_model=schemas.BlogPost)
+def read_blog_post(
+    blog_post_id:int, 
+    db:Session = Depends(get_db), 
+    current_user:str = Depends(get_current_active_user)):
+
+    db_blog_post = crud.get_blog_post(db, blog_post_id=blog_post_id)
+    if(db_blog_post is None):
+        raise HTTPException(status_code=404, detail="Blog post not found")
+    return db_blog_post
+
+@app.put("/blog/{blog_post_id}", response_model=schemas.BlogPost)
+def update_blog_post(
+    blog_post_id:int, 
+    blog_post:schemas.BlogPostUpdate, 
+    db:Session = Depends(get_db), 
+    current_user:str = Depends(get_current_active_user)):
+
+    db_blog_post = crud.update_blog_post(db=db, blog_post_id=blog_post_id, blog_post=blog_post)
+    if(db_blog_post is None):
+        raise HTTPException(status_code=404, detail="Blog post not found")
+    return db_blog_post
+
+@app.delete("/blog/{blog_post_id}", response_model=schemas.BlogPost)
+def delete_blog_post(
+    blog_post_id:int, 
+    db:Session = Depends(get_db), 
+    current_user:str = Depends(get_current_active_user)):
+
+    db_blog_post = crud.delete_blog_post(db=db, blog_post_id=blog_post_id)
+    if(db_blog_post is None):
+        raise HTTPException(status_code=404, detail="Blog post not found")
+    return db_blog_post
