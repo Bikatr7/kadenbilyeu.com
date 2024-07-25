@@ -10,12 +10,14 @@ from datetime import datetime, timedelta, timezone
 
 ## third-party libraries
 
-from fastapi import FastAPI, HTTPException, status, Cookie
+from fastapi import FastAPI, HTTPException, status, Cookie, Depends
 from fastapi.responses import JSONResponse
-from fastapi.security import  HTTPBasicCredentials, HTTPBasic
+from fastapi.security import  HTTPBasicCredentials, HTTPBasic, OAuth2PasswordBearer
 from fastapi.middleware.cors import CORSMiddleware
 
 from passlib.context import CryptContext
+
+
 
 from pydantic import BaseModel
 
@@ -88,6 +90,7 @@ ACCESS_TOKEN_SECRET = os.environ.get("ACCESS_TOKEN_SECRET")
 REFRESH_TOKEN_SECRET = os.environ.get("REFRESH_TOKEN_SECRET")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 security = HTTPBasic()
 
@@ -130,7 +133,7 @@ def create_refresh_token(data:dict, expires_delta:typing.Optional[timedelta] = N
     encoded_jwt = jwt.encode(to_encode, REFRESH_TOKEN_SECRET, algorithm=TOKEN_ALGORITHM) # type: ignore
     return encoded_jwt
 
-def verify_token(token: str):
+def verify_token(token:str):
     try:
         payload = jwt.decode(token, ACCESS_TOKEN_SECRET, algorithms=[TOKEN_ALGORITHM]) # type: ignore
         username:str = payload.get("sub")
@@ -156,6 +159,19 @@ def verify_totp(totp_code:str):
 
     if(not totp.verify(totp_code)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
+    
+def get_current_user(token:str = Depends(oauth2_scheme)):
+    try:
+        token_data = verify_token(token)
+        return token_data.username
+    except HTTPException as e:
+        raise e
+
+def get_current_active_user(current_user:str = Depends(get_current_user)):
+    if(current_user != ADMIN_USER):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
+    return current_user
+
 
 @app.post("/login", response_model=LoginToken)
 def login(data: LoginModel):
