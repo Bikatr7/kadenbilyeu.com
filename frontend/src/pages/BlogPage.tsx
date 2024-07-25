@@ -1,39 +1,85 @@
 // Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com) (https://kadenbilyeu.com)
 // Use of this source code is governed by an GNU Affero General Public License v3.0
-// license that can be found in the LICENSE file.
+// license that can be found in the LICENSE file
 
-import { useState } from 'react';
-import { Box, Text, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Input, useDisclosure } from "@chakra-ui/react";
+// react
+import { useState, useEffect } from 'react';
+
+// chakra-ui
+import { Box, Text, Button, Input, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure } from "@chakra-ui/react";
+
+// components
 import BlogBackground from "../components/BlogBackground";
+
+// util
+import { getURL } from '../utils';
 
 const BlogPage: React.FC = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [totp, setTotp] = useState('');
     const [error, setError] = useState('');
+    const [step, setStep] = useState(1); // 1: login, 2: TOTP verification
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            setIsLoggedIn(true);
+        }
+    }, []);
+
+    const handleNext = () => {
+        setStep(2);
+    };
+
+    const handleBack = () => {
+        setStep(1);
+    };
+
+    const handleClose = () => {
+        setUsername('');
+        setPassword('');
+        setTotp('');
+        setError('');
+        setStep(1);
+        onClose();
+    };
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://localhost:5000/verify-credentials', {
+            const response = await fetch(getURL('/login'), {
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Basic ' + btoa(username + ':' + password),
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({ username, password, totp })
             });
 
             if (response.ok) {
                 const data = await response.json();
-                if (data.message === 'Credentials are valid') {
-                    alert('Login successful!');
-                    onClose();
+                if (data.access_token) {
+                    localStorage.setItem('token', data.access_token);
+                    document.cookie = `refresh_token=${data.refresh_token}; path=/; secure; HttpOnly`;
+                    setIsLoggedIn(true);
+                    handleClose();
+                } else {
+                    setError('Invalid credentials or TOTP code');
                 }
             } else {
-                setError('Incorrect username or password');
+                const errorData = await response.json();
+                setError(`Error: ${errorData.detail || 'Invalid credentials or TOTP code'}`);
             }
         } catch (error) {
             setError('An error occurred. Please try again.');
         }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+        setIsLoggedIn(false);
     };
 
     return (
@@ -54,40 +100,80 @@ const BlogPage: React.FC = () => {
             >
                 <Text fontSize="4xl" color="yellow">Coming Soon</Text>
             </Box>
-            <Button position="absolute" top="1rem" right="1rem" onClick={onOpen} zIndex="2">
-                Login
-            </Button>
-            <Modal isOpen={isOpen} onClose={onClose} isCentered>
+            {isLoggedIn ? (
+                <Button position="absolute" top="1rem" right="1rem" onClick={handleLogout} zIndex="2">
+                    Logout
+                </Button>
+            ) : (
+                <Button position="absolute" top="1rem" right="1rem" onClick={onOpen} zIndex="2">
+                    Login
+                </Button>
+            )}
+            <Modal isOpen={isOpen} onClose={handleClose} isCentered>
                 <ModalOverlay />
                 <ModalContent bg="black" color="gray.500" border="2px solid gray.500">
                     <ModalHeader borderBottom="1px solid gray.500">Login</ModalHeader>
-                    <ModalCloseButton />
+                    <ModalCloseButton onClick={handleClose} />
                     <ModalBody>
-                        <Input
-                            placeholder="Username"
-                            mb={4}
-                            borderColor="gray.500"
-                            focusBorderColor="gray.500"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
-                        <Input
-                            placeholder="Password"
-                            type="password"
-                            borderColor="gray.500"
-                            focusBorderColor="gray.500"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        {error && <Text color="red.500" mt={2}>{error}</Text>}
+                        {step === 1 ? (
+                            <>
+                                <Input
+                                    placeholder="Username"
+                                    mb={4}
+                                    borderColor="gray.500"
+                                    focusBorderColor="gray.500"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                />
+                                <Input
+                                    placeholder="Password"
+                                    type="password"
+                                    mb={4}
+                                    borderColor="gray.500"
+                                    focusBorderColor="gray.500"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <Text mb={4}>Enter your TOTP code</Text>
+                                <Input
+                                    placeholder="TOTP Code"
+                                    mb={4}
+                                    borderColor="gray.500"
+                                    focusBorderColor="gray.500"
+                                    value={totp}
+                                    onChange={(e) => setTotp(e.target.value)}
+                                />
+                            </>
+                        )}
+                        {error && (
+                            <Text color="red.500" mt={2}>
+                                {error}
+                            </Text>
+                        )}
                     </ModalBody>
-                    <ModalFooter borderTop="1px solid gray.500">
-                        <Button colorScheme="gray" mr={3} onClick={onClose}>
+                    <ModalFooter borderTop="1px solid gray.500" display="flex" justifyContent="space-between">
+                        <Button colorScheme="gray" mr={3} onClick={handleClose}>
                             Close
                         </Button>
-                        <Button variant="outline" borderColor="gray.500" color="gray.500" onClick={handleLogin}>
-                            Login
-                        </Button>
+                        <Box>
+                            {step === 2 && (
+                                <Button variant="outline" borderColor="gray.500" color="gray.500" mr={3} onClick={handleBack}>
+                                    Back
+                                </Button>
+                            )}
+                            {step === 1 ? (
+                                <Button variant="outline" borderColor="gray.500" color="gray.500" onClick={handleNext}>
+                                    Next
+                                </Button>
+                            ) : (
+                                <Button variant="outline" borderColor="gray.500" color="gray.500" onClick={handleLogin}>
+                                    Verify TOTP
+                                </Button>
+                            )}
+                        </Box>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

@@ -1,4 +1,4 @@
-fastapi
-passlib
-pyotp
-bcyrpt
+fastapi==0.110.3
+passlib==1.7.4
+pyotp==2.9.0
+bcrypt==3.1.7

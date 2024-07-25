@@ -2,13 +2,31 @@
 ## Use of this source code is governed by an GNU Affero General Public License v3.0
 ## license that can be found in the LICENSE file.
 
+## built-in libraries
+
+import typing
 import os
-from fastapi import FastAPI, HTTPException, status, Depends
+from datetime import datetime, timedelta, timezone
+
+## third-party libraries
+
+from fastapi import FastAPI, HTTPException, status, Cookie
 from fastapi.security import  HTTPBasicCredentials, HTTPBasic
 from fastapi.middleware.cors import CORSMiddleware
+
 from passlib.context import CryptContext
+
 from pydantic import BaseModel
+
 import pyotp
+
+
+import jwt
+from jwt import PyJWTError
+
+
+TOKEN_ALGORITHM = "HS256"
+TOKEN_EXPIRE_MINUTES = 1440
 
 ##-----------------------------------------start-of-utility-functions----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -33,8 +51,18 @@ def get_env_variables() -> None:
 
 ##-----------------------------------------start-of-pydantic-models----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-class TOTPVerify(BaseModel):
-    code:str
+class LoginModel(BaseModel):
+    username: str
+    password: str
+    totp: str
+
+class LoginToken(BaseModel):
+    access_token: str
+    token_type: str
+    refresh_token: str
+
+class TokenData(BaseModel):
+    username: str
 
 ##-----------------------------------------start-of-main----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -56,6 +84,8 @@ ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
 ADMIN_USER = os.environ.get("ADMIN_USER")
 ADMIN_PASS_HASH = os.environ.get("ADMIN_PASS_HASH")
 TOTP_SECRET = os.environ.get("TOTP_SECRET")
+ACCESS_TOKEN_SECRET = os.environ.get("ACCESS_TOKEN_SECRET")
+REFRESH_TOKEN_SECRET = os.environ.get("REFRESH_TOKEN_SECRET")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -68,35 +98,102 @@ if(not any([ADMIN_USER, ADMIN_PASS_HASH])):
     ADMIN_USER = os.environ.get("ADMIN_USER")
     ADMIN_PASS_HASH = os.environ.get("ADMIN_PASS_HASH")
     TOTP_SECRET = os.environ.get("TOTP_SECRET")
+    ACCESS_TOKEN_SECRET = os.environ.get("ACCESS_TOKEN_SECRET")
+    REFRESH_TOKEN_SECRET = os.environ.get("REFRESH_TOKEN_SECRET")
 
 assert ADMIN_USER, "ADMIN_USER environment variable not set"
 assert ADMIN_PASS_HASH, "ADMIN_PASS_HASH environment variable not set"
 assert TOTP_SECRET, "TOTP_SECRET environment variable not set"
+assert ACCESS_TOKEN_SECRET, "ACCESS_TOKEN_SECRET environment variable not set"
+assert REFRESH_TOKEN_SECRET, "REFRESH_TOKEN_SECRET environment variable not set"
+
+def create_access_token(data:dict, expires_delta:typing.Optional[timedelta] = None):
+    to_encode = data.copy()
+    if(expires_delta):
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, ACCESS_TOKEN_SECRET, algorithm=TOKEN_ALGORITHM) # type: ignore
+    return encoded_jwt
+
+
+def create_refresh_token(data:dict, expires_delta:typing.Optional[timedelta] = None):
+    to_encode = data.copy()
+    if(expires_delta):
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(days=30)
+
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, REFRESH_TOKEN_SECRET, algorithm=TOKEN_ALGORITHM) # type: ignore
+    return encoded_jwt
+
+def verify_token(token: str):
+    try:
+        payload = jwt.decode(token, ACCESS_TOKEN_SECRET, algorithms=[TOKEN_ALGORITHM]) # type: ignore
+        username:str = payload.get("sub")
+        if(username is None):
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+        return TokenData(username=username)
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")
+    except PyJWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
 
 def verify_credentials(credentials:HTTPBasicCredentials):
     if(not(credentials.username == ADMIN_USER and pwd_context.verify(credentials.password, ADMIN_PASS_HASH))):
         print(credentials.username)
         print(ADMIN_USER)
-        print(credentials.password)
+    
+        password_hash = pwd_context.hash(credentials.password)
+
+        print(password_hash)
         print(ADMIN_PASS_HASH)
+
         print(pwd_context.verify(credentials.password, ADMIN_PASS_HASH))
+
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Unauthorized",
             headers={"WWW-Authenticate": "Basic"},
         )
 
-def get_current_user(credentials:HTTPBasicCredentials = Depends(security)):
-    verify_credentials(credentials)
-    return credentials.username
-
-def verify_totp(data:TOTPVerify, user:str = Depends(get_current_user)):
+def verify_totp(totp_code:str):
     totp = pyotp.TOTP(TOTP_SECRET) # type: ignore
-    if(not totp.verify(data.code)):
-        raise HTTPException(status_code=400, detail="Invalid TOTP code")
-    return {"message": "TOTP code is valid"}
 
-@app.post("/verify-credentials")
-def verify_user_credentials(credentials:HTTPBasicCredentials = Depends(security)):
+    print(totp.now())
+    print(totp_code)
+
+    if(not totp.verify(totp_code)):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
+
+@app.post("/login", response_model=LoginToken)
+def login(data: LoginModel):
+    credentials = HTTPBasicCredentials(username=data.username, password=data.password)
     verify_credentials(credentials)
-    return {"message": "Credentials are valid"}
+    verify_totp(data.totp)
+
+    access_token_expires = timedelta(minutes=TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": data.username}, expires_delta=access_token_expires
+    )
+    refresh_token_expires = timedelta(minutes=TOKEN_EXPIRE_MINUTES)
+    refresh_token = create_refresh_token(
+        data={"sub": data.username}, expires_delta=refresh_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer", "refresh_token": refresh_token}
+
+@app.post("/refresh", response_model=LoginToken)
+def refresh_token(refresh_token: str = Cookie(None)):
+    if(refresh_token is None):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No refresh token provided")
+
+    token_data = verify_token(refresh_token)
+    access_token_expires = timedelta(minutes=TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": token_data.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer", "refresh_token": refresh_token}

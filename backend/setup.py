@@ -36,8 +36,10 @@ def setup_local_environment() -> None:
 
     env_to_key_local = {
         "ADMIN_USER": "admin",
-        "ADMIN_PASS_HASH": "$2b$12$wOtWoEqVCCT6lARGKj6aJOSMKKel.R6r5c2ibzGV.k4dKzEjT5m4O",
+        "ADMIN_PASS_HASH": "$2b$12$MlPMcgDvVCU.s10xcB2fneIjZ/ymgz5O52yH5pshAFF5.bwPq4SMq",
         "TOTP_SECRET": "JBSWY3DPEHPK3PXP",
+        "ACCESS_TOKEN_SECRET": "secret",
+        "REFRESH_TOKEN_SECRET": "secret",
         "NODE_ENV": "development",
     }
 
@@ -49,7 +51,13 @@ def setup_local_environment() -> None:
             print("Setting up local environment...")
 
             to_write_frontend = env_to_key_local["NODE_ENV"] + "\n"
-            to_write_backend = "ADMIN_USER=" + env_to_key_local["ADMIN_USER"] + "\n" + "ADMIN_PASS_HASH=" + env_to_key_local["ADMIN_PASS_HASH"] + "\n" + "TOTP_SECRET=" + env_to_key_local["TOTP_SECRET"] + "\n" + "ENVIRONMENT=development" + "\n"
+            to_write_backend = (
+                "ADMIN_USER=" + env_to_key_local["ADMIN_USER"] + "\n" +
+                "ADMIN_PASS_HASH=" + env_to_key_local["ADMIN_PASS_HASH"] + "\n" +
+                "TOTP_SECRET=" + env_to_key_local["TOTP_SECRET"] + "\n" +
+                "ENVIRONMENT=development" + "\n" +
+                "ACCESS_TOKEN_SECRET=" + env_to_key_local["ACCESS_TOKEN_SECRET"] + "\n"
+            )
           
         else:
 

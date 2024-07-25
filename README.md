@@ -27,6 +27,10 @@ Built with React, Vite, and Typescript
 6. First install all required packages, these are in `package.json`. Do `npm i`. Then run the dev server with `npm run dev`
 7. Website will be on localhost:5173 (frontend) and localhost:5000 (backend)
 
+Default login is admin:password
+
+Also requires a totp code, default is JBSWY3DPEHPK3PXP so use that.
+
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## **Contributions**<a name="contributions"></a>
