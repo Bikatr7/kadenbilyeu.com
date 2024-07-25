@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, timezone
 ## third-party libraries
 
 from fastapi import FastAPI, HTTPException, status, Cookie
+from fastapi.responses import JSONResponse
 from fastapi.security import  HTTPBasicCredentials, HTTPBasic
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -69,7 +70,7 @@ class TokenData(BaseModel):
 app = FastAPI()
 
 ## CORS setup
-origins = ["*"]
+origins = ["https://kadenbilyeu.com", "http://localhost:5173"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -124,7 +125,7 @@ def create_refresh_token(data:dict, expires_delta:typing.Optional[timedelta] = N
     if(expires_delta):
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(days=30)
+        expire = datetime.now(timezone.utc) + timedelta(days=1)
 
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, REFRESH_TOKEN_SECRET, algorithm=TOKEN_ALGORITHM) # type: ignore
@@ -145,16 +146,6 @@ def verify_token(token: str):
 
 def verify_credentials(credentials:HTTPBasicCredentials):
     if(not(credentials.username == ADMIN_USER and pwd_context.verify(credentials.password, ADMIN_PASS_HASH))):
-        print(credentials.username)
-        print(ADMIN_USER)
-    
-        password_hash = pwd_context.hash(credentials.password)
-
-        print(password_hash)
-        print(ADMIN_PASS_HASH)
-
-        print(pwd_context.verify(credentials.password, ADMIN_PASS_HASH))
-
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Unauthorized",
@@ -163,9 +154,6 @@ def verify_credentials(credentials:HTTPBasicCredentials):
 
 def verify_totp(totp_code:str):
     totp = pyotp.TOTP(TOTP_SECRET) # type: ignore
-
-    print(totp.now())
-    print(totp_code)
 
     if(not totp.verify(totp_code)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
@@ -196,4 +184,18 @@ def refresh_token(refresh_token: str = Cookie(None)):
     access_token = create_access_token(
         data={"sub": token_data.username}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer", "refresh_token": refresh_token}
+    refresh_token_expires = timedelta(minutes=TOKEN_EXPIRE_MINUTES)
+    new_refresh_token = create_refresh_token(
+        data={"sub": token_data.username}, expires_delta=refresh_token_expires
+    )
+
+    response = JSONResponse(content={"access_token": access_token, "token_type": "bearer"})
+    response.set_cookie(
+        key="refresh_token",
+        value=new_refresh_token,
+        httponly=True,
+        secure=True,
+        samesite="strict",
+        max_age=TOKEN_EXPIRE_MINUTES
+    )
+    return response
