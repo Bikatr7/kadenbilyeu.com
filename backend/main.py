@@ -29,6 +29,8 @@ from sqlalchemy.orm import Session
 ## custom modules
 import schemas, crud
 from dependencies import get_db
+from database import Base, engine
+import models
 
 ## I promise I will clean this up backend code up later. I'm just trying to get it to work for now.
 
@@ -75,6 +77,8 @@ class TokenData(BaseModel):
 ##-----------------------------------------start-of-main----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 app = FastAPI()
+
+Base.metadata.create_all(bind=engine)
 
 ## CORS setup
 origins = ["https://kadenbilyeu.com", "http://localhost:5173"]

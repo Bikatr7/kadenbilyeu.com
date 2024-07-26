@@ -6,12 +6,9 @@ from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 
-DATABASE_URL:str = "sqlite:///./blog.db"
-
-engine:Engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-
-SessionLocal:sessionmaker = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+DATABASE_URL: str = "sqlite:///./blog.db"
 
 Base:DeclarativeMeta = declarative_base()
 
-Base.metadata.create_all(bind=engine)
+engine:Engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal:sessionmaker = sessionmaker(autocommit=False, autoflush=False, bind=engine)
