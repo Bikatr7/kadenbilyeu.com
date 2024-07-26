@@ -3,7 +3,7 @@
 ## license that can be found in the LICENSE file.
 
 from sqlalchemy.orm import Session
-from . import models, schemas
+import models, schemas
 
 def get_blog_posts(db:Session, skip:int = 0, limit:int = 10):
     return db.query(models.BlogPost).offset(skip).limit(limit).all()

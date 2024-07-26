@@ -27,8 +27,8 @@ from jwt import PyJWTError
 from sqlalchemy.orm import Session
 
 ## custom modules
-from . import schemas, crud
-from .dependencies import get_db
+import schemas, crud
+from dependencies import get_db
 
 ## I promise I will clean this up backend code up later. I'm just trying to get it to work for now.
 

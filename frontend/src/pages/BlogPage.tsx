@@ -11,6 +11,7 @@ import { Box, Text, Button } from "@chakra-ui/react";
 // components
 import BlogBackground from "../components/BlogBackground";
 import Login from "../components/Login";
+import MakePost from "../components/MakePost";
 
 const BlogPage: React.FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -44,9 +45,12 @@ const BlogPage: React.FC = () => {
                 <Text fontSize="4xl" color="yellow">Coming Soon</Text>
             </Box>
             {isLoggedIn ? (
-                <Button position="absolute" top="1rem" right="1rem" onClick={handleLogout} zIndex="2">
-                    Logout
-                </Button>
+                <Box position="absolute" top="1rem" right="1rem" zIndex="2" display="flex" gap="1rem">
+                    <MakePost />
+                    <Button onClick={handleLogout}>
+                        Logout
+                    </Button>
+                </Box>
             ) : (
                 <Login onLogin={handleLogin} />
             )}
