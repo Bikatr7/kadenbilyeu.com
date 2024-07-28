@@ -2,13 +2,15 @@
 ## Use of this source code is governed by an GNU Affero General Public License v3.0
 ## license that can be found in the LICENSE file.
 
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, String, Text, DateTime
+from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime, timezone
+import uuid
 from database import Base
 
 class BlogPost(Base):
     __tablename__ = "blog_posts"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     title = Column(String, index=True)
     content = Column(Text, nullable=False)
     author = Column(String, nullable=False)

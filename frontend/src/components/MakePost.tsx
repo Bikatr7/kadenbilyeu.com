@@ -36,7 +36,7 @@ const MakePost: React.FC = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ title, content, author: 'admin' }),
+                body: JSON.stringify({ title, content, author: 'Kaden Bilyeu (Bikatr7)' }),
             });
 
             if (!response.ok) {

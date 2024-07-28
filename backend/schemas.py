@@ -4,11 +4,12 @@
 
 from pydantic import BaseModel
 from datetime import datetime
+from uuid import UUID
 
 class BlogPostBase(BaseModel):
-    title: str
-    content: str
-    author: str
+    title:str
+    content:str
+    author:str
 
 class BlogPostCreate(BlogPostBase):
     pass
@@ -17,9 +18,9 @@ class BlogPostUpdate(BlogPostBase):
     pass
 
 class BlogPost(BlogPostBase):
-    id: int
-    created_at: datetime
-    updated_at: datetime
+    id:UUID
+    created_at:datetime
+    updated_at:datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -3,6 +3,7 @@
 ## license that can be found in the LICENSE file.
 
 ## built-in libraries
+from uuid import UUID
 
 import typing
 import os
@@ -243,7 +244,7 @@ def read_blog_posts(
 
 @app.get("/blog/{blog_post_id}", response_model=schemas.BlogPost)
 def read_blog_post(
-    blog_post_id:int, 
+    blog_post_id:UUID, 
     db:Session = Depends(get_db)):
 
     db_blog_post = crud.get_blog_post(db, blog_post_id=blog_post_id)
@@ -253,7 +254,7 @@ def read_blog_post(
 
 @app.put("/blog/{blog_post_id}", response_model=schemas.BlogPost)
 def update_blog_post(
-    blog_post_id:int, 
+    blog_post_id:UUID, 
     blog_post:schemas.BlogPostUpdate, 
     db:Session = Depends(get_db), 
     current_user:str = Depends(get_current_active_user)):
@@ -265,7 +266,7 @@ def update_blog_post(
 
 @app.delete("/blog/{blog_post_id}", response_model=schemas.BlogPost)
 def delete_blog_post(
-    blog_post_id:int, 
+    blog_post_id:UUID, 
     db:Session = Depends(get_db), 
     current_user:str = Depends(get_current_active_user)):
 

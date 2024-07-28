@@ -73,7 +73,7 @@ const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, 
     return (
         <>
         <Box mb={20}>
-            <Stack direction={{ base: 'column', md: reverse ? 'row-reverse' : 'row' }} mt={10} marginBottom={25}>
+            <Stack direction={{ base: 'column', md: reverse ? 'row-reverse' : 'row' }} marginBottom={25}>
                 <Flex flex={1} justifyContent="center">
                     <Image boxSize={{ base: '300px', md: '400px' }} alt={imageAlt} objectFit="cover" src={imageUrl} css={imageAnimation} />
                 </Flex>

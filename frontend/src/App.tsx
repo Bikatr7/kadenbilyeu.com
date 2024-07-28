@@ -38,7 +38,7 @@ function App()
 
     return (
         <ChakraProvider theme={theme}>
-            <Box bg="black" minH="100vh">
+            <Box bg="black">
                 {isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
                 {!isLoading && (
                     <>

@@ -31,28 +31,26 @@ const BlogPostPage: React.FC = () => {
     return (
         <Box bg="black" color="white" minHeight="100vh" position="relative" overflow="hidden">
             <BlogBackground />
-            <Box 
-                position="absolute" 
-                top="50%" 
-                left="50%" 
-                transform="translate(-50%, -50%)" 
-                width="80%" 
-                height="auto" 
-                border="2px solid yellow"
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
+            <Box
+                position="absolute"
+                top="50%"
+                left="50%"
+                transform="translate(-50%, -50%)"
+                width="80%"
+                maxWidth="800px"
+                bg="rgba(0, 0, 0, 0.7)"
+                borderRadius="md"
+                boxShadow="lg"
+                p={6}
                 zIndex="1"
-                p="2rem"
             >
                 {blogPost ? (
                     <>
-                        <Text fontSize="3xl" mb="1rem">{blogPost.title}</Text>
+                        <Text fontSize="3xl" mb={4} textAlign="center">{blogPost.title}</Text>
                         <Text fontSize="lg">{blogPost.content}</Text>
                     </>
                 ) : (
-                    <Text>Loading...</Text>
+                    <Text textAlign="center">Loading...</Text>
                 )}
             </Box>
         </Box>

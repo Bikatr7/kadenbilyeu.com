@@ -1,4 +1,4 @@
-// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com) (https://kadenbilyeu.com)
+// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com)
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file
 
@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Button, VStack, Text } from "@chakra-ui/react";
+import { Box, Button, VStack, Text, Flex } from "@chakra-ui/react";
 
 // components
 import BlogBackground from "../components/BlogBackground";
@@ -19,7 +19,9 @@ import { getURL } from '../utils';
 
 const BlogPage: React.FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [blogPosts, setBlogPosts] = useState<{ id: string; title: string }[]>([]);
+    const [blogPosts, setBlogPosts] = useState<
+        { id: string; title: string; created_at: string; author: string }[]
+    >([]);
 
     const handleLogin = () => {
         setIsLoggedIn(true);
@@ -45,22 +47,26 @@ const BlogPage: React.FC = () => {
             <BlogBackground />
             <Box 
                 position="absolute" 
-                top="50%" 
+                top="20%" 
                 left="50%" 
-                transform="translate(-50%, -50%)" 
-                width="100%" 
-                height="70%" 
-                border="2px solid yellow"
+                transform="translate(-50%, -20%)" 
+                width="80%" 
+                height="auto" 
+                border="2px solid darkgrey"
                 display="flex"
-                justifyContent="center"
+                justifyContent="flex-start"
                 alignItems="center"
                 zIndex="1"
                 p="1rem"
+                pt="2rem"
             >
-                <VStack spacing="1rem">
+                <VStack spacing="1rem" align="flex-start" width="100%">
                     {blogPosts.map(post => (
-                        <Link to={`/blog/${post.id}`} key={post.id}>
-                            <Text fontSize="xl" color="yellow">{post.title}</Text>
+                        <Link to={`/blog/${post.id}`} key={post.id} style={{ width: '100%' }}>
+                            <Flex justify="space-between" align="center" width="100%">
+                                <Text fontSize="xl" color="yellow">{post.title}</Text>
+                                <Text fontSize="md" color="gray.300">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
+                            </Flex>
                         </Link>
                     ))}
                 </VStack>
