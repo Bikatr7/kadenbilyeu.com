@@ -3,18 +3,23 @@
 // license that can be found in the LICENSE file
 
 // react
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Text, Button } from "@chakra-ui/react";
+import { Box, Button, VStack, Text } from "@chakra-ui/react";
 
 // components
 import BlogBackground from "../components/BlogBackground";
 import Login from "../components/Login";
 import MakePost from "../components/MakePost";
 
+// util
+import { getURL } from '../utils';
+
 const BlogPage: React.FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [blogPosts, setBlogPosts] = useState<{ id: string; title: string }[]>([]);
 
     const handleLogin = () => {
         setIsLoggedIn(true);
@@ -25,6 +30,15 @@ const BlogPage: React.FC = () => {
         document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
         setIsLoggedIn(false);
     };
+
+    useEffect(() => {
+        const fetchBlogPosts = async () => {
+            const response = await fetch(getURL("/latest-blogs?limit=5"));
+            const data = await response.json();
+            setBlogPosts(data);
+        };
+        fetchBlogPosts();
+    }, []);
 
     return (
         <Box bg="black" color="white" minHeight="100vh" position="relative" overflow="hidden">
@@ -41,8 +55,15 @@ const BlogPage: React.FC = () => {
                 justifyContent="center"
                 alignItems="center"
                 zIndex="1"
+                p="1rem"
             >
-                <Text fontSize="4xl" color="yellow">Coming Soon</Text>
+                <VStack spacing="1rem">
+                    {blogPosts.map(post => (
+                        <Link to={`/blog/${post.id}`} key={post.id}>
+                            <Text fontSize="xl" color="yellow">{post.title}</Text>
+                        </Link>
+                    ))}
+                </VStack>
             </Box>
             {isLoggedIn ? (
                 <Box position="absolute" top="1rem" right="1rem" zIndex="2" display="flex" gap="1rem">

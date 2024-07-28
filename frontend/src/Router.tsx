@@ -3,17 +3,18 @@
 // license that can be found in the LICENSE file.
 
 // react
-import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 // pages
 import HomePage from './pages/HomePage';
 import BlogPage from './pages/BlogPage';
+import BlogPostPage from './pages/BlogPostPage';
 
-function Router({ showContent, toggleContent, contentLoaded }: { showContent: any, toggleContent: any, contentLoaded: any }) 
-{
+function Router({ showContent, toggleContent, contentLoaded }: { showContent: any, toggleContent: any, contentLoaded: any }) {
     const routes = [
         { path: '/', element: <HomePage showContent={showContent} toggleContent={toggleContent} contentLoaded={contentLoaded} /> },
         { path: '/blog', element: <BlogPage /> },
+        { path: '/blog/:id', element: <BlogPostPage /> },
     ];
 
     const router = createBrowserRouter(routes);

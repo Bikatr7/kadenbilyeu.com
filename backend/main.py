@@ -237,16 +237,14 @@ def create_blog_post(
 def read_blog_posts(
     skip:int = 0, 
     limit:int = 10, 
-    db:Session = Depends(get_db), 
-    current_user:str = Depends(get_current_active_user)):
+    db:Session = Depends(get_db)):
 
     return crud.get_blog_posts(db, skip=skip, limit=limit)
 
 @app.get("/blog/{blog_post_id}", response_model=schemas.BlogPost)
 def read_blog_post(
     blog_post_id:int, 
-    db:Session = Depends(get_db), 
-    current_user:str = Depends(get_current_active_user)):
+    db:Session = Depends(get_db)):
 
     db_blog_post = crud.get_blog_post(db, blog_post_id=blog_post_id)
     if(db_blog_post is None):
@@ -275,3 +273,10 @@ def delete_blog_post(
     if(db_blog_post is None):
         raise HTTPException(status_code=404, detail="Blog post not found")
     return db_blog_post
+
+@app.get("/latest-blogs/", response_model=list[schemas.BlogPost])
+def read_latest_blog_posts(
+    limit:int = 5,
+    db:Session = Depends(get_db)):
+
+    return crud.get_blog_posts(db, skip=0, limit=limit)
