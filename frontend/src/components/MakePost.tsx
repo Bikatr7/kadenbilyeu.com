@@ -1,4 +1,4 @@
-// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com) (https://kadenbilyeu.com)
+// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com)
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file
 
@@ -9,7 +9,11 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { getURL } from '../utils';
 
-const MakePost: React.FC = () => {
+interface MakePostProps {
+    onPost: () => void;
+}
+
+const MakePost: React.FC<MakePostProps> = ({ onPost }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -44,6 +48,7 @@ const MakePost: React.FC = () => {
             }
 
             handleClose();
+            onPost(); // Call the onPost callback to refresh the blog posts
         } catch (error) {
             setError('An error occurred. Please try again.');
         }

@@ -226,15 +226,23 @@ def refresh_token(refresh_token: str = Cookie(None)):
     )
     return response
 
-@app.post("/blog/", response_model=schemas.BlogPost)
+@app.post("/blog", response_model=schemas.BlogPost)
 def create_blog_post(
     blog_post:schemas.BlogPostCreate, 
     db:Session = Depends(get_db), 
     current_user:str = Depends(get_current_active_user)):
+    
+    db_blog_post = models.BlogPost(
+        title=blog_post.title,
+        content=blog_post.content,
+        author=blog_post.author,
+        created_at=datetime.now(timezone.utc),
+        updated_at=datetime.now(timezone.utc)
+    )
 
-    return crud.create_blog_post(db=db, blog_post=blog_post)
+    return crud.create_blog_post(db=db, db_blog_post=db_blog_post)
 
-@app.get("/blog/", response_model=list[schemas.BlogPost])
+@app.get("/blog", response_model=list[schemas.BlogPost])
 def read_blog_posts(
     skip:int = 0, 
     limit:int = 10, 
@@ -275,9 +283,13 @@ def delete_blog_post(
         raise HTTPException(status_code=404, detail="Blog post not found")
     return db_blog_post
 
-@app.get("/latest-blogs/", response_model=list[schemas.BlogPost])
+@app.get("/latest-blogs", response_model=list[schemas.BlogPost])
 def read_latest_blog_posts(
     limit:int = 5,
     db:Session = Depends(get_db)):
 
-    return crud.get_blog_posts(db, skip=0, limit=limit)
+    return crud.get_recent_blog_posts(db, skip=0, limit=limit)
+
+@app.get("/blog-count", response_model=int)
+def get_blog_count(db: Session = Depends(get_db)):
+    return db.query(models.BlogPost).count()

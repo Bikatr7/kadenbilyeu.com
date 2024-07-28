@@ -22,6 +22,7 @@ const BlogPage: React.FC = () => {
     const [blogPosts, setBlogPosts] = useState<
         { id: string; title: string; created_at: string; author: string }[]
     >([]);
+    const [postCount, setPostCount] = useState(0);
 
     const handleLogin = () => {
         setIsLoggedIn(true);
@@ -33,17 +34,42 @@ const BlogPage: React.FC = () => {
         setIsLoggedIn(false);
     };
 
+    const fetchBlogPosts = async () => {
+        const response = await fetch(getURL("/latest-blogs?limit=5"));
+        const data = await response.json();
+        setBlogPosts(data);
+        localStorage.setItem('blogPosts', JSON.stringify(data));
+        localStorage.setItem('postCount', data.length.toString());
+    };
+
+    const fetchPostCount = async () => {
+        const response = await fetch(getURL("/blog-count"));
+        const count = await response.json();
+        setPostCount(count);
+    };
+
     useEffect(() => {
-        const fetchBlogPosts = async () => {
-            const response = await fetch(getURL("/latest-blogs?limit=5"));
-            const data = await response.json();
-            setBlogPosts(data);
-        };
+        const cachedBlogPosts = localStorage.getItem('blogPosts');
+        const cachedPostCount = localStorage.getItem('postCount');
+
+        if (cachedBlogPosts && cachedPostCount) {
+            setBlogPosts(JSON.parse(cachedBlogPosts));
+            fetchPostCount().then(() => {
+                if (postCount != parseInt(cachedPostCount, 10)) {
+                    fetchBlogPosts();
+                }
+            });
+        } else {
+            fetchBlogPosts();
+        }
+    }, [postCount]);
+
+    const handleNewPost = () => {
         fetchBlogPosts();
-    }, []);
+    };
 
     return (
-        <Box bg="black" color="white" minHeight="100vh" position="relative" overflow="hidden">
+        <Box bg="black" color="white" minHeight="83vh" position="relative" overflow="hidden">
             <BlogBackground />
             <Box 
                 position="absolute" 
@@ -51,7 +77,7 @@ const BlogPage: React.FC = () => {
                 left="50%" 
                 transform="translate(-50%, -20%)" 
                 width="80%" 
-                height="auto" 
+                height="270px"  // Fixed height to accommodate 5 links
                 border="2px solid darkgrey"
                 display="flex"
                 justifyContent="flex-start"
@@ -59,6 +85,7 @@ const BlogPage: React.FC = () => {
                 zIndex="1"
                 p="1rem"
                 pt="2rem"
+                overflowY="auto"  // Ensure overflow content can be scrolled
             >
                 <VStack spacing="1rem" align="flex-start" width="100%">
                     {blogPosts.map(post => (
@@ -73,7 +100,7 @@ const BlogPage: React.FC = () => {
             </Box>
             {isLoggedIn ? (
                 <Box position="absolute" top="1rem" right="1rem" zIndex="2" display="flex" gap="1rem">
-                    <MakePost />
+                    <MakePost onPost={handleNewPost} />
                     <Button onClick={handleLogout}>
                         Logout
                     </Button>

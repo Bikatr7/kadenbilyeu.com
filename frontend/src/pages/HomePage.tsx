@@ -24,7 +24,7 @@ const Contact = lazy(() => import('../sections/Contact'));
 
 function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean }) {
     return (
-        <Box bg="black" color="white" minHeight="100vh">
+        <Box bg="black" color="white" minHeight="83vh">
             <Preface showContent={showContent} toggleContent={toggleContent} />
             <NamedDivider name="Introduction" id="introduction" />
             <Introduction />

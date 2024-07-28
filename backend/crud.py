@@ -9,11 +9,13 @@ from uuid import UUID
 def get_blog_posts(db:Session, skip:int = 0, limit:int = 10):
     return db.query(models.BlogPost).offset(skip).limit(limit).all()
 
+def get_recent_blog_posts(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.BlogPost).order_by(models.BlogPost.created_at.desc()).offset(skip).limit(limit).all()
+
 def get_blog_post(db:Session, blog_post_id:UUID):
     return db.query(models.BlogPost).filter(models.BlogPost.id == blog_post_id).first()
 
-def create_blog_post(db:Session, blog_post:schemas.BlogPostCreate):
-    db_blog_post = models.BlogPost(**blog_post.model_dump())
+def create_blog_post(db:Session, db_blog_post:models.BlogPost):
     db.add(db_blog_post)
     db.commit()
     db.refresh(db_blog_post)
