@@ -1,4 +1,4 @@
-// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com)
+// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7)
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file
 
@@ -10,14 +10,12 @@ import { Link } from 'react-router-dom';
 import { Box, Button, VStack, Text, Flex } from "@chakra-ui/react";
 
 // components
-import BlogBackground from "../components/BlogBackground";
 import Login from "../components/Login";
-import MakePost from "../components/MakePost";
 
 // util
 import { getURL } from '../utils';
 
-const BlogPage: React.FC = () => {
+const BlogDirectoryPage: React.FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [blogPosts, setBlogPosts] = useState<
         { id: string; title: string; created_at: string; author: string }[]
@@ -27,18 +25,18 @@ const BlogPage: React.FC = () => {
         try {
             const countResponse = await fetch(getURL("/blog-count"));
             const newCount = await countResponse.json();
-            
-            const cachedCount = localStorage.getItem('blogPagePostCount');
-            
+
+            const cachedCount = localStorage.getItem('blogDirectoryPostCount');
+
             if (!cachedCount || newCount !== parseInt(cachedCount, 10)) {
-                const postsResponse = await fetch(getURL("/latest-blogs?limit=5"));
+                const postsResponse = await fetch(getURL("/all-blogs"));
                 const newPosts = await postsResponse.json();
-                
+
                 setBlogPosts(newPosts);
-                localStorage.setItem('blogPageBlogPosts', JSON.stringify(newPosts));
-                localStorage.setItem('blogPagePostCount', newCount.toString());
+                localStorage.setItem('blogDirectoryPosts', JSON.stringify(newPosts));
+                localStorage.setItem('blogDirectoryPostCount', newCount.toString());
             } else {
-                const cachedPosts = localStorage.getItem('blogPageBlogPosts');
+                const cachedPosts = localStorage.getItem('blogDirectoryPosts');
                 if (cachedPosts) {
                     setBlogPosts(JSON.parse(cachedPosts));
                 }
@@ -62,43 +60,27 @@ const BlogPage: React.FC = () => {
         setIsLoggedIn(false);
     };
 
-    const handleNewPost = () => {
-        fetchBlogPosts();
-    };
-
     return (
-        <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" alignItems="center" position="relative">
-            <BlogBackground />
-            
+        <Box bg="black" color="white" minHeight="100vh" display="flex" flexDirection="column">
             <Flex 
-                position="absolute" 
-                top="5vh" 
-                right="10%" 
-                zIndex="2"
-                gap="1rem"
+                justify="flex-end" 
+                p="1rem" 
+                bg="black"
             >
                 {isLoggedIn ? (
-                    <>
-                        <MakePost onPost={handleNewPost} />
-                        <Button onClick={handleLogout}>Logout</Button>
-                    </>
+                    <Button onClick={handleLogout}>Logout</Button>
                 ) : (
                     <Login onLogin={handleLogin} />
                 )}
             </Flex>
 
-            <Flex 
-                direction="column" 
-                align="center" 
-                mt="15vh" 
-                width="80%" 
-                maxWidth="800px" 
-                zIndex="1" 
-                p="1rem" 
-                pt="2rem" 
-                overflowY="auto" 
-                border="2px solid darkgrey"
-                bg="rgba(0, 0, 0, 0.7)"
+            <Box
+                flex="1" 
+                display="flex"
+                justifyContent="center"
+                alignItems="flex-start"
+                p="1rem"
+                overflowY="auto"
             >
                 <VStack spacing="1rem" align="flex-start" width="100%">
                     {blogPosts.map(post => (
@@ -110,9 +92,9 @@ const BlogPage: React.FC = () => {
                         </Link>
                     ))}
                 </VStack>
-            </Flex>
+            </Box>
         </Box>
     );
 };
 
-export default BlogPage;
+export default BlogDirectoryPage;

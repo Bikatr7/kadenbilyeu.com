@@ -9,7 +9,10 @@ from uuid import UUID
 def get_blog_posts(db:Session, skip:int = 0, limit:int = 10):
     return db.query(models.BlogPost).offset(skip).limit(limit).all()
 
-def get_recent_blog_posts(db: Session, skip: int = 0, limit: int = 10):
+def get_all_blog_posts(db:Session):
+    return db.query(models.BlogPost).order_by(models.BlogPost.created_at.desc()).all()
+
+def get_recent_blog_posts(db:Session, skip:int = 0, limit:int = 10):
     return db.query(models.BlogPost).order_by(models.BlogPost.created_at.desc()).offset(skip).limit(limit).all()
 
 def get_blog_post(db:Session, blog_post_id:UUID):

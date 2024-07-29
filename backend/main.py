@@ -293,3 +293,8 @@ def read_latest_blog_posts(
 @app.get("/blog-count", response_model=int)
 def get_blog_count(db: Session = Depends(get_db)):
     return db.query(models.BlogPost).count()
+
+@app.get("/all-blogs", response_model=list[schemas.BlogPost])
+def read_all_blog_posts(db:Session = Depends(get_db)):
+    return crud.get_all_blog_posts(db)
+

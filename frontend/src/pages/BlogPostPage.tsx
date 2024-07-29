@@ -29,7 +29,7 @@ const BlogPostPage: React.FC = () => {
     }, [id]);
 
     return (
-        <Box bg="black" color="white" minHeight="100vh" position="relative" overflow="hidden">
+        <Box bg="black" color="white" minHeight="83vh" position="relative" overflow="hidden">
             <BlogBackground />
             <Box
                 position="absolute"
