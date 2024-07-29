@@ -4,10 +4,11 @@
 
 // react
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, Button } from "@chakra-ui/react";
+import { ArrowBackIcon } from '@chakra-ui/icons';
 
 // components
 import BlogBackground from "../components/BlogBackground";
@@ -15,8 +16,14 @@ import BlogBackground from "../components/BlogBackground";
 // util
 import { getURL } from '../utils';
 
+// markdown
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+
 const BlogPostPage: React.FC = () => {
     const { id } = useParams();
+    const location = useLocation();
     const [blogPost, setBlogPost] = useState<{ title: string, content: string } | null>(null);
 
     useEffect(() => {
@@ -28,27 +35,114 @@ const BlogPostPage: React.FC = () => {
         fetchBlogPost();
     }, [id]);
 
+    const getBackLink = () => {
+        if (location.state?.from === '/blog' || location.state?.from === '/blog/directory') {
+            return location.state.from;
+        }
+        return '/blog/';
+    };
+
     return (
         <Box bg="black" color="white" minHeight="83vh" position="relative" overflow="hidden">
             <BlogBackground />
             <Box
                 position="absolute"
-                top="50%"
-                left="50%"
-                transform="translate(-50%, -50%)"
-                width="80%"
-                maxWidth="800px"
-                bg="rgba(0, 0, 0, 0.7)"
-                borderRadius="md"
-                boxShadow="lg"
+                top="0"
+                left="0"
+                right="0"
+                bottom="0"
+                overflowY="auto"
                 p={6}
                 zIndex="1"
+                sx={{
+                    /* Hide scrollbar for Webkit-based browsers */
+                    '::-webkit-scrollbar': {
+                        display: 'none',
+                    },
+                    /* Hide scrollbar for other browsers */
+                    '-ms-overflow-style': 'none',  /* IE and Edge */
+                    'scrollbar-width': 'none'  /* Firefox */
+                }}
             >
+                <Button
+                    leftIcon={<ArrowBackIcon />}
+                    as="a"
+                    href={getBackLink()}
+                    rounded="full"
+                    mb={4}
+                    position="sticky"
+                    top="1rem"
+                    zIndex="2"
+                    _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
+                    _active={{ transform: 'scale(0.99)' }}
+                >
+                    Go Back
+                </Button>
                 {blogPost ? (
-                    <>
+                    <Box
+                        width="80%"
+                        maxWidth="800px"
+                        margin="0 auto"
+                        bg="rgba(0, 0, 0, 0.7)"
+                        borderRadius="md"
+                        boxShadow="lg"
+                        p={6}
+                        overflow="hidden"
+                    >
                         <Text fontSize="3xl" mb={4} textAlign="center">{blogPost.title}</Text>
-                        <Text fontSize="lg">{blogPost.content}</Text>
-                    </>
+                        <Box 
+                            fontSize="lg" 
+                            className="markdown-body"
+                            sx={{
+                                'h1, h2, h3, h4, h5, h6': {
+                                    marginTop: '1em',
+                                    marginBottom: '0.5em',
+                                    fontWeight: 'bold',
+                                },
+                                'h1': { fontSize: '2em' },
+                                'h2': { fontSize: '1.5em' },
+                                'p': { marginBottom: '1em' },
+                                'ul, ol': { 
+                                    marginLeft: '2em',
+                                    marginBottom: '1em',
+                                },
+                                'li': { marginBottom: '0.5em' },
+                                'code': {
+                                    backgroundColor: 'gray.700',
+                                    padding: '0.2em 0.4em',
+                                    borderRadius: '3px',
+                                },
+                                'pre': {
+                                    backgroundColor: 'gray.700',
+                                    padding: '1em',
+                                    overflowX: 'auto',
+                                    marginBottom: '1em',
+                                },
+                                'blockquote': {
+                                    borderLeft: '4px solid',
+                                    borderColor: 'gray.500',
+                                    paddingLeft: '1em',
+                                    marginLeft: '0',
+                                    fontStyle: 'italic',
+                                },
+                                'a': {
+                                    color: 'blue.300',
+                                    textDecoration: 'underline',
+                                },
+                                'img': {
+                                    maxWidth: '100%',
+                                    height: 'auto',
+                                },
+                            }}
+                        >
+                            <ReactMarkdown 
+                                remarkPlugins={[remarkGfm]} 
+                                rehypePlugins={[rehypeRaw]}
+                            >
+                                {blogPost.content}
+                            </ReactMarkdown>
+                        </Box>
+                    </Box>
                 ) : (
                     <Text textAlign="center">Loading...</Text>
                 )}

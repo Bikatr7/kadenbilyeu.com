@@ -104,7 +104,7 @@ const BlogPage: React.FC = () => {
             >
                 <VStack spacing="1rem" align="flex-start" width="100%">
                     {blogPosts.map(post => (
-                        <Link to={`/blog/${post.id}`} key={post.id} style={{ width: '100%' }}>
+                        <Link to={`/blog/${post.id}`} key={post.id} style={{ width: '100%' }} state={{ from: location.pathname }}>
                             <Flex 
                                 justify="space-between" 
                                 align="center" 

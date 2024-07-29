@@ -12,6 +12,7 @@ import { ArrowBackIcon } from '@chakra-ui/icons';
 
 // components
 import Login from "../components/Login";
+import BlogBackground from "../components/BlogBackground";
 
 // util
 import { getURL } from '../utils';
@@ -62,7 +63,9 @@ const BlogDirectoryPage: React.FC = () => {
     };
 
     return (
-        <Box bg="black" color="white" minHeight="100vh" display="flex" flexDirection="column">
+        <Box bg="black" color="white" minHeight="100vh" display="flex" flexDirection="column" position="relative">
+            <BlogBackground />
+            
             <Flex 
                 justify="space-between" 
                 p="1rem" 
@@ -83,10 +86,11 @@ const BlogDirectoryPage: React.FC = () => {
                 alignItems="flex-start"
                 p="1rem"
                 overflowY="auto"
+                zIndex="1"
             >
                 <VStack spacing="1rem" align="flex-start" width="100%">
                     {blogPosts.map(post => (
-                        <Link to={`/blog/${post.id}`} key={post.id} style={{ width: '100%' }}>
+                        <Link to={`/blog/${post.id}`} key={post.id} style={{ width: '100%' }} state={{ from: location.pathname }}>
                             <Flex 
                                 justify="space-between" 
                                 align="center" 
