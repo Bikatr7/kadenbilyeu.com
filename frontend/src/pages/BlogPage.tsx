@@ -80,7 +80,7 @@ const BlogPage: React.FC = () => {
                 {isLoggedIn ? (
                     <>
                         <MakePost onPost={handleNewPost} />
-                        <Button onClick={handleLogout} as="a" href="/blog/directory" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
+                        <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                             Logout
                         </Button>
                     </>
@@ -105,7 +105,14 @@ const BlogPage: React.FC = () => {
                 <VStack spacing="1rem" align="flex-start" width="100%">
                     {blogPosts.map(post => (
                         <Link to={`/blog/${post.id}`} key={post.id} style={{ width: '100%' }}>
-                            <Flex justify="space-between" align="center" width="100%">
+                            <Flex 
+                                justify="space-between" 
+                                align="center" 
+                                width="100%" 
+                                paddingLeft="0.5rem"
+                                paddingRight="0.5rem"
+                                _hover={{ backgroundColor: 'gray.700', cursor: 'pointer' }} // Hover effect added here
+                            >
                                 <Text fontSize="xl" color="yellow">{post.title}</Text>
                                 <Text fontSize="md" color="gray.300">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
                             </Flex>
