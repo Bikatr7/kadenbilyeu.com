@@ -56,7 +56,7 @@ const MakePost: React.FC<MakePostProps> = ({ onPost }) => {
 
     return (
         <>
-            <Button onClick={onOpen} zIndex="2">
+            <Button onClick={onOpen} zIndex="2" as="a" href="/blog/directory" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                 Make Post
             </Button>
             <Modal isOpen={isOpen} onClose={handleClose} isCentered size="4xl">

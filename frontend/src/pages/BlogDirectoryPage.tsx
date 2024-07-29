@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 
 // chakra-ui
 import { Box, Button, VStack, Text, Flex } from "@chakra-ui/react";
+import { ArrowBackIcon } from '@chakra-ui/icons';
 
 // components
 import Login from "../components/Login";
@@ -63,10 +64,11 @@ const BlogDirectoryPage: React.FC = () => {
     return (
         <Box bg="black" color="white" minHeight="100vh" display="flex" flexDirection="column">
             <Flex 
-                justify="flex-end" 
+                justify="space-between" 
                 p="1rem" 
                 bg="black"
             >
+                <Button leftIcon={<ArrowBackIcon />} as="a" href="/blog/" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>Go Back</Button>
                 {isLoggedIn ? (
                     <Button onClick={handleLogout}>Logout</Button>
                 ) : (

@@ -80,7 +80,9 @@ const BlogPage: React.FC = () => {
                 {isLoggedIn ? (
                     <>
                         <MakePost onPost={handleNewPost} />
-                        <Button onClick={handleLogout}>Logout</Button>
+                        <Button onClick={handleLogout} as="a" href="/blog/directory" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
+                            Logout
+                        </Button>
                     </>
                 ) : (
                     <Login onLogin={handleLogin} />
