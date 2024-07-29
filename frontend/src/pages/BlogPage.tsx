@@ -111,6 +111,9 @@ const BlogPage: React.FC = () => {
                     ))}
                 </VStack>
             </Flex>
+            <Button as="a" href="/blog/directory" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}} marginTop={15}>
+                All Posts
+            </Button>
         </Box>
     );
 };

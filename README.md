@@ -19,6 +19,8 @@ Built with React, Vite, and Typescript
 
 ## **Setting Up A Local Build**<a name="setting-up-a-local-build"></a>
 
+These steps must be followed _in order_.
+
 1. Clone the repo, make sure you are using the correct branch (currently `production`)
 2. Navigate to the `backend` directory. `cd backend`. Inside is the python backend.
 3. Run the setup script with the local argument. This will install all requirements and setup the local env `python setup.py local`.
