@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Button, VStack, Text, Flex } from "@chakra-ui/react";
+import { Box, Button, VStack, Text, Flex, Spinner } from "@chakra-ui/react";
 
 // components
 import BlogBackground from "../components/BlogBackground";
@@ -22,8 +22,10 @@ const BlogPage: React.FC = () => {
     const [blogPosts, setBlogPosts] = useState<
         { id: string; title: string; created_at: string; author: string }[]
     >([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const fetchBlogPosts = useCallback(async () => {
+        setIsLoading(true);
         try {
             const countResponse = await fetch(getURL("/blog-count"));
             const newCount = await countResponse.json();
@@ -45,6 +47,8 @@ const BlogPage: React.FC = () => {
             }
         } catch (error) {
             console.error("Error fetching blog data:", error);
+        } finally {
+            setIsLoading(false);
         }
     }, []);
 
@@ -101,24 +105,31 @@ const BlogPage: React.FC = () => {
                 overflowY="auto" 
                 border="2px solid darkgrey"
                 bg="rgba(0, 0, 0, 0.7)"
+                height="300px" 
+                justifyContent="flex-start"
             >
-                <VStack spacing="1rem" align="flex-start" width="100%">
-                    {blogPosts.map(post => (
-                        <Link to={`/blog/${post.id}`} key={post.id} style={{ width: '100%' }} state={{ from: location.pathname }}>
-                            <Flex 
-                                justify="space-between" 
-                                align="center" 
-                                width="100%" 
-                                paddingLeft="0.5rem"
-                                paddingRight="0.5rem"
-                                _hover={{ backgroundColor: 'gray.700', cursor: 'pointer' }} // Hover effect added here
-                            >
-                                <Text fontSize="xl" color="yellow">{post.title}</Text>
-                                <Text fontSize="md" color="gray.300">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
-                            </Flex>
-                        </Link>
-                    ))}
-                </VStack>
+                {isLoading ? (
+                    <Spinner size="xl" color="yellow" />
+                ) : (
+                    <VStack spacing="0.5rem" align="stretch" width="100%" height="100%">
+                        {blogPosts.map(post => (
+                            <Link to={`/blog/${post.id}`} key={post.id} style={{ width: '100%', height: '20%' }} state={{ from: location.pathname }}>
+                                <Flex 
+                                    justify="space-between" 
+                                    align="center" 
+                                    width="100%" 
+                                    height="100%"
+                                    paddingLeft="0.5rem"
+                                    paddingRight="0.5rem"
+                                    _hover={{ backgroundColor: 'gray.700', cursor: 'pointer' }}
+                                >
+                                    <Text fontSize="xl" color="yellow" isTruncated>{post.title}</Text>
+                                    <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
+                                </Flex>
+                            </Link>
+                        ))}
+                    </VStack>
+                )}
             </Flex>
             <Button as="a" href="/blog/directory" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}} marginTop={15}>
                 All Posts

@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react';
 
 // chakra-ui
-import { Box, Button, Input, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Input, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Text, useDisclosure, Spinner } from "@chakra-ui/react";
 
 // util
 import { getURL } from '../utils';
@@ -22,12 +22,18 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const [totp, setTotp] = useState('');
     const [error, setError] = useState('');
     const [step, setStep] = useState(1); // 1: login, 2: TOTP verification
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            onLogin();
-        }
+        const checkLoginStatus = async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                onLogin();
+            }
+            setIsLoading(false);
+        };
+
+        checkLoginStatus();
     }, [onLogin]);
 
     const handleNext = () => {
@@ -88,8 +94,18 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
     return (
         <>
-            <Button position="absolute" top="1rem" right="1rem" onClick={onOpen} zIndex="2" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
-                Login
+            <Button 
+                position="absolute" 
+                top="1rem" 
+                right="1rem" 
+                onClick={onOpen} 
+                zIndex="2" 
+                _hover={{ color: 'yellow', transform: 'scale(1.01)'}} 
+                _active={{ transform: 'scale(0.99)'}}
+                minWidth="70px"  // Ensure consistent width
+                height="40px"    // Ensure consistent height
+            >
+                {isLoading ? <Spinner size="sm" /> : 'Login'}
             </Button>
             <Modal isOpen={isOpen} onClose={handleClose} isCentered>
                 <ModalOverlay />
