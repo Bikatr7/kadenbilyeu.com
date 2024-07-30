@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Text, Button } from "@chakra-ui/react";
+import { Box, Text, Button, Flex } from "@chakra-ui/react";
 import { ArrowBackIcon } from '@chakra-ui/icons';
 
 // components
@@ -43,14 +43,29 @@ const BlogPostPage: React.FC = () => {
     };
 
     return (
-        <Box bg="black" color="white" minHeight="83vh" position="relative" overflow="hidden">
+        <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" position="relative">
             <BlogBackground />
+            
+            <Flex 
+                justify="space-between" 
+                p="1rem" 
+                bg="black"
+            >
+                <Button 
+                    leftIcon={<ArrowBackIcon />} 
+                    as="a" 
+                    href={getBackLink()} 
+                    rounded="full" 
+                    _hover={{ color: 'yellow', transform: 'scale(1.01)' }} 
+                    _active={{ transform: 'scale(0.99)' }}
+                >
+                    Go Back
+                </Button>
+            </Flex>
+            
             <Box
-                position="absolute"
-                top="0"
-                left="0"
-                right="0"
-                bottom="0"
+                flex="1" 
+                position="relative"
                 overflowY="auto"
                 p={6}
                 zIndex="1"
@@ -64,20 +79,6 @@ const BlogPostPage: React.FC = () => {
                     'scrollbar-width': 'none'  /* Firefox */
                 }}
             >
-                <Button
-                    leftIcon={<ArrowBackIcon />}
-                    as="a"
-                    href={getBackLink()}
-                    rounded="full"
-                    mb={4}
-                    position="sticky"
-                    top="1rem"
-                    zIndex="2"
-                    _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
-                    _active={{ transform: 'scale(0.99)' }}
-                >
-                    Go Back
-                </Button>
                 {blogPost ? (
                     <Box
                         width="80%"

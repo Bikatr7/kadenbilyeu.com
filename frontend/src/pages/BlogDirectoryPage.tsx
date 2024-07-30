@@ -63,7 +63,7 @@ const BlogDirectoryPage: React.FC = () => {
     };
 
     return (
-        <Box bg="black" color="white" minHeight="100vh" display="flex" flexDirection="column" position="relative">
+        <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" position="relative">
             <BlogBackground />
             
             <Flex 

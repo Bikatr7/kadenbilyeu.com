@@ -75,11 +75,10 @@ const BlogPage: React.FC = () => {
             <BlogBackground />
             
             <Flex 
-                position="absolute" 
-                top="5vh" 
-                right="10%" 
-                zIndex="2"
-                gap="1rem"
+                justify="space-between" 
+                p="1rem" 
+                bg="black"
+                width="100%"
             >
                 {isLoggedIn ? (
                     <>
@@ -131,7 +130,15 @@ const BlogPage: React.FC = () => {
                     </VStack>
                 )}
             </Flex>
-            <Button as="a" href="/blog/directory" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}} marginTop={15}>
+            <Button 
+                as="a" 
+                href="/blog/directory" 
+                rounded="full" 
+                _hover={{ color: 'yellow', transform: 'scale(1.01)'}} 
+                _active={{ transform: 'scale(0.99)'}} 
+                marginTop={15}
+                width="auto"
+            >
                 All Posts
             </Button>
         </Box>
