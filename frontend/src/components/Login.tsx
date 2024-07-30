@@ -88,7 +88,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
     return (
         <>
-            <Button position="absolute" top="1rem" right="1rem" onClick={onOpen} zIndex="2" as="a" href="/blog/directory" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
+            <Button position="absolute" top="1rem" right="1rem" onClick={onOpen} zIndex="2" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                 Login
             </Button>
             <Modal isOpen={isOpen} onClose={handleClose} isCentered>
