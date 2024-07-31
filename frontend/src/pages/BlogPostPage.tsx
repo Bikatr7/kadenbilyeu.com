@@ -89,6 +89,7 @@ const BlogPostPage: React.FC = () => {
                         boxShadow="lg"
                         p={6}
                         overflow="hidden"
+                        border={`2px solid darkgrey`}
                     >
                         <Text fontSize="3xl" mb={4} textAlign="center">{blogPost.title}</Text>
                         <Box 

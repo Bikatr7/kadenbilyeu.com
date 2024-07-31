@@ -1,9 +1,9 @@
-// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com)
+// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7)
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file
 
 // react
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 // chakra-ui
@@ -28,6 +28,8 @@ const BlogPage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [contextMenu, setContextMenu] = useState<{ x: number, y: number, postId: string | null }>({ x: 0, y: 0, postId: null });
+  const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
   const fetchBlogPosts = useCallback(async () => {
     setIsLoading(true);
@@ -69,6 +71,32 @@ const BlogPage: React.FC = () => {
   };
   const handleNewPost = () => fetchBlogPosts();
 
+  const handleRightClick = (e: React.MouseEvent, postId: string) => {
+    e.preventDefault();
+    if (isLoggedIn) {
+      const linkElement = e.currentTarget as HTMLElement;
+      const rect = linkElement.getBoundingClientRect();
+      setContextMenu({ x: rect.left + window.scrollX - 390, y: rect.bottom + window.scrollY - 85, postId });
+    }
+  };
+
+  const handleClickOutside = (e: MouseEvent) => {
+    if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+      setContextMenu({ x: 0, y: 0, postId: null });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setContextMenu({ x: 0, y: 0, postId: null });
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   return (
     <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow={'hidden'} maxHeight={'83vh'}>
       <BlogBackground />
@@ -104,7 +132,13 @@ const BlogPage: React.FC = () => {
           >
             <VStack spacing="0.5rem" align="stretch" width="100%" height="100%" overflowY="auto" p="1rem">
               {blogPosts.map(post => (
-                <Link to={`/blog/${post.id}`} key={post.id} style={{ width: '100%' }} state={{ from: location.pathname }}>
+                <Link 
+                  to={`/blog/${post.id}`} 
+                  key={post.id} 
+                  style={{ width: '100%' }} 
+                  state={{ from: location.pathname }}
+                  onContextMenu={(e) => handleRightClick(e, post.id)}
+                >
                   <Flex 
                     justify="space-between" 
                     align="center" 
@@ -134,6 +168,27 @@ const BlogPage: React.FC = () => {
             All Posts
           </Button>
         </>
+      )}
+
+      {contextMenu.postId && isLoggedIn && (
+        <Box 
+          ref={contextMenuRef}
+          position="absolute"
+          top={contextMenu.y}
+          left={contextMenu.x}
+          bg="black"
+          color="white"
+          p="0.5rem"
+          boxShadow="md"
+          zIndex={1000}
+          onMouseLeave={handleMouseLeave}
+          border={'1px solid darkgrey'}
+        >
+          <VStack align="stretch">
+            <Text cursor="pointer" _hover={{ color: 'yellow' }}>Edit</Text>
+            <Text cursor="pointer" _hover={{ color: 'yellow' }}>Delete</Text>
+          </VStack>
+        </Box>
       )}
     </Box>
   );

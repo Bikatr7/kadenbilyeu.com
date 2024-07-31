@@ -109,8 +109,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             </Button>
             <Modal isOpen={isOpen} onClose={handleClose} isCentered>
                 <ModalOverlay />
-                <ModalContent bg="black" color="gray.500" border="2px solid gray.500">
-                    <ModalHeader borderBottom="1px solid gray.500">Login</ModalHeader>
+                <ModalContent bg="black" color="gray.500" border="2px solid darkgrey">
+                    <ModalHeader>Login</ModalHeader>
                     <ModalCloseButton onClick={handleClose} />
                     <ModalBody>
                         {step === 1 ? (
