@@ -1,21 +1,14 @@
-// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7)
+// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com) (https://kadenbilyeu.com)
 // Use of this source code is governed by an GNU Affero General Public License v3.0
-// license that can be found in the LICENSE file
+// license that can be found in the LICENSE file.
 
-// react
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-
-// chakra-ui
 import { Box, Button, VStack, Text, Flex, Spinner } from "@chakra-ui/react";
-
-// components
 import BlogBackground from "../components/BlogBackground";
 import Login from "../components/Login";
 import MakePost from "../components/MakePost";
 import EditPost from "../components/EditPost";
-
-// util
 import { getURL } from '../utils';
 
 interface BlogPost {
@@ -208,14 +201,13 @@ const BlogPage: React.FC = () => {
           border={'1px solid darkgrey'}
         >
           <VStack align="stretch">
-            <EditPost
-              postId={contextMenu.postId}
-              onEdit={handleEditPost}
-              onClose={handleCloseEditPost} 
-              initialTitle={blogPosts.find(post => post.id === contextMenu.postId)?.title || ''}
-              initialContent={blogPosts.find(post => post.id === contextMenu.postId)?.content || ''}
-              initialAuthor={blogPosts.find(post => post.id === contextMenu.postId)?.author || ''}
-            />
+            <Text
+              cursor="pointer"
+              _hover={{ color: 'yellow' }}
+              onClick={() => setEditingPost(blogPosts.find(post => post.id === contextMenu.postId) || null)}
+            >
+              Edit
+            </Text>
             <Text
               cursor="pointer"
               _hover={{ color: 'yellow' }}
@@ -238,6 +230,7 @@ const BlogPage: React.FC = () => {
           initialTitle={editingPost.title}
           initialContent={editingPost.content}
           initialAuthor={editingPost.author}
+          isOpen={true}
         />
       )}
     </Box>
