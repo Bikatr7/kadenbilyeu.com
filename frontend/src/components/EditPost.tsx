@@ -1,12 +1,8 @@
-// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com)
-// Use of this source code is governed by an GNU Affero General Public License v3.0
-// license that can be found in the LICENSE file
-
 // react
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // chakra-ui
-import { Box, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Text } from "@chakra-ui/react";
 
 // components
 import PostEditor from './PostEditor';
@@ -14,15 +10,26 @@ import PostEditor from './PostEditor';
 // utils
 import { getURL } from '../utils';
 
-interface MakePostProps {
-    onPost: () => void;
+interface EditPostProps {
+    postId: string;
+    onEdit: () => void;
+    initialTitle: string;
+    initialContent: string;
+    initialAuthor: string;
 }
 
-const MakePost: React.FC<MakePostProps> = ({ onPost }) => {
+const EditPost: React.FC<EditPostProps> = ({ postId, onEdit, initialTitle, initialContent, initialAuthor }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
+    const [title, setTitle] = useState(initialTitle);
+    const [content, setContent] = useState(initialContent);
+    const [author, setAuthor] = useState(initialAuthor);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        setTitle(initialTitle);
+        setContent(initialContent);
+        setAuthor(initialAuthor);
+    }, [initialTitle, initialContent, initialAuthor]);
 
     const handleClose = () => {
         setTitle('');
@@ -34,26 +41,26 @@ const MakePost: React.FC<MakePostProps> = ({ onPost }) => {
     const handleSubmit = async () => {
         const token = localStorage.getItem('token');
         if (!token) {
-            setError('You must be logged in to make a post.');
+            setError('You must be logged in to edit a post.');
             return;
         }
 
         try {
-            const response = await fetch(getURL('/blog'), {
-                method: 'POST',
+            const response = await fetch(getURL(`/blog/${postId}`), {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ title, content, author: 'Kaden Bilyeu (Bikatr7)' }),
+                body: JSON.stringify({ title, content, author }), // Send title, content, and author
             });
 
             if (!response.ok) {
-                throw new Error('Failed to create post');
+                throw new Error('Failed to update post');
             }
 
             handleClose();
-            onPost(); // Call the onPost callback to refresh the blog posts
+            onEdit(); // Call the onEdit callback to refresh the blog posts
         } catch (error) {
             setError('An error occurred. Please try again.');
         }
@@ -61,13 +68,11 @@ const MakePost: React.FC<MakePostProps> = ({ onPost }) => {
 
     return (
         <>
-            <Button onClick={onOpen} zIndex="2" _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
-                Make Post
-            </Button>
+            <Text cursor="pointer" _hover={{ color: 'yellow' }} onClick={onOpen}>Edit</Text>
             <Modal isOpen={isOpen} onClose={handleClose} isCentered size="6xl">
                 <ModalOverlay />
                 <ModalContent bg="black" color="gray.500" border="2px solid gray.500" maxHeight="90vh" boxShadow="0 0 10px 5px rgba(255, 255, 255, 0.5)">
-                    <ModalHeader borderBottom="1px solid gray.500">Create Post</ModalHeader>
+                    <ModalHeader borderBottom="1px solid gray.500">Edit Post</ModalHeader>
                     <ModalCloseButton onClick={handleClose} />
                     <ModalBody overflowY="auto">
                         <PostEditor title={title} content={content} setTitle={setTitle} setContent={setContent} />
@@ -78,7 +83,7 @@ const MakePost: React.FC<MakePostProps> = ({ onPost }) => {
                             Close
                         </Button>
                         <Button variant="outline" borderColor="gray.500" color="gray.500" onClick={handleSubmit}>
-                            Post
+                            Save Changes
                         </Button>
                     </ModalFooter>
                 </ModalContent>
@@ -87,4 +92,4 @@ const MakePost: React.FC<MakePostProps> = ({ onPost }) => {
     );
 };
 
-export default MakePost;
+export default EditPost;

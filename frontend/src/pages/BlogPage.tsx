@@ -1,10 +1,17 @@
-// Import necessary dependencies
+// react
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
+
+// chakra-ui
 import { Box, Button, VStack, Text, Flex, Spinner } from "@chakra-ui/react";
+
+// components
 import BlogBackground from "../components/BlogBackground";
 import Login from "../components/Login";
 import MakePost from "../components/MakePost";
+import EditPost from "../components/EditPost";
+
+// util
 import { getURL } from '../utils';
 
 interface BlogPost {
@@ -12,6 +19,7 @@ interface BlogPost {
   title: string;
   created_at: string;
   author: string;
+  content: string;
 }
 
 const BlogPage: React.FC = () => {
@@ -19,29 +27,17 @@ const BlogPage: React.FC = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [contextMenu, setContextMenu] = useState<{ x: number, y: number, postId: string | null }>({ x: 0, y: 0, postId: null });
+  const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
   const fetchBlogPosts = useCallback(async () => {
     setIsLoading(true);
     try {
-      const countResponse = await fetch(getURL("/blog-count"));
-      const newCount = await countResponse.json();
-
-      const cachedCount = localStorage.getItem('blogPagePostCount');
-
-      if (!cachedCount || newCount !== parseInt(cachedCount, 10)) {
-        const postsResponse = await fetch(getURL("/latest-blogs?limit=5"));
-        const newPosts = await postsResponse.json();
-
-        setBlogPosts(newPosts);
-        localStorage.setItem('blogPageBlogPosts', JSON.stringify(newPosts));
-        localStorage.setItem('blogPagePostCount', newCount.toString());
-      } else {
-        const cachedPosts = localStorage.getItem('blogPageBlogPosts');
-        if (cachedPosts) {
-          setBlogPosts(JSON.parse(cachedPosts));
-        }
-      }
+      const postsResponse = await fetch(getURL("/latest-blogs?limit=5"));
+      const newPosts = await postsResponse.json();
+      setBlogPosts(newPosts);
+      localStorage.setItem('blogPageBlogPosts', JSON.stringify(newPosts));
+      localStorage.setItem('blogPagePostCount', newPosts.length.toString());
     } catch (error) {
       console.error("Error fetching blog data:", error);
     } finally {
@@ -60,14 +56,19 @@ const BlogPage: React.FC = () => {
     setIsLoggedIn(false);
   };
   const handleNewPost = () => fetchBlogPosts();
+  const handleEditPost = () => {
+    fetchBlogPosts();
+    setEditingPost(null);
+  };
 
   const handleRightClick = (e: React.MouseEvent, postId: string) => {
-    e.preventDefault();
     if (isLoggedIn) {
+      e.preventDefault();
       const linkElement = e.currentTarget as HTMLElement;
       const rect = linkElement.getBoundingClientRect();
       setContextMenu({ x: rect.left + window.scrollX - 390, y: rect.bottom + window.scrollY - 85, postId });
     }
+    // If not logged in, do nothing, allowing the default browser context menu to appear
   };
 
   const handleClickOutside = (e: MouseEvent) => {
@@ -148,7 +149,7 @@ const BlogPage: React.FC = () => {
                   key={post.id} 
                   style={{ width: '100%' }} 
                   state={{ from: location.pathname }}
-                  onContextMenu={(e) => handleRightClick(e, post.id)}
+                  onContextMenu={isLoggedIn ? (e) => handleRightClick(e, post.id) : undefined}
                 >
                   <Flex 
                     justify="space-between" 
@@ -196,9 +197,26 @@ const BlogPage: React.FC = () => {
           border={'1px solid darkgrey'}
         >
           <VStack align="stretch">
+            <EditPost
+              postId={contextMenu.postId!}
+              onEdit={handleEditPost}
+              initialTitle={blogPosts.find(post => post.id === contextMenu.postId)?.title || ''}
+              initialContent={blogPosts.find(post => post.id === contextMenu.postId)?.content || ''}
+              initialAuthor={blogPosts.find(post => post.id === contextMenu.postId)?.author || ''}
+            />
             <Text cursor="pointer" _hover={{ color: 'yellow' }} onClick={() => handleDelete(contextMenu.postId!)}>Delete</Text>
           </VStack>
         </Box>
+      )}
+
+      {editingPost && (
+        <EditPost
+          postId={editingPost.id}
+          onEdit={handleEditPost}
+          initialTitle={editingPost.title}
+          initialContent={editingPost.content}
+          initialAuthor={editingPost.author}
+        />
       )}
     </Box>
   );

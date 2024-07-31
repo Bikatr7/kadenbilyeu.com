@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file
 
 // react
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 // chakra-ui
@@ -13,36 +13,33 @@ import { ArrowBackIcon } from '@chakra-ui/icons';
 // components
 import Login from "../components/Login";
 import BlogBackground from "../components/BlogBackground";
+import EditPost from "../components/EditPost";
 
 // util
 import { getURL } from '../utils';
 
+interface BlogPost {
+  id: string;
+  title: string;
+  created_at: string;
+  author: string;
+  content: string;
+}
+
 const BlogDirectoryPage: React.FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [blogPosts, setBlogPosts] = useState<
-        { id: string; title: string; created_at: string; author: string }[]
-    >([]);
+    const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+    const [contextMenu, setContextMenu] = useState<{ x: number, y: number, postId: string | null }>({ x: 0, y: 0, postId: null });
+    const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+    const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
     const fetchBlogPosts = useCallback(async () => {
         try {
-            const countResponse = await fetch(getURL("/blog-count"));
-            const newCount = await countResponse.json();
-
-            const cachedCount = localStorage.getItem('blogDirectoryPostCount');
-
-            if (!cachedCount || newCount !== parseInt(cachedCount, 10)) {
-                const postsResponse = await fetch(getURL("/all-blogs"));
-                const newPosts = await postsResponse.json();
-
-                setBlogPosts(newPosts);
-                localStorage.setItem('blogDirectoryPosts', JSON.stringify(newPosts));
-                localStorage.setItem('blogDirectoryPostCount', newCount.toString());
-            } else {
-                const cachedPosts = localStorage.getItem('blogDirectoryPosts');
-                if (cachedPosts) {
-                    setBlogPosts(JSON.parse(cachedPosts));
-                }
-            }
+            const postsResponse = await fetch(getURL("/all-blogs"));
+            const newPosts = await postsResponse.json();
+            setBlogPosts(newPosts);
+            localStorage.setItem('blogDirectoryPosts', JSON.stringify(newPosts));
+            localStorage.setItem('blogDirectoryPostCount', newPosts.length.toString());
         } catch (error) {
             console.error("Error fetching blog data:", error);
         }
@@ -52,14 +49,63 @@ const BlogDirectoryPage: React.FC = () => {
         fetchBlogPosts();
     }, [fetchBlogPosts]);
 
-    const handleLogin = () => {
-        setIsLoggedIn(true);
-    };
-
+    const handleLogin = () => setIsLoggedIn(true);
     const handleLogout = () => {
         localStorage.removeItem('token');
         document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
         setIsLoggedIn(false);
+    };
+
+    const handleRightClick = (e: React.MouseEvent, postId: string) => {
+        if (isLoggedIn) {
+            e.preventDefault();
+            const linkElement = e.currentTarget as HTMLElement;
+            const rect = linkElement.getBoundingClientRect();
+            setContextMenu({ x: rect.left + window.scrollX, y: rect.bottom + window.scrollY, postId });
+        }
+    };
+
+    const handleClickOutside = (e: MouseEvent) => {
+        if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+            setContextMenu({ x: 0, y: 0, postId: null });
+        }
+    };
+
+    const handleMouseLeave = () => {
+        setContextMenu({ x: 0, y: 0, postId: null });
+    };
+
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
+
+    const handleDelete = async (postId: string) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(getURL(`/blog/${postId}`), {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                fetchBlogPosts();
+            } else {
+                const errorData = await response.json();
+                console.error("Error deleting blog post:", errorData.detail);
+            }
+        } catch (error) {
+            console.error("An error occurred while deleting the blog post:", error);
+        }
+    };
+
+    const handleEditPost = () => {
+        fetchBlogPosts();
+        setEditingPost(null);
     };
 
     return (
@@ -90,14 +136,21 @@ const BlogDirectoryPage: React.FC = () => {
             >
                 <VStack spacing="1rem" align="flex-start" width="100%">
                     {blogPosts.map(post => (
-                        <Link to={`/blog/${post.id}`} key={post.id} style={{ width: '100%' }} state={{ from: location.pathname }}>
+                        <Link 
+                            to={`/blog/${post.id}`} 
+                            key={post.id} 
+                            style={{ width: '100%' }} 
+                            state={{ from: location.pathname }}
+                            onContextMenu={isLoggedIn ? (e) => handleRightClick(e, post.id) : undefined}
+                        >
                             <Flex 
                                 justify="space-between" 
                                 align="center" 
                                 width="100%" 
                                 paddingLeft="0.5rem"
                                 paddingRight="0.5rem"
-                                _hover={{ backgroundColor: 'gray.700', cursor: 'pointer' }} // Hover effect added here
+                                _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
+                                transition="background-color 0.2s"
                             >
                                 <Text fontSize="xl" color="yellow">{post.title}</Text>
                                 <Text fontSize="md" color="gray.300">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
@@ -106,6 +159,43 @@ const BlogDirectoryPage: React.FC = () => {
                     ))}
                 </VStack>
             </Box>
+
+            {contextMenu.postId && isLoggedIn && (
+                <Box 
+                    ref={contextMenuRef}
+                    position="absolute"
+                    top={contextMenu.y}
+                    left={contextMenu.x}
+                    bg="black"
+                    color="white"
+                    p="0.5rem"
+                    boxShadow="md"
+                    zIndex={1000}
+                    onMouseLeave={handleMouseLeave}
+                    border={'1px solid darkgrey'}
+                >
+                    <VStack align="stretch">
+                        <EditPost
+                            postId={contextMenu.postId}
+                            onEdit={handleEditPost}
+                            initialTitle={blogPosts.find(post => post.id === contextMenu.postId)?.title || ''}
+                            initialContent={blogPosts.find(post => post.id === contextMenu.postId)?.content || ''}
+                            initialAuthor={blogPosts.find(post => post.id === contextMenu.postId)?.author || ''}
+                        />
+                        <Text cursor="pointer" _hover={{ color: 'yellow' }} onClick={() => handleDelete(contextMenu.postId!)}>Delete</Text>
+                    </VStack>
+                </Box>
+            )}
+
+            {editingPost && (
+                <EditPost
+                    postId={editingPost.id}
+                    onEdit={handleEditPost}
+                    initialTitle={editingPost.title}
+                    initialContent={editingPost.content}
+                    initialAuthor={editingPost.author}
+                />
+            )}
         </Box>
     );
 };
