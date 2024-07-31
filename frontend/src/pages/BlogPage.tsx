@@ -70,7 +70,7 @@ const BlogPage: React.FC = () => {
   const handleNewPost = () => fetchBlogPosts();
 
   return (
-    <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow={'hidden'}>
+    <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow={'hidden'} maxHeight={'83vh'}>
       <BlogBackground />
       
       <Flex justify="space-between" p="1rem" bg="black" width="100%">
