@@ -1,3 +1,7 @@
+// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7)
+// Use of this source code is governed by an GNU Affero General Public License v3.0
+// license that can be found in the LICENSE file
+
 // react
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
@@ -56,10 +60,6 @@ const BlogPage: React.FC = () => {
     setIsLoggedIn(false);
   };
   const handleNewPost = () => fetchBlogPosts();
-  const handleEditPost = () => {
-    fetchBlogPosts();
-    setEditingPost(null);
-  };
 
   const handleRightClick = (e: React.MouseEvent, postId: string) => {
     if (isLoggedIn) {
@@ -68,7 +68,6 @@ const BlogPage: React.FC = () => {
       const rect = linkElement.getBoundingClientRect();
       setContextMenu({ x: rect.left + window.scrollX - 390, y: rect.bottom + window.scrollY - 85, postId });
     }
-    // If not logged in, do nothing, allowing the default browser context menu to appear
   };
 
   const handleClickOutside = (e: MouseEvent) => {
@@ -100,6 +99,7 @@ const BlogPage: React.FC = () => {
 
       if (response.ok) {
         fetchBlogPosts();
+        setContextMenu({ x: 0, y: 0, postId: null }); 
       } else {
         const errorData = await response.json();
         console.error("Error deleting blog post:", errorData.detail);
@@ -109,15 +109,26 @@ const BlogPage: React.FC = () => {
     }
   };
 
+  const handleEditPost = () => {
+    fetchBlogPosts();
+    setEditingPost(null);
+    setContextMenu({ x: 0, y: 0, postId: null }); 
+  };
+
+  const handleCloseEditPost = () => {
+    setEditingPost(null);
+    setContextMenu({ x: 0, y: 0, postId: null }); 
+  };
+
   return (
     <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow={'hidden'} maxHeight={'83vh'}>
       <BlogBackground />
-      
+
       <Flex justify="space-between" p="1rem" bg="black" width="100%">
         {isLoggedIn ? (
           <>
             <MakePost onPost={handleNewPost} />
-            <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
+            <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
               Logout
             </Button>
           </>
@@ -132,10 +143,10 @@ const BlogPage: React.FC = () => {
         </div>
       ) : (
         <>
-          <Box 
-            mt="15vh" 
-            width="80%" 
-            maxWidth="800px" 
+          <Box
+            mt="15vh"
+            width="80%"
+            maxWidth="800px"
             maxHeight="400px"
             border="2px solid darkgrey"
             bg="rgba(0, 0, 0, 0.7)"
@@ -144,17 +155,17 @@ const BlogPage: React.FC = () => {
           >
             <VStack spacing="0.5rem" align="stretch" width="100%" height="100%" overflowY="auto" p="1rem">
               {blogPosts.map(post => (
-                <Link 
-                  to={`/blog/${post.id}`} 
-                  key={post.id} 
-                  style={{ width: '100%' }} 
+                <Link
+                  to={`/blog/${post.id}`}
+                  key={post.id}
+                  style={{ width: '100%' }}
                   state={{ from: location.pathname }}
                   onContextMenu={isLoggedIn ? (e) => handleRightClick(e, post.id) : undefined}
                 >
-                  <Flex 
-                    justify="space-between" 
-                    align="center" 
-                    width="100%" 
+                  <Flex
+                    justify="space-between"
+                    align="center"
+                    width="100%"
                     p="0.5rem"
                     _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
                     transition="background-color 0.2s"
@@ -166,13 +177,13 @@ const BlogPage: React.FC = () => {
               ))}
             </VStack>
           </Box>
-          
-          <Button 
-            as="a" 
-            href="/blog/directory" 
-            rounded="full" 
-            _hover={{ color: 'yellow', transform: 'scale(1.01)'}} 
-            _active={{ transform: 'scale(0.99)'}} 
+
+          <Button
+            as="a"
+            href="/blog/directory"
+            rounded="full"
+            _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
+            _active={{ transform: 'scale(0.99)' }}
             mt="2rem"
             mb="2rem"
             width="auto"
@@ -183,7 +194,7 @@ const BlogPage: React.FC = () => {
       )}
 
       {contextMenu.postId && isLoggedIn && (
-        <Box 
+        <Box
           ref={contextMenuRef}
           position="absolute"
           top={contextMenu.y}
@@ -198,13 +209,23 @@ const BlogPage: React.FC = () => {
         >
           <VStack align="stretch">
             <EditPost
-              postId={contextMenu.postId!}
+              postId={contextMenu.postId}
               onEdit={handleEditPost}
+              onClose={handleCloseEditPost} 
               initialTitle={blogPosts.find(post => post.id === contextMenu.postId)?.title || ''}
               initialContent={blogPosts.find(post => post.id === contextMenu.postId)?.content || ''}
               initialAuthor={blogPosts.find(post => post.id === contextMenu.postId)?.author || ''}
             />
-            <Text cursor="pointer" _hover={{ color: 'yellow' }} onClick={() => handleDelete(contextMenu.postId!)}>Delete</Text>
+            <Text
+              cursor="pointer"
+              _hover={{ color: 'yellow' }}
+              onClick={() => {
+                handleDelete(contextMenu.postId!);
+                setContextMenu({ x: 0, y: 0, postId: null }); 
+              }}
+            >
+              Delete
+            </Text>
           </VStack>
         </Box>
       )}
@@ -213,6 +234,7 @@ const BlogPage: React.FC = () => {
         <EditPost
           postId={editingPost.id}
           onEdit={handleEditPost}
+          onClose={handleCloseEditPost} 
           initialTitle={editingPost.title}
           initialContent={editingPost.content}
           initialAuthor={editingPost.author}

@@ -13,13 +13,14 @@ import { getURL } from '../utils';
 interface EditPostProps {
     postId: string;
     onEdit: () => void;
+    onClose: () => void; 
     initialTitle: string;
     initialContent: string;
     initialAuthor: string;
 }
 
-const EditPost: React.FC<EditPostProps> = ({ postId, onEdit, initialTitle, initialContent, initialAuthor }) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+const EditPost: React.FC<EditPostProps> = ({ postId, onEdit, onClose, initialTitle, initialContent, initialAuthor }) => {
+    const { isOpen, onOpen, onClose: chakraOnClose } = useDisclosure();
     const [title, setTitle] = useState(initialTitle);
     const [content, setContent] = useState(initialContent);
     const [author, setAuthor] = useState(initialAuthor);
@@ -35,7 +36,8 @@ const EditPost: React.FC<EditPostProps> = ({ postId, onEdit, initialTitle, initi
         setTitle('');
         setContent('');
         setError('');
-        onClose();
+        chakraOnClose();
+        onClose(); 
     };
 
     const handleSubmit = async () => {
@@ -52,7 +54,7 @@ const EditPost: React.FC<EditPostProps> = ({ postId, onEdit, initialTitle, initi
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ title, content, author }), // Send title, content, and author
+                body: JSON.stringify({ title, content, author }),
             });
 
             if (!response.ok) {
@@ -60,7 +62,7 @@ const EditPost: React.FC<EditPostProps> = ({ postId, onEdit, initialTitle, initi
             }
 
             handleClose();
-            onEdit(); // Call the onEdit callback to refresh the blog posts
+            onEdit(); 
         } catch (error) {
             setError('An error occurred. Please try again.');
         }
