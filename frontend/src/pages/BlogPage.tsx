@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Button, VStack, Text, Flex, Spinner, Center } from "@chakra-ui/react";
+import { Box, Button, VStack, Text, Flex, Spinner } from "@chakra-ui/react";
 
 // components
 import BlogBackground from "../components/BlogBackground";
@@ -87,9 +87,9 @@ const BlogPage: React.FC = () => {
       </Flex>
 
       {isLoading ? (
-        <Center height="calc(100vh - 200px)" width="100%">
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1000 }}>
           <Spinner size="xl" color="yellow" thickness="4px" />
-        </Center>
+        </div>
       ) : (
         <>
           <Box 
