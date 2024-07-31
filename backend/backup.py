@@ -2,14 +2,16 @@ import os
 import shutil
 import zipfile
 import smtplib
-from email.message import EmailMessage
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 from gnupg import GPG
 from datetime import datetime
 
 ##----------------------------------/----------------------------------##
 
 def get_envs():
-
     with open(".smtp.env", "r") as f:
         for line in f:
             key, value = line.strip().split("=")
@@ -23,13 +25,13 @@ def get_envs():
     FROM_EMAIL = os.getenv('FROM_EMAIL') or ""
     TO_EMAIL = os.getenv('TO_EMAIL') or ""
 
-    assert ENCRYPTION_KEY != "", "ENCRYPTION_KEY is required"
-    assert SMTP_SERVER != "", "SMTP_SERVER is required"
-    assert SMTP_PORT != 0, "SMTP_PORT is required"
-    assert SMTP_USER != "", "SMTP_USER is required"
-    assert SMTP_PASSWORD != "", "SMTP_PASSWORD is required"
-    assert FROM_EMAIL != "", "FROM_EMAIL is required"
-    assert TO_EMAIL != "", "TO_EMAIL is required"
+    assert(ENCRYPTION_KEY != ""), "ENCRYPTION_KEY is required"
+    assert(SMTP_SERVER != ""), "SMTP_SERVER is required"
+    assert(SMTP_PORT != 0), "SMTP_PORT is required"
+    assert(SMTP_USER != ""), "SMTP_USER is required"
+    assert(SMTP_PASSWORD != ""), "SMTP_PASSWORD is required"
+    assert(FROM_EMAIL != ""), "FROM_EMAIL is required"
+    assert(TO_EMAIL != ""), "TO_EMAIL is required"
 
     return ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL
 
@@ -52,7 +54,7 @@ def encrypt_file(file_path, passphrase):
             output=encrypted_path
         )
         
-    if not status.ok:
+    if(not status.ok):
         raise ValueError('Failed to encrypt the file:', status.stderr)
 
     return encrypted_path
@@ -68,40 +70,50 @@ def compress_file(file_path):
 ##----------------------------------/----------------------------------##
 
 def send_email(subject, body, to_email, attachment_path, from_email, smtp_server, smtp_port, smtp_user, smtp_password):
-    msg = EmailMessage()
+    msg = MIMEMultipart()
     msg['Subject'] = subject
     msg['From'] = from_email
     msg['To'] = to_email
-    msg.set_content(body)
+    msg.attach(MIMEText(body, 'plain'))
 
     with open(attachment_path, 'rb') as f:
-        file_data = f.read()
-        file_name = attachment_path.split('/')[-1]
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload(f.read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', f'attachment; filename={os.path.basename(attachment_path)}')
+        msg.attach(part)
 
-    msg.add_attachment(file_data, maintype='application', subtype='octet-stream', filename=file_name)
-
-    with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
-        server.login(smtp_user, smtp_password)
-        server.send_message(msg)
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls() 
+            server.login(smtp_user, smtp_password)
+            server.send_message(msg)
+            server.quit()
+    except Exception as e:
+        print(f"Error: {e}")
 
 ##----------------------------------/----------------------------------##
 
-def main():
-
+def perform_backup():
     ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL = get_envs()
 
     db_path = 'blog.db'
     export_path = f'exported_db_{datetime.now().strftime("%Y%m%d%H%M%S")}.db'
-    export_db(db_path, export_path)
 
-    encrypted_path = encrypt_file(export_path, ENCRYPTION_KEY)
-    compressed_path = compress_file(encrypted_path)
+    export_db(db_path, export_path)
+    os.remove(db_path)
+
+    compressed_path = compress_file(export_path)
+    os.remove(export_path)
+
+    encrypted_path = encrypt_file(compressed_path, ENCRYPTION_KEY)
+    os.remove(compressed_path)
 
     send_email(
         subject='Daily SQLite Database Backup',
         body='Please find the attached encrypted and compressed SQLite database backup.',
         to_email=TO_EMAIL,
-        attachment_path=compressed_path,
+        attachment_path=encrypted_path,
         from_email=FROM_EMAIL,
         smtp_server=SMTP_SERVER,
         smtp_port=SMTP_PORT,
@@ -109,7 +121,12 @@ def main():
         smtp_password=SMTP_PASSWORD
     )
 
-##----------------------------------/----------------------------------##
+    try:
 
-if(__name__ == '__main__'):
-    main()
+        os.remove(export_path)
+        os.remove(compressed_path)
+        os.remove(encrypted_path)
+
+    except Exception:
+        pass
+
