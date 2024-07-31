@@ -2,6 +2,8 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
 // chakra-ui
 import { Box, Input, Textarea } from "@chakra-ui/react";
 
@@ -10,14 +12,16 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 
-interface PostEditorProps {
+interface PostEditorProps 
+{
     title: string;
     content: string;
     setTitle: (title: string) => void;
     setContent: (content: string) => void;
 }
 
-const PostEditor: React.FC<PostEditorProps> = ({ title, content, setTitle, setContent }) => {
+const PostEditor: React.FC<PostEditorProps> = ({ title, content, setTitle, setContent }) => 
+{
     return (
         <Box display="flex" flexDirection={["column", "column", "row"]}>
             <Box flex="1" mr={4}>

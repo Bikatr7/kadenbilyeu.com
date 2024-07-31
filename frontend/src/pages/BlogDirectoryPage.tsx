@@ -2,16 +2,28 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
+// react 
 import { useState, useEffect, useCallback, useRef } from 'react';
+
+// react
 import { Link } from 'react-router-dom';
+
+// chakra-ui
 import { Box, Button, VStack, Text, Flex } from "@chakra-ui/react";
 import { ArrowBackIcon } from '@chakra-ui/icons';
+
+// components
 import Login from "../components/Login";
 import BlogBackground from "../components/BlogBackground";
 import EditPost from "../components/EditPost";
+
+// utils
 import { getURL } from '../utils';
 
-interface BlogPost {
+interface BlogPost 
+{
     id: string;
     title: string;
     created_at: string;
@@ -19,38 +31,47 @@ interface BlogPost {
     content: string;
 }
 
-const BlogDirectoryPage: React.FC = () => {
+const BlogDirectoryPage: React.FC = () => 
+{
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, postId: string | null }>({ x: 0, y: 0, postId: null });
     const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
     const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
-    const fetchBlogPosts = useCallback(async () => {
-        try {
+    const fetchBlogPosts = useCallback(async () => 
+    {
+        try 
+        {
             const postsResponse = await fetch(getURL("/all-blogs"));
             const newPosts = await postsResponse.json();
             setBlogPosts(newPosts);
             localStorage.setItem('blogDirectoryPosts', JSON.stringify(newPosts));
             localStorage.setItem('blogDirectoryPostCount', newPosts.length.toString());
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             console.error("Error fetching blog data:", error);
         }
     }, []);
 
-    useEffect(() => {
+    useEffect(() => 
+    {
         fetchBlogPosts();
     }, [fetchBlogPosts]);
 
     const handleLogin = () => setIsLoggedIn(true);
-    const handleLogout = () => {
+    const handleLogout = () => 
+    {
         localStorage.removeItem('token');
         document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
         setIsLoggedIn(false);
     };
 
-    const handleRightClick = (e: React.MouseEvent, postId: string) => {
-        if (isLoggedIn) {
+    const handleRightClick = (e: React.MouseEvent, postId: string) => 
+    {
+        if (isLoggedIn) 
+        {
             e.preventDefault();
             const linkElement = e.currentTarget as HTMLElement;
             const rect = linkElement.getBoundingClientRect();
@@ -58,52 +79,68 @@ const BlogDirectoryPage: React.FC = () => {
         }
     };
 
-    const handleClickOutside = (e: MouseEvent) => {
-        if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+    const handleClickOutside = (e: MouseEvent) => 
+    {
+        if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) 
+        {
             setContextMenu({ x: 0, y: 0, postId: null });
         }
     };
 
-    const handleMouseLeave = () => {
+    const handleMouseLeave = () => 
+    {
         setContextMenu({ x: 0, y: 0, postId: null });
     };
 
-    useEffect(() => {
+    useEffect(() => 
+    {
         document.addEventListener('click', handleClickOutside);
-        return () => {
+        return () => 
+        {
             document.removeEventListener('click', handleClickOutside);
         };
     }, []);
 
-    const handleDelete = async (postId: string) => {
-        try {
+    const handleDelete = async (postId: string) => 
+    {
+        try 
+        {
             const token = localStorage.getItem('token');
-            const response = await fetch(getURL(`/blog/${postId}`), {
+            const response = await fetch(getURL(`/blog/${postId}`), 
+            {
                 method: 'DELETE',
-                headers: {
+                headers: 
+                {
                     'Authorization': `Bearer ${token}`
                 }
             });
 
-            if (response.ok) {
+            if (response.ok) 
+            {
                 fetchBlogPosts();
                 setContextMenu({ x: 0, y: 0, postId: null }); 
-            } else {
+            } 
+            else 
+            {
                 const errorData = await response.json();
                 console.error("Error deleting blog post:", errorData.detail);
             }
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             console.error("An error occurred while deleting the blog post:", error);
         }
     };
 
-    const handleEditPost = () => {
+    const handleEditPost = () => 
+    {
         fetchBlogPosts();
         setEditingPost(null);
         setContextMenu({ x: 0, y: 0, postId: null }); 
     };
 
-    const handleCloseEditPost = () => {
+    const handleCloseEditPost = () => 
+    {
         setEditingPost(null);
         setContextMenu({ x: 0, y: 0, postId: null }); 
     };

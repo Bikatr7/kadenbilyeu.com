@@ -2,15 +2,19 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
 // chakra-ui imports
 import { Box, Container,Divider, Flex, IconButton, Image, Stack, Text } from '@chakra-ui/react';
 
 // icons and images
 import { IconBrandGithub } from '@tabler/icons-react';
 
+// logo
 import logo from '../assets/images/personals/bikatr7_logo.webp';
 
-function Footer() {
+function Footer() 
+{
     return (
         <Box
             bg="black"

@@ -2,6 +2,8 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
 // react
 import { lazy, Suspense } from 'react';
 
@@ -22,7 +24,8 @@ const AboutMe = lazy(() => import('../sections/AboutMe'));
 const AboutSite = lazy(() => import('../sections/AboutSite'));
 const Contact = lazy(() => import('../sections/Contact'));
 
-function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean }) {
+function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean }) 
+{
     return (
         <Box bg="black" color="white" minHeight="83vh">
             <Preface showContent={showContent} toggleContent={toggleContent} />

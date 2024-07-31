@@ -2,16 +2,26 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
+// react
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
+
+// chakra-ui
 import { Box, Button, VStack, Text, Flex, Spinner } from "@chakra-ui/react";
+
+// components
 import BlogBackground from "../components/BlogBackground";
 import Login from "../components/Login";
 import MakePost from "../components/MakePost";
 import EditPost from "../components/EditPost";
+
+// utils
 import { getURL } from '../utils';
 
-interface BlogPost {
+interface BlogPost 
+{
   id: string;
   title: string;
   created_at: string;
@@ -19,7 +29,8 @@ interface BlogPost {
   content: string;
 }
 
-const BlogPage: React.FC = () => {
+const BlogPage: React.FC = () => 
+{
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,35 +38,45 @@ const BlogPage: React.FC = () => {
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
-  const fetchBlogPosts = useCallback(async () => {
+  const fetchBlogPosts = useCallback(async () => 
+  {
     setIsLoading(true);
-    try {
+    try 
+    {
       const postsResponse = await fetch(getURL("/latest-blogs?limit=5"));
       const newPosts = await postsResponse.json();
       setBlogPosts(newPosts);
       localStorage.setItem('blogPageBlogPosts', JSON.stringify(newPosts));
       localStorage.setItem('blogPagePostCount', newPosts.length.toString());
-    } catch (error) {
+    } 
+    catch (error) 
+    {
       console.error("Error fetching blog data:", error);
-    } finally {
+    } 
+    finally 
+    {
       setIsLoading(false);
     }
   }, []);
 
-  useEffect(() => {
+  useEffect(() => 
+  {
     fetchBlogPosts();
   }, [fetchBlogPosts]);
 
   const handleLogin = () => setIsLoggedIn(true);
-  const handleLogout = () => {
+  const handleLogout = () => 
+  {
     localStorage.removeItem('token');
     document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
     setIsLoggedIn(false);
   };
   const handleNewPost = () => fetchBlogPosts();
 
-  const handleRightClick = (e: React.MouseEvent, postId: string) => {
-    if (isLoggedIn) {
+  const handleRightClick = (e: React.MouseEvent, postId: string) => 
+  {
+    if (isLoggedIn) 
+    {
       e.preventDefault();
       const linkElement = e.currentTarget as HTMLElement;
       const rect = linkElement.getBoundingClientRect();
@@ -63,52 +84,68 @@ const BlogPage: React.FC = () => {
     }
   };
 
-  const handleClickOutside = (e: MouseEvent) => {
-    if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+  const handleClickOutside = (e: MouseEvent) => 
+  {
+    if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) 
+    {
       setContextMenu({ x: 0, y: 0, postId: null });
     }
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = () => 
+  {
     setContextMenu({ x: 0, y: 0, postId: null });
   };
 
-  useEffect(() => {
+  useEffect(() => 
+  {
     document.addEventListener('click', handleClickOutside);
-    return () => {
+    return () => 
+    {
       document.removeEventListener('click', handleClickOutside);
     };
   }, []);
 
-  const handleDelete = async (postId: string) => {
-    try {
+  const handleDelete = async (postId: string) => 
+  {
+    try 
+    {
       const token = localStorage.getItem('token');
-      const response = await fetch(getURL(`/blog/${postId}`), {
+      const response = await fetch(getURL(`/blog/${postId}`), 
+      {
         method: 'DELETE',
-        headers: {
+        headers: 
+        {
           'Authorization': `Bearer ${token}`
         }
       });
 
-      if (response.ok) {
+      if (response.ok) 
+      {
         fetchBlogPosts();
         setContextMenu({ x: 0, y: 0, postId: null }); 
-      } else {
+      } 
+      else 
+      {
         const errorData = await response.json();
         console.error("Error deleting blog post:", errorData.detail);
       }
-    } catch (error) {
+    } 
+    catch (error) 
+    {
       console.error("An error occurred while deleting the blog post:", error);
     }
   };
 
-  const handleEditPost = () => {
+  const handleEditPost = () => 
+  {
     fetchBlogPosts();
     setEditingPost(null);
     setContextMenu({ x: 0, y: 0, postId: null }); 
   };
 
-  const handleCloseEditPost = () => {
+  const handleCloseEditPost = () => 
+  {
     setEditingPost(null);
     setContextMenu({ x: 0, y: 0, postId: null }); 
   };

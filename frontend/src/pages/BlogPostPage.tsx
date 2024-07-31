@@ -2,25 +2,36 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
+// react
 import { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+
+// chakra-ui
 import { Box, Text, Button, Flex, useToast } from "@chakra-ui/react";
 import { ArrowBackIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
+
+// components
 import BlogBackground from "../components/BlogBackground";
 import EditPost from "../components/EditPost";
 import { getURL } from '../utils';
+
+// markdown
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 
-interface BlogPost {
+interface BlogPost 
+{
     id: string;
     title: string;
     content: string;
     author: string;
 }
 
-const BlogPostPage: React.FC = () => {
+const BlogPostPage: React.FC = () =>
+{
     const { id } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
@@ -29,8 +40,10 @@ const BlogPostPage: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    useEffect(() => {
-        const fetchBlogPost = async () => {
+    useEffect(() => 
+    {
+        const fetchBlogPost = async () => 
+        {
             const response = await fetch(getURL(`/blog/${id}`));
             const data = await response.json();
             setBlogPost(data);
@@ -41,18 +54,22 @@ const BlogPostPage: React.FC = () => {
         setIsLoggedIn(!!token);
     }, [id]);
 
-    const getBackLink = () => {
-        if (location.state?.from === '/blog' || location.state?.from === '/blog/directory') {
+    const getBackLink = () => 
+    {
+        if (location.state?.from === '/blog' || location.state?.from === '/blog/directory')
+         {
             return location.state.from;
         }
         return '/blog/';
     };
 
-    const handleEdit = () => {
+    const handleEdit = () => 
+    {
         setIsEditing(true);
     };
 
-    const handleEditSubmit = async () => {
+    const handleEditSubmit = async () => 
+    {
         const response = await fetch(getURL(`/blog/${id}`));
         const data = await response.json();
         setBlogPost(data);
@@ -65,17 +82,21 @@ const BlogPostPage: React.FC = () => {
         });
     };
 
-    const handleDelete = async () => {
-        try {
+    const handleDelete = async () => 
+    {
+        try 
+        {
             const token = localStorage.getItem('token');
-            const response = await fetch(getURL(`/blog/${id}`), {
+            const response = await fetch(getURL(`/blog/${id}`), 
+            {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
 
-            if (response.ok) {
+            if (response.ok) 
+            {
                 toast({
                     title: "Post deleted",
                     status: "success",
@@ -83,7 +104,9 @@ const BlogPostPage: React.FC = () => {
                     isClosable: true,
                 });
                 navigate('/blog');
-            } else {
+            } 
+            else 
+            {
                 const errorData = await response.json();
                 toast({
                     title: "Error deleting post",
@@ -93,7 +116,9 @@ const BlogPostPage: React.FC = () => {
                     isClosable: true,
                 });
             }
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             console.error("An error occurred while deleting the blog post:", error);
             toast({
                 title: "Error",

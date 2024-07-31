@@ -2,21 +2,15 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
 // chakra-ui
-import {
-    Button,
-    Image,
-    Flex,
-    Heading,
-    Stack,
-    Text
-} from "@chakra-ui/react";
+import { Button, Flex, Heading, Image, Stack, Text } from '@chakra-ui/react';
 
 // icons and images
 import { IconBrandGithub} from '@tabler/icons-react';
 
 import face from '../assets/images/personals/kadenbilyeu.webp';
-
 
 function Preface({ showContent, toggleContent }: { showContent: boolean, toggleContent: () => void }) {
     const handleClick = () => {

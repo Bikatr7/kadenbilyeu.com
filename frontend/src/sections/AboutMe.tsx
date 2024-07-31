@@ -2,11 +2,10 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
 // chakra-ui
-import {
-    Box,
-    Text,
-} from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 
 function AboutMe() {
     return (

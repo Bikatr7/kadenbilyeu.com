@@ -2,6 +2,8 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
 // react
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
@@ -11,7 +13,8 @@ import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import BlogDirectoryPage from './pages/BlogDirectoryPage';
 
-function Router({ showContent, toggleContent, contentLoaded }: { showContent: any, toggleContent: any, contentLoaded: any }) {
+function Router({ showContent, toggleContent, contentLoaded }: { showContent: any, toggleContent: any, contentLoaded: any }) 
+{
     const routes = [
         { path: '/', element: <HomePage showContent={showContent} toggleContent={toggleContent} contentLoaded={contentLoaded} /> },
         { path: '/blog', element: <BlogPage /> },

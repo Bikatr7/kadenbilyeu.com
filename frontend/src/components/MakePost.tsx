@@ -1,6 +1,8 @@
-// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com)
+// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com) (https://kadenbilyeu.com)
 // Use of this source code is governed by an GNU Affero General Public License v3.0
-// license that can be found in the LICENSE file
+// license that can be found in the LICENSE file.
+
+// maintain allman bracket style for consistency
 
 // react
 import { useState } from 'react';
@@ -14,31 +16,37 @@ import PostEditor from './PostEditor';
 // utils
 import { getURL } from '../utils';
 
-interface MakePostProps {
+interface MakePostProps 
+{
     onPost: () => void;
 }
 
-const MakePost: React.FC<MakePostProps> = ({ onPost }) => {
+const MakePost: React.FC<MakePostProps> = ({ onPost }) => 
+{
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [error, setError] = useState('');
 
-    const handleClose = () => {
+    const handleClose = () => 
+    {
         setTitle('');
         setContent('');
         setError('');
         onClose();
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async () => 
+    {
         const token = localStorage.getItem('token');
-        if (!token) {
+        if (!token) 
+        {
             setError('You must be logged in to make a post.');
             return;
         }
 
-        try {
+        try 
+        {
             const response = await fetch(getURL('/blog'), {
                 method: 'POST',
                 headers: {

@@ -2,12 +2,22 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
+// react
 import { useState, useEffect } from 'react';
+
+// chakra-ui
 import { Box, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure} from "@chakra-ui/react";
+
+// components
 import PostEditor from './PostEditor';
+
+// utils
 import { getURL } from '../utils';
 
-interface EditPostProps {
+interface EditPostProps 
+{
     postId: string;
     onEdit: () => void;
     onClose: () => void; 
@@ -17,20 +27,23 @@ interface EditPostProps {
     isOpen: boolean;
 }
 
-const EditPost: React.FC<EditPostProps> = ({ postId, onEdit, onClose, initialTitle, initialContent, initialAuthor, isOpen }) => {
+const EditPost: React.FC<EditPostProps> = ({ postId, onEdit, onClose, initialTitle, initialContent, initialAuthor, isOpen }) => 
+{
     const { onClose: chakraOnClose } = useDisclosure();
     const [title, setTitle] = useState(initialTitle);
     const [content, setContent] = useState(initialContent);
     const [author, setAuthor] = useState(initialAuthor);
     const [error, setError] = useState('');
 
-    useEffect(() => {
+    useEffect(() => 
+    {
         setTitle(initialTitle);
         setContent(initialContent);
         setAuthor(initialAuthor);
     }, [initialTitle, initialContent, initialAuthor]);
 
-    const handleClose = () => {
+    const handleClose = () => 
+    {
         setTitle('');
         setContent('');
         setError('');
@@ -38,30 +51,38 @@ const EditPost: React.FC<EditPostProps> = ({ postId, onEdit, onClose, initialTit
         onClose(); 
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async () => 
+    {
         const token = localStorage.getItem('token');
-        if (!token) {
+        if (!token) 
+        {
             setError('You must be logged in to edit a post.');
             return;
         }
 
-        try {
-            const response = await fetch(getURL(`/blog/${postId}`), {
+        try 
+        {
+            const response = await fetch(getURL(`/blog/${postId}`), 
+            {
                 method: 'PUT',
-                headers: {
+                headers: 
+                {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({ title, content, author }),
             });
 
-            if (!response.ok) {
+            if (!response.ok) 
+            {
                 throw new Error('Failed to update post');
             }
 
             handleClose();
             onEdit(); 
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             setError('An error occurred. Please try again.');
         }
     };

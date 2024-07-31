@@ -2,19 +2,25 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
+// react
 import { useEffect, useRef } from 'react';
 
-const BlogBackground:React.FC = () => {
+const BlogBackground:React.FC = () => 
+{
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-    useEffect(() => {
+    useEffect(() => 
+    {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        const setCanvasSize = () => {
+        const setCanvasSize = () => 
+        {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         };
@@ -22,14 +28,16 @@ const BlogBackground:React.FC = () => {
         setCanvasSize();
         window.addEventListener('resize', setCanvasSize);
 
-        const animate = () => {
+        const animate = () => 
+        {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Draw dots
             const dotSpacing = 35;
             ctx.fillStyle = 'rgba(128, 128, 128, 0.5)';
-            for (let x = 0; x < canvas.width; x += dotSpacing) {
-                for (let y = 0; y < canvas.height; y += dotSpacing) {
+            for (let x = 0; x < canvas.width; x += dotSpacing) 
+            {
+                for (let y = 0; y < canvas.height; y += dotSpacing) 
+                {
                     ctx.beginPath();
                     ctx.arc(x, y, 1, 0, Math.PI * 2);
                     ctx.fill();
@@ -41,7 +49,8 @@ const BlogBackground:React.FC = () => {
 
         animate();
 
-        return () => {
+        return () => 
+        {
             window.removeEventListener('resize', setCanvasSize);
         };
     }, []);
