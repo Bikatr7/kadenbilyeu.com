@@ -18,7 +18,6 @@ import LoadingAnimation from './components/LoadingAnimation.tsx';
 
 import Router from './Router.tsx';
 
-
 function App() 
 {
     const [isLoading, setIsLoading] = useState(true);
