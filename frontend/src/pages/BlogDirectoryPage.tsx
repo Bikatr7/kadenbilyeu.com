@@ -75,7 +75,7 @@ const BlogDirectoryPage: React.FC = () => {
                 {isLoggedIn ? (
                     <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>Logout</Button>
                 ) : (
-                    <Login onLogin={handleLogin} />
+                    <Login onLogin={handleLogin} onLogout={handleLogout} />
                 )}
             </Flex>
 

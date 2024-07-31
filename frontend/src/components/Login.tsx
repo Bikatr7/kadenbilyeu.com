@@ -11,11 +11,15 @@ import { Box, Button, Input, Modal, ModalOverlay, ModalContent, ModalHeader, Mod
 // util
 import { getURL } from '../utils';
 
+// jwt-decode
+import { jwtDecode } from 'jwt-decode';
+
 interface LoginProps {
     onLogin: () => void;
+    onLogout: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -24,17 +28,29 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const [step, setStep] = useState(1); // 1: login, 2: TOTP verification
     const [isLoading, setIsLoading] = useState(true);
 
+    const isTokenExpired = (token: string) => {
+        try {
+            const decoded = jwtDecode(token);
+            const currentTime = Date.now() / 1000;
+            return decoded.exp ? decoded.exp < currentTime : true;
+        } catch (error) {
+            return true;
+        }
+    };
+
     useEffect(() => {
         const checkLoginStatus = async () => {
             const token = localStorage.getItem('token');
-            if (token) {
+            if (token && !isTokenExpired(token)) {
                 onLogin();
+            } else {
+                onLogout();
             }
             setIsLoading(false);
         };
 
         checkLoginStatus();
-    }, [onLogin]);
+    }, [onLogin, onLogout]);
 
     const handleNext = () => {
         setStep(2);

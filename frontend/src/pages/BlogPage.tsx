@@ -1,20 +1,10 @@
-// Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7)
-// Use of this source code is governed by an GNU Affero General Public License v3.0
-// license that can be found in the LICENSE file
-
-// react
+// Import necessary dependencies
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-
-// chakra-ui
 import { Box, Button, VStack, Text, Flex, Spinner } from "@chakra-ui/react";
-
-// components
 import BlogBackground from "../components/BlogBackground";
 import Login from "../components/Login";
 import MakePost from "../components/MakePost";
-
-// util
 import { getURL } from '../utils';
 
 interface BlogPost {
@@ -36,13 +26,13 @@ const BlogPage: React.FC = () => {
     try {
       const countResponse = await fetch(getURL("/blog-count"));
       const newCount = await countResponse.json();
-      
+
       const cachedCount = localStorage.getItem('blogPagePostCount');
-      
+
       if (!cachedCount || newCount !== parseInt(cachedCount, 10)) {
         const postsResponse = await fetch(getURL("/latest-blogs?limit=5"));
         const newPosts = await postsResponse.json();
-        
+
         setBlogPosts(newPosts);
         localStorage.setItem('blogPageBlogPosts', JSON.stringify(newPosts));
         localStorage.setItem('blogPagePostCount', newCount.toString());
@@ -97,6 +87,27 @@ const BlogPage: React.FC = () => {
     };
   }, []);
 
+  const handleDelete = async (postId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(getURL(`/blog/${postId}`), {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        fetchBlogPosts();
+      } else {
+        const errorData = await response.json();
+        console.error("Error deleting blog post:", errorData.detail);
+      }
+    } catch (error) {
+      console.error("An error occurred while deleting the blog post:", error);
+    }
+  };
+
   return (
     <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow={'hidden'} maxHeight={'83vh'}>
       <BlogBackground />
@@ -110,7 +121,7 @@ const BlogPage: React.FC = () => {
             </Button>
           </>
         ) : (
-          <Login onLogin={handleLogin} />
+          <Login onLogin={handleLogin} onLogout={handleLogout} />
         )}
       </Flex>
 
@@ -185,8 +196,7 @@ const BlogPage: React.FC = () => {
           border={'1px solid darkgrey'}
         >
           <VStack align="stretch">
-            <Text cursor="pointer" _hover={{ color: 'yellow' }}>Edit</Text>
-            <Text cursor="pointer" _hover={{ color: 'yellow' }}>Delete</Text>
+            <Text cursor="pointer" _hover={{ color: 'yellow' }} onClick={() => handleDelete(contextMenu.postId!)}>Delete</Text>
           </VStack>
         </Box>
       )}
