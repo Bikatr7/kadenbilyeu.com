@@ -9,7 +9,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Button, VStack, Text, Flex, Spinner } from "@chakra-ui/react";
+import { Box, Button, VStack, Text, Flex, Spinner, useToast } from "@chakra-ui/react";
 
 // components
 import BlogBackground from "../components/BlogBackground";
@@ -37,6 +37,7 @@ const BlogPage: React.FC = () =>
   const [contextMenu, setContextMenu] = useState<{ x: number, y: number, postId: string | null }>({ x: 0, y: 0, postId: null });
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
+  const toast = useToast();
 
   const fetchBlogPosts = useCallback(async () => 
   {
@@ -71,7 +72,17 @@ const BlogPage: React.FC = () =>
     document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
     setIsLoggedIn(false);
   };
-  const handleNewPost = () => fetchBlogPosts();
+  const handleNewPost = () => 
+  {
+    fetchBlogPosts();
+    toast({
+      title: "New post created.",
+      description: "Your new post has been successfully created.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+  };
 
   const handleRightClick = (e: React.MouseEvent, postId: string) => 
   {
@@ -150,16 +161,84 @@ const BlogPage: React.FC = () =>
     setContextMenu({ x: 0, y: 0, postId: null }); 
   };
 
+  const handleFileUpload = async (file: File) => 
+  {
+    const formData = new FormData();
+    formData.append('file', file);
+    const token = localStorage.getItem('token');
+
+    try 
+    {
+      const response = await fetch(getURL('/replace-database/'), 
+      {
+        method: 'POST',
+        headers: 
+        {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (response.ok) 
+      {
+        console.log('Database replaced successfully');
+        toast({
+          title: "Database replaced.",
+          description: "The database has been successfully replaced.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      } 
+      else 
+      {
+        const errorData = await response.json();
+        console.error('Error replacing database:', errorData.detail);
+        toast({
+          title: "Error replacing database.",
+          description: errorData.detail,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } 
+    catch (error) 
+    {
+      console.error('An error occurred while uploading the file:', error);
+      toast({
+        title: "Error replacing database.",
+        description: "An error occurred while uploading the file.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => 
+  {
+    const file = event.target.files?.[0];
+    if (file) 
+    {
+      handleFileUpload(file);
+    }
+  };
+
   return (
     <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow={'hidden'} maxHeight={'83vh'}>
       <BlogBackground />
 
-      <Flex justify="space-between" p="1rem" bg="black" width="100%">
+      <Flex justify="flex-end" p="1rem" bg="black" width="100%" gap="1rem">
         {isLoggedIn ? (
           <>
             <MakePost onPost={handleNewPost} />
             <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
               Logout
+            </Button>
+            <Button as="label" _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
+              Upload Database
+              <input type="file" accept=".pgp" style={{ display: 'none' }} onChange={handleFileChange} />
             </Button>
           </>
         ) : (

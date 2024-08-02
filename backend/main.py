@@ -317,8 +317,10 @@ def get_blog_count(db: Session = Depends(get_db)):
 def read_all_blog_posts(db:Session = Depends(get_db)):
     return crud.get_all_blog_posts(db)
 
-@app.post("/replace-database/")
-async def upload_backup(file: UploadFile = File(...) , current_user:str = Depends(get_current_active_user)):
+@app.post("/replace-database")
+async def upload_backup(file: UploadFile = File(...),
+                        db:Session = Depends(get_db),
+                        current_user:str = Depends(get_current_active_user)):
 
     try:
         global maintenance_mode
