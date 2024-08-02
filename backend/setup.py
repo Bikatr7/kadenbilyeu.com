@@ -41,6 +41,7 @@ def setup_local_environment() -> None:
         "ACCESS_TOKEN_SECRET": "secret",
         "REFRESH_TOKEN_SECRET": "secret",
         "NODE_ENV": "development",
+        "ENCRYPTION_KEY": "password"
     }
 
 
@@ -57,6 +58,8 @@ def setup_local_environment() -> None:
                 "TOTP_SECRET=" + env_to_key_local["TOTP_SECRET"] + "\n" +
                 "ENVIRONMENT=development" + "\n" +
                 "ACCESS_TOKEN_SECRET=" + env_to_key_local["ACCESS_TOKEN_SECRET"] + "\n"
+                "REFRESH_TOKEN_SECRET=" + env_to_key_local["REFRESH_TOKEN_SECRET"] + "\n"
+                "ENCRYPTION_KEY=" + env_to_key_local["ENCRYPTION_KEY"] + "\n"
             )
           
         else:

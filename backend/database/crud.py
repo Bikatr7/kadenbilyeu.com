@@ -11,9 +11,9 @@ import typing
 from sqlalchemy.orm import Session
 
 ## custom modules
-import models, schemas
+from .entities import BlogPostModel, BlogPostUpdate
 
-def get_blog_posts(db:Session, skip:int=0, limit:int=10) -> typing.List[models.BlogPost]:
+def get_blog_posts(db:Session, skip:int=0, limit:int=10) -> typing.List[BlogPostModel]:
     
     """
     
@@ -25,13 +25,13 @@ def get_blog_posts(db:Session, skip:int=0, limit:int=10) -> typing.List[models.B
     limit (int): The number of blog posts to get
 
     Returns:
-    typing.List[models.BlogPost]: The list of blog posts
+    typing.List[BlogPostModel]: The list of blog posts
 
     """
 
-    return db.query(models.BlogPost).offset(skip).limit(limit).all()
+    return db.query(BlogPostModel).offset(skip).limit(limit).all()
 
-def get_all_blog_posts(db:Session) -> typing.List[models.BlogPost]:
+def get_all_blog_posts(db:Session) -> typing.List[BlogPostModel]:
 
     """
 
@@ -43,13 +43,13 @@ def get_all_blog_posts(db:Session) -> typing.List[models.BlogPost]:
     limit (int): The number of blog posts to get
 
     Returns:
-    typing.List[models.BlogPost]: The list of blog posts
+    typing.List[BlogPostModel]: The list of blog posts
 
     """
 
-    return db.query(models.BlogPost).order_by(models.BlogPost.created_at.desc()).all()
+    return db.query(BlogPostModel).order_by(BlogPostModel.created_at.desc()).all()
 
-def get_recent_blog_posts(db:Session, skip:int=0, limit:int=10) -> typing.List[models.BlogPost]:
+def get_recent_blog_posts(db:Session, skip:int=0, limit:int=10) -> typing.List[BlogPostModel]:
 
     """
 
@@ -61,13 +61,13 @@ def get_recent_blog_posts(db:Session, skip:int=0, limit:int=10) -> typing.List[m
     limit (int): The number of blog posts to get
 
     Returns:
-    typing.List[models.BlogPost]: The list of blog posts
+    typing.List[BlogPostModel]: The list of blog posts
 
     """
 
-    return db.query(models.BlogPost).order_by(models.BlogPost.created_at.desc()).offset(skip).limit(limit).all()
+    return db.query(BlogPostModel).order_by(BlogPostModel.created_at.desc()).offset(skip).limit(limit).all()
 
-def get_blog_post(db:Session, blog_post_id:UUID) -> models.BlogPost:
+def get_blog_post(db:Session, blog_post_id:UUID) -> BlogPostModel:
 
     """
 
@@ -78,13 +78,13 @@ def get_blog_post(db:Session, blog_post_id:UUID) -> models.BlogPost:
     blog_post_id (UUID): The ID of the blog post
 
     Returns:
-    models.BlogPost: The blog post
+    BlogPostModel: The blog post
 
     """
 
-    return db.query(models.BlogPost).filter(models.BlogPost.id == blog_post_id).first()
+    return db.query(BlogPostModel).filter(BlogPostModel.id == blog_post_id).first()
 
-def create_blog_post(db:Session, db_blog_post:models.BlogPost) -> models.BlogPost:
+def create_blog_post(db:Session, db_blog_post:BlogPostModel) -> BlogPostModel:
 
     """
 
@@ -92,10 +92,10 @@ def create_blog_post(db:Session, db_blog_post:models.BlogPost) -> models.BlogPos
 
     Args:
     db (Session): The SQLAlchemy session
-    db_blog_post (models.BlogPost): The blog post to create
+    db_blog_post (BlogPostModel): The blog post to create
 
     Returns:
-    models.BlogPost: The created blog post
+    BlogPostModel: The created blog post
 
     """
 
@@ -105,7 +105,7 @@ def create_blog_post(db:Session, db_blog_post:models.BlogPost) -> models.BlogPos
 
     return db_blog_post
 
-def update_blog_post(db:Session, blog_post_id:UUID, blog_post:schemas.BlogPostUpdate) -> models.BlogPost:
+def update_blog_post(db:Session, blog_post_id:UUID, blog_post:BlogPostUpdate) -> BlogPostModel:
 
     """
 
@@ -117,11 +117,11 @@ def update_blog_post(db:Session, blog_post_id:UUID, blog_post:schemas.BlogPostUp
     blog_post (schemas.BlogPostUpdate): The blog post to update
 
     Returns:
-    models.BlogPost: The updated blog post
+    BlogPostModel: The updated blog post
 
     """
 
-    db_blog_post = db.query(models.BlogPost).filter(models.BlogPost.id == blog_post_id).first()
+    db_blog_post = db.query(BlogPostModel).filter(BlogPostModel.id == blog_post_id).first()
 
     if(db_blog_post):
         for key, value in blog_post.model_dump().items():
@@ -131,7 +131,7 @@ def update_blog_post(db:Session, blog_post_id:UUID, blog_post:schemas.BlogPostUp
 
     return db_blog_post
 
-def delete_blog_post(db:Session, blog_post_id:UUID) -> models.BlogPost:
+def delete_blog_post(db:Session, blog_post_id:UUID) -> BlogPostModel:
 
     """
 
@@ -142,11 +142,11 @@ def delete_blog_post(db:Session, blog_post_id:UUID) -> models.BlogPost:
     blog_post_id (UUID): The ID of the blog post
     
     Returns:
-    models.BlogPost: The deleted blog post
+    BlogPostModel: The deleted blog post
 
     """
 
-    db_blog_post = db.query(models.BlogPost).filter(models.BlogPost.id == blog_post_id).first()
+    db_blog_post = db.query(BlogPostModel).filter(BlogPostModel.id == blog_post_id).first()
     if(db_blog_post):
         db.delete(db_blog_post)
         db.commit()

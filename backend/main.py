@@ -30,12 +30,10 @@ from jwt import PyJWTError
 from sqlalchemy.orm import Session
 
 ## custom modules
-import schemas
-from dependencies import get_db
 from database import crud
-from database.manager import Base, engine, replace_sqlite_db
+from database.manager import Base, engine, replace_sqlite_db, get_db
 from backup import decompress_file, decrypt_file
-import models
+from database.entities import BlogPostRead, BlogPostCreate, BlogPostModel, BlogPostUpdate
 
 ## I promise I will clean this up backend code up later. I'm just trying to get it to work for now.
 
@@ -246,13 +244,13 @@ def refresh_token(refresh_token: str = Cookie(None)):
     )
     return response
 
-@app.post("/blog", response_model=schemas.BlogPost)
+@app.post("/blog", response_model=BlogPostRead)
 def create_blog_post(
-    blog_post:schemas.BlogPostCreate, 
+    blog_post:BlogPostCreate, 
     db:Session = Depends(get_db), 
     current_user:str = Depends(get_current_active_user)):
     
-    db_blog_post = models.BlogPost(
+    db_blog_post = BlogPostModel(
         title=blog_post.title,
         content=blog_post.content,
         author=blog_post.author,
@@ -262,7 +260,7 @@ def create_blog_post(
 
     return crud.create_blog_post(db=db, db_blog_post=db_blog_post)
 
-@app.get("/blog", response_model=list[schemas.BlogPost])
+@app.get("/blog", response_model=list[BlogPostRead])
 def read_blog_posts(
     skip:int = 0, 
     limit:int = 10, 
@@ -270,7 +268,7 @@ def read_blog_posts(
 
     return crud.get_blog_posts(db, skip=skip, limit=limit)
 
-@app.get("/blog/{blog_post_id}", response_model=schemas.BlogPost)
+@app.get("/blog/{blog_post_id}", response_model=BlogPostRead)
 def read_blog_post(
     blog_post_id:UUID, 
     db:Session = Depends(get_db)):
@@ -280,10 +278,10 @@ def read_blog_post(
         raise HTTPException(status_code=404, detail="Blog post not found")
     return db_blog_post
 
-@app.put("/blog/{blog_post_id}", response_model=schemas.BlogPost)
+@app.put("/blog/{blog_post_id}", response_model=BlogPostRead)
 def update_blog_post(
     blog_post_id:UUID, 
-    blog_post:schemas.BlogPostUpdate, 
+    blog_post:BlogPostUpdate, 
     db:Session = Depends(get_db), 
     current_user:str = Depends(get_current_active_user)):
 
@@ -292,7 +290,7 @@ def update_blog_post(
         raise HTTPException(status_code=404, detail="Blog post not found")
     return db_blog_post
 
-@app.delete("/blog/{blog_post_id}", response_model=schemas.BlogPost)
+@app.delete("/blog/{blog_post_id}", response_model=BlogPostRead)
 def delete_blog_post(
     blog_post_id:UUID, 
     db:Session = Depends(get_db), 
@@ -303,7 +301,7 @@ def delete_blog_post(
         raise HTTPException(status_code=404, detail="Blog post not found")
     return db_blog_post
 
-@app.get("/latest-blogs", response_model=list[schemas.BlogPost])
+@app.get("/latest-blogs", response_model=list[BlogPostRead])
 def read_latest_blog_posts(
     limit:int = 5,
     db:Session = Depends(get_db)):
@@ -312,9 +310,9 @@ def read_latest_blog_posts(
 
 @app.get("/blog-count", response_model=int)
 def get_blog_count(db: Session = Depends(get_db)):
-    return db.query(models.BlogPost).count()
+    return db.query(BlogPostModel).count()
 
-@app.get("/all-blogs", response_model=list[schemas.BlogPost])
+@app.get("/all-blogs", response_model=list[BlogPostRead])
 def read_all_blog_posts(db:Session = Depends(get_db)):
     return crud.get_all_blog_posts(db)
 
