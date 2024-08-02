@@ -6,7 +6,7 @@ from sqlalchemy import Column, String, Text, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime, timezone
 import uuid
-from database import Base
+from database.manager import Base
 
 class BlogPost(Base):
     __tablename__ = "blog_posts"

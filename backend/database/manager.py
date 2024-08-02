@@ -2,11 +2,13 @@
 ## Use of this source code is governed by an GNU Affero General Public License v3.0
 ## license that can be found in the LICENSE file.
 
+## built-in libraries
+import os
+
+## third-party libraries
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker, close_all_sessions
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
-
-import os
 
 DATABASE_URL:str = "sqlite:///./blog.db"
 

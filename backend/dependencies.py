@@ -2,7 +2,7 @@
 ## Use of this source code is governed by an GNU Affero General Public License v3.0
 ## license that can be found in the LICENSE file.
 
-from database import SessionLocal
+from database.manager import SessionLocal
 from sqlalchemy.orm import Session
 
 def get_db():

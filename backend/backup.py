@@ -1,18 +1,48 @@
+## Copyright 2024 Kaden Bilyeu (Bikatr7) (https://github.com/Bikatr7) (https://github.com/Bikatr7/kadenbilyeu.com) (https://kadenbilyeu.com)
+## Use of this source code is governed by an GNU Affero General Public License v3.0
+## license that can be found in the LICENSE file.
+
+## built-in libraries
 import os
+
 import shutil
+
 import zipfile
+
 import smtplib
+
+import typing
+
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
-from gnupg import GPG
+
 from datetime import datetime
+
+## third-party libraries
+from gnupg import GPG
 
 ##----------------------------------/----------------------------------##
 
-def get_envs():
-    with open(".smtp.env", "r") as f:
+def get_envs() -> typing.Tuple[str, str, int, str, str, str, str]:
+
+    """
+    
+    Get the environment variables from the .env file
+
+    Returns:
+    ENCRYPTION_KEY (str): The encryption key to encrypt/decrypt the database
+    SMTP_SERVER (str): The SMTP server to send the email
+    SMTP_PORT (int): The SMTP port to send the email
+    SMTP_USER (str): The SMTP user to send the email
+    SMTP_PASSWORD (str): The SMTP password to send the email
+    FROM_EMAIL (str): The email address to send the email from
+    TO_EMAIL (str): The email address to send the email to
+
+    """
+
+    with open(".env", "r") as f:
         for line in f:
             key, value = line.strip().split("=")
             os.environ[key] = value
@@ -37,13 +67,41 @@ def get_envs():
 
 ##----------------------------------/----------------------------------##
 
-def export_db(db_path, export_path):
+def export_db(db_path:str, export_path:str) -> str:
+
+    """
+
+    Export the SQLite database to a new file
+
+    Args:
+    db_path (str): The path to the SQLite database file
+    export_path (str): The path to the exported SQLite database file
+
+    Returns:
+    export_path (str): The path to the exported SQLite database file
+
+    """
+
     shutil.copy(db_path, export_path)
     return export_path
 
 ##----------------------------------/----------------------------------##
 
-def encrypt_file(file_path, passphrase):
+def encrypt_file(file_path:str, passphrase:str) -> str:
+
+    """
+
+    Encrypt the file using the GPG encryption algorithm
+
+    Args:
+    file_path (str): The path to the file to encrypt
+    passphrase (str): The passphrase to encrypt the file with
+
+    Returns:
+    encrypted_path (str): The path to the encrypted file
+
+    """
+
     gpg = GPG()
     encrypted_path = file_path + '.pgp'
     
@@ -61,7 +119,20 @@ def encrypt_file(file_path, passphrase):
 
     return encrypted_path
 
-def decrypt_file(file_path, passphrase, output_path):
+def decrypt_file(file_path:str, passphrase:str) -> str:
+
+    """
+
+    Decrypt the file using the GPG encryption algorithm
+
+    Args:
+    file_path (str): The path to the file to decrypt
+
+    Returns:
+    decrypted_path (str): The path to the decrypted file
+
+    """
+
     gpg = GPG()
     decrypted_path = file_path.replace('.pgp', '')
     
@@ -79,14 +150,41 @@ def decrypt_file(file_path, passphrase, output_path):
 
 ##----------------------------------/----------------------------------##
 
-def compress_file(file_path):
+def compress_file(file_path:str) -> str:
+
+    """
+
+    Compress the file into a zip archive
+
+    Args:
+    file_path (str): The path to the file to compress
+
+    Returns:
+    compressed_path (str): The path to the compressed file
+
+    """
+
     compressed_path = file_path + '.zip'
+
     with zipfile.ZipFile(compressed_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
         zipf.write(file_path, os.path.basename(file_path))
+
     return compressed_path
 
-def decompress_file(file_path, decompressed_path):
-    print(f"Decompressing file: {file_path}")
+def decompress_file(file_path:str, decompressed_path:str) -> str:
+
+    """
+
+    Decompress the file from a zip archive
+
+    Args:
+    file_path (str): The path to the file to decompress
+
+    Returns:
+    decompressed_path (str): The path to the decompressed file
+
+    """
+    
     with zipfile.ZipFile(file_path, 'r') as zipf:
         
         ## Extract all files to a temporary directory
@@ -105,19 +203,36 @@ def decompress_file(file_path, decompressed_path):
         shutil.move(extracted_file_path, decompressed_path)
     
         shutil.rmtree(temp_dir)
-
-    print(f"Decompressed file: {extracted_file_path}")
-    print(f"Decompressed file: {decompressed_path}")
         
     return decompressed_path
 
 ##----------------------------------/----------------------------------##
 
-def send_email(subject, body, to_email, attachment_path, from_email, smtp_server, smtp_port, smtp_user, smtp_password):
+def send_email(subject:str, body:str, to_email:str, attachment_path:str, from_email:str, smtp_server:str, smtp_port:int, smtp_user:str, smtp_password:str) -> None:
+
+    """
+
+    Send an email with an attachment
+
+    Args:
+    subject (str): The subject of the email
+    body (str): The body of the email
+    to_email (str): The email address to send the email to
+    attachment_path (str): The path to the attachment to send
+    from_email (str): The email address to send the email from
+    smtp_server (str): The SMTP server to send the email
+    smtp_port (int): The SMTP port to send the email
+    smtp_user (str): The SMTP user to send the email
+    smtp_password (str): The SMTP password to send the email
+
+    """
+
+
     msg = MIMEMultipart()
     msg['Subject'] = subject
     msg['From'] = from_email
     msg['To'] = to_email
+
     msg.attach(MIMEText(body, 'plain'))
 
     with open(attachment_path, 'rb') as f:
@@ -128,21 +243,33 @@ def send_email(subject, body, to_email, attachment_path, from_email, smtp_server
         msg.attach(part)
 
     try:
+
         with smtplib.SMTP(smtp_server, smtp_port) as server:
             server.starttls() 
             server.login(smtp_user, smtp_password)
             server.send_message(msg)
             server.quit()
+
     except Exception as e:
         print(f"Error: {e}")
 
 ##----------------------------------/----------------------------------##
 
-def perform_backup():
+def perform_backup() -> None:
+
+    """
+
+    Perform the backup process
+
+    """
+
     ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL = get_envs()
 
     db_path = 'blog.db'
-    export_path = f'exported_db_{datetime.now().strftime("%Y%m%d%H%M%S")}.db'
+
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+
+    export_path = f'exported_db_{timestamp}.db'
 
     export_db(db_path, export_path)
 
@@ -153,8 +280,8 @@ def perform_backup():
     os.remove(compressed_path)
 
     send_email(
-        subject='Daily SQLite Database Backup',
-        body='Please find the attached encrypted and compressed SQLite database backup.',
+        subject=f'Daily SQLite Database Backup ({timestamp})',
+        body='Please find the attached encrypted and compressed SQLite database backup. This email was sent automatically. Do not reply.',
         to_email=TO_EMAIL,
         attachment_path=encrypted_path,
         from_email=FROM_EMAIL,

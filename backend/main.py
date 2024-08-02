@@ -30,9 +30,10 @@ from jwt import PyJWTError
 from sqlalchemy.orm import Session
 
 ## custom modules
-import schemas, crud
+import schemas
 from dependencies import get_db
-from database import Base, engine, replace_sqlite_db
+from database import crud
+from database.manager import Base, engine, replace_sqlite_db
 from backup import decompress_file, decrypt_file
 import models
 
@@ -331,7 +332,7 @@ async def upload_backup(file: UploadFile = File(...),
             shutil.copyfileobj(file.file, buffer)
 
         with open("backup.zip.pgp", "rb") as f:
-            decrypted_file = decrypt_file("backup.zip.pgp", ENCRYPTION_KEY, "backup.zip")
+            decrypted_file = decrypt_file("backup.zip.pgp", ENCRYPTION_KEY) # type: ignore
 
         with open(decrypted_file, "rb") as f:
             decompressed_file = decompress_file(decrypted_file, "backup.db")
