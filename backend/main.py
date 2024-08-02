@@ -7,11 +7,13 @@ from uuid import UUID
 
 import typing
 import os
+import threading
+import shutil
 from datetime import datetime, timedelta, timezone
 
 ## third-party libraries
 
-from fastapi import FastAPI, HTTPException, status, Cookie, Depends
+from fastapi import FastAPI, HTTPException, status, Cookie, Depends, File, UploadFile, Request
 from fastapi.responses import JSONResponse
 from fastapi.security import  HTTPBasicCredentials, HTTPBasic, OAuth2PasswordBearer
 from fastapi.middleware.cors import CORSMiddleware
@@ -30,11 +32,14 @@ from sqlalchemy.orm import Session
 ## custom modules
 import schemas, crud
 from dependencies import get_db
-from database import Base, engine
+from database import Base, engine, replace_sqlite_db
+from backup import decompress_file, decrypt_file
 import models
 
 ## I promise I will clean this up backend code up later. I'm just trying to get it to work for now.
 
+maintenance_mode = False
+maintenance_lock = threading.Lock()
 
 TOKEN_ALGORITHM = "HS256"
 TOKEN_EXPIRE_MINUTES = 1440
@@ -92,6 +97,8 @@ app.add_middleware(
 )
 
 TURNSTILE_SECRET_KEY = os.environ.get("TURNSTILE_SECRET_KEY")
+ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
+
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
 
 ADMIN_USER = os.environ.get("ADMIN_USER")
@@ -114,12 +121,14 @@ if(not any([ADMIN_USER, ADMIN_PASS_HASH])):
     TOTP_SECRET = os.environ.get("TOTP_SECRET")
     ACCESS_TOKEN_SECRET = os.environ.get("ACCESS_TOKEN_SECRET")
     REFRESH_TOKEN_SECRET = os.environ.get("REFRESH_TOKEN_SECRET")
+    ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
 
 assert ADMIN_USER, "ADMIN_USER environment variable not set"
 assert ADMIN_PASS_HASH, "ADMIN_PASS_HASH environment variable not set"
 assert TOTP_SECRET, "TOTP_SECRET environment variable not set"
 assert ACCESS_TOKEN_SECRET, "ACCESS_TOKEN_SECRET environment variable not set"
 assert REFRESH_TOKEN_SECRET, "REFRESH_TOKEN_SECRET environment variable not set"
+assert ENCRYPTION_KEY, "ENCRYPTION_KEY environment variable not set"
 
 def create_access_token(data:dict, expires_delta:typing.Optional[timedelta] = None):
     to_encode = data.copy()
@@ -182,6 +191,16 @@ def get_current_active_user(current_user:str = Depends(get_current_user)):
     if(current_user != ADMIN_USER):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
     return current_user
+
+@app.middleware("http")
+async def maintenance_middleware(request:Request, call_next):
+    global maintenance_mode
+    if(maintenance_mode):
+        return JSONResponse(status_code=503, content={"message": "Server is in maintenance mode"})
+    
+    response = await call_next(request)
+    
+    return response
 
 
 @app.post("/login", response_model=LoginToken)
@@ -298,3 +317,33 @@ def get_blog_count(db: Session = Depends(get_db)):
 def read_all_blog_posts(db:Session = Depends(get_db)):
     return crud.get_all_blog_posts(db)
 
+@app.post("/replace-database/")
+async def upload_backup(file: UploadFile = File(...) , current_user:str = Depends(get_current_active_user)):
+
+    try:
+        global maintenance_mode
+        with maintenance_lock:
+            maintenance_mode = True
+
+        with open("backup.zip.pgp", "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        with open("backup.zip.pgp", "rb") as f:
+            decrypted_file = decrypt_file("backup.zip.pgp", ENCRYPTION_KEY, "backup.zip")
+
+        with open(decrypted_file, "rb") as f:
+            decompressed_file = decompress_file(decrypted_file, "backup.db")
+
+        replace_sqlite_db(decompressed_file, "blog.db")
+
+        os.remove("backup.zip.pgp")
+        os.remove(decrypted_file)
+
+        return {"message": "Database replaced successfully"}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+        with maintenance_lock:
+            maintenance_mode = False

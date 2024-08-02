@@ -41,6 +41,8 @@ def export_db(db_path, export_path):
     shutil.copy(db_path, export_path)
     return export_path
 
+##----------------------------------/----------------------------------##
+
 def encrypt_file(file_path, passphrase):
     gpg = GPG()
     encrypted_path = file_path + '.pgp'
@@ -59,6 +61,22 @@ def encrypt_file(file_path, passphrase):
 
     return encrypted_path
 
+def decrypt_file(file_path, passphrase, output_path):
+    gpg = GPG()
+    decrypted_path = file_path.replace('.pgp', '')
+    
+    with open(file_path, 'rb') as f:
+        status = gpg.decrypt_file(
+            f, 
+            passphrase=passphrase, 
+            output=decrypted_path
+        )
+        
+    if(not status.ok):
+        raise ValueError('Failed to decrypt the file:', status.stderr)
+
+    return decrypted_path
+
 ##----------------------------------/----------------------------------##
 
 def compress_file(file_path):
@@ -66,6 +84,32 @@ def compress_file(file_path):
     with zipfile.ZipFile(compressed_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
         zipf.write(file_path, os.path.basename(file_path))
     return compressed_path
+
+def decompress_file(file_path, decompressed_path):
+    print(f"Decompressing file: {file_path}")
+    with zipfile.ZipFile(file_path, 'r') as zipf:
+        
+        ## Extract all files to a temporary directory
+        temp_dir = os.path.join(os.getcwd(), "temp_extracted")
+        os.makedirs(temp_dir, exist_ok=True)
+        zipf.extractall(temp_dir)
+        
+        extracted_files = os.listdir(temp_dir)
+        
+        if(not extracted_files):
+            raise FileNotFoundError("No files found in the zip archive")
+        
+        extracted_file = extracted_files[0]
+        extracted_file_path = os.path.join(temp_dir, extracted_file)
+        
+        shutil.move(extracted_file_path, decompressed_path)
+    
+        shutil.rmtree(temp_dir)
+
+    print(f"Decompressed file: {extracted_file_path}")
+    print(f"Decompressed file: {decompressed_path}")
+        
+    return decompressed_path
 
 ##----------------------------------/----------------------------------##
 
@@ -101,7 +145,6 @@ def perform_backup():
     export_path = f'exported_db_{datetime.now().strftime("%Y%m%d%H%M%S")}.db'
 
     export_db(db_path, export_path)
-    os.remove(db_path)
 
     compressed_path = compress_file(export_path)
     os.remove(export_path)
@@ -130,3 +173,11 @@ def perform_backup():
     except Exception:
         pass
 
+    finally:
+        try:
+            os.remove(export_path)
+            os.remove(compressed_path)
+            os.remove(encrypted_path)
+
+        except:
+            pass
