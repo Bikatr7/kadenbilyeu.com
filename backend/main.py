@@ -22,26 +22,25 @@ from passlib.context import CryptContext
 
 from pydantic import BaseModel
 
-import pyotp
-
-import jwt
-from jwt import PyJWTError
-
 from sqlalchemy.orm import Session
 
 ## custom modules
+from constants import get_env_variables
+
+get_env_variables()
+
+from constants import ENCRYPTION_KEY, ENVIRONMENT, TOKEN_EXPIRE_MINUTES
+
 from database import crud
 from database.manager import Base, engine, replace_sqlite_db, get_db
-from backup import decompress_file, decrypt_file
 from database.entities import BlogPostRead, BlogPostCreate, BlogPostModel, BlogPostUpdate
 
-## I promise I will clean this up backend code up later. I'm just trying to get it to work for now.
+from backup import decompress_file, decrypt_file
+
+from auth import verify_credentials, verify_totp, verify_token, get_current_active_user, create_access_token, create_refresh_token
 
 maintenance_mode = False
 maintenance_lock = threading.Lock()
-
-TOKEN_ALGORITHM = "HS256"
-TOKEN_EXPIRE_MINUTES = 1440
 
 ##-----------------------------------------start-of-utility-functions----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -50,19 +49,6 @@ def get_url() -> str:
         return "http://api.localhost:5000"
     
     return "https://api.kadenbilyeu.com"
-
-def get_env_variables() -> None:
-
-    """
-
-    Only used in development. This function reads the .env file and sets the environment variables.
-
-    """
-
-    with open(".env") as f:
-        for line in f:
-            key, value = line.strip().split("=")
-            os.environ[key] = value
 
 ##-----------------------------------------start-of-pydantic-models----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -76,120 +62,11 @@ class LoginToken(BaseModel):
     token_type: str
     refresh_token: str
 
-class TokenData(BaseModel):
-    username: str
-
 ##-----------------------------------------start-of-main----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 app = FastAPI()
 
-Base.metadata.create_all(bind=engine)
-
-## CORS setup
-origins = ["https://kadenbilyeu.com", "http://localhost:5173"]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-TURNSTILE_SECRET_KEY = os.environ.get("TURNSTILE_SECRET_KEY")
-ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
-
-ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
-
-ADMIN_USER = os.environ.get("ADMIN_USER")
-ADMIN_PASS_HASH = os.environ.get("ADMIN_PASS_HASH")
-TOTP_SECRET = os.environ.get("TOTP_SECRET")
-ACCESS_TOKEN_SECRET = os.environ.get("ACCESS_TOKEN_SECRET")
-REFRESH_TOKEN_SECRET = os.environ.get("REFRESH_TOKEN_SECRET")
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
-security = HTTPBasic()
-
-## Turnstile verification endpoint won't be used if the secret key is not set
-## but for the other endpoints, we need to make sure the root keys are set
-if(not any([ADMIN_USER, ADMIN_PASS_HASH])):
-    get_env_variables()
-    ADMIN_USER = os.environ.get("ADMIN_USER")
-    ADMIN_PASS_HASH = os.environ.get("ADMIN_PASS_HASH")
-    TOTP_SECRET = os.environ.get("TOTP_SECRET")
-    ACCESS_TOKEN_SECRET = os.environ.get("ACCESS_TOKEN_SECRET")
-    REFRESH_TOKEN_SECRET = os.environ.get("REFRESH_TOKEN_SECRET")
-    ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
-
-assert ADMIN_USER, "ADMIN_USER environment variable not set"
-assert ADMIN_PASS_HASH, "ADMIN_PASS_HASH environment variable not set"
-assert TOTP_SECRET, "TOTP_SECRET environment variable not set"
-assert ACCESS_TOKEN_SECRET, "ACCESS_TOKEN_SECRET environment variable not set"
-assert REFRESH_TOKEN_SECRET, "REFRESH_TOKEN_SECRET environment variable not set"
-assert ENCRYPTION_KEY, "ENCRYPTION_KEY environment variable not set"
-
-def create_access_token(data:dict, expires_delta:typing.Optional[timedelta] = None):
-    to_encode = data.copy()
-    if(expires_delta):
-        expire = datetime.now(timezone.utc) + expires_delta
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
-
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, ACCESS_TOKEN_SECRET, algorithm=TOKEN_ALGORITHM) # type: ignore
-    return encoded_jwt
-
-
-def create_refresh_token(data:dict, expires_delta:typing.Optional[timedelta] = None):
-    to_encode = data.copy()
-    if(expires_delta):
-        expire = datetime.now(timezone.utc) + expires_delta
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(days=1)
-
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, REFRESH_TOKEN_SECRET, algorithm=TOKEN_ALGORITHM) # type: ignore
-    return encoded_jwt
-
-def verify_token(token:str):
-    try:
-        payload = jwt.decode(token, ACCESS_TOKEN_SECRET, algorithms=[TOKEN_ALGORITHM]) # type: ignore
-        username:str = payload.get("sub")
-        if(username is None):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-        return TokenData(username=username)
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")
-    except PyJWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-
-
-def verify_credentials(credentials:HTTPBasicCredentials):
-    if(not(credentials.username == ADMIN_USER and pwd_context.verify(credentials.password, ADMIN_PASS_HASH))):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Unauthorized",
-            headers={"WWW-Authenticate": "Basic"},
-        )
-
-def verify_totp(totp_code:str):
-    totp = pyotp.TOTP(TOTP_SECRET) # type: ignore
-
-    if(not totp.verify(totp_code)):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
-    
-def get_current_user(token:str = Depends(oauth2_scheme)):
-    try:
-        token_data = verify_token(token)
-        return token_data.username
-    except HTTPException as e:
-        raise e
-
-def get_current_active_user(current_user:str = Depends(get_current_user)):
-    if(current_user != ADMIN_USER):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
-    return current_user
+##-----------------------------------------start-of-middleware----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @app.middleware("http")
 async def maintenance_middleware(request:Request, call_next):
@@ -201,9 +78,40 @@ async def maintenance_middleware(request:Request, call_next):
     
     return response
 
+## CORS setup
+origins = ["https://kadenbilyeu.com", "http://localhost:5173"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+##-----------------------------------------start-of-database----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Create the database
+Base.metadata.create_all(bind=engine)
+
+security = HTTPBasic()
+
+##-----------------------------------------start-of-endpoints----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @app.post("/login", response_model=LoginToken)
-def login(data: LoginModel):
+def login(data:LoginModel) -> typing.Dict[str, str]:
+    
+    """
+    
+    Login endpoint for the API
+
+    Args:
+    data (LoginModel): The data required to login
+
+    Returns:
+    typing.Dict[str, str]: The access token and token type
+
+    """
+
     credentials = HTTPBasicCredentials(username=data.username, password=data.password)
     verify_credentials(credentials)
     verify_totp(data.totp)
@@ -216,10 +124,24 @@ def login(data: LoginModel):
     refresh_token = create_refresh_token(
         data={"sub": data.username}, expires_delta=refresh_token_expires
     )
+
     return {"access_token": access_token, "token_type": "bearer", "refresh_token": refresh_token}
 
 @app.post("/refresh", response_model=LoginToken)
-def refresh_token(refresh_token: str = Cookie(None)):
+def refresh_token(refresh_token: str = Cookie(None)) -> JSONResponse:
+    
+    """
+
+    Refresh the access token using the refresh token
+
+    Args:
+    refresh_token (str): The refresh token
+
+    Returns:
+    typing.Dict[str, str]: The access token and token type
+
+    """
+
     if(refresh_token is None):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No refresh token provided")
 
@@ -245,11 +167,22 @@ def refresh_token(refresh_token: str = Cookie(None)):
     return response
 
 @app.post("/blog", response_model=BlogPostRead)
-def create_blog_post(
-    blog_post:BlogPostCreate, 
-    db:Session = Depends(get_db), 
-    current_user:str = Depends(get_current_active_user)):
+def create_blog_post(blog_post:BlogPostCreate, db:Session = Depends(get_db), current_user:str = Depends(get_current_active_user)) -> BlogPostRead:
     
+    """
+
+    Create a new blog post
+
+    Args:
+    blog_post (BlogPostCreate): The data for the new blog post
+    db (Session): The database session
+    current_user (str): The current user
+
+    Returns:
+    BlogPostRead: The new blog post
+
+    """
+
     db_blog_post = BlogPostModel(
         title=blog_post.title,
         content=blog_post.content,
@@ -260,66 +193,158 @@ def create_blog_post(
 
     return crud.create_blog_post(db=db, db_blog_post=db_blog_post)
 
-@app.get("/blog", response_model=list[BlogPostRead])
-def read_blog_posts(
-    skip:int = 0, 
-    limit:int = 10, 
-    db:Session = Depends(get_db)):
+from typing import List, Union
+
+@app.get("/blog", response_model=List[BlogPostRead])
+def read_blog_posts(skip:int = 0, limit:int = 10, db:Session = Depends(get_db)):
+    
+    """
+    
+    Read blog posts from the database
+
+    Args:
+    skip (int): The number of posts to skip
+    limit (int): The number of posts to return
+    db (Session): The database session
+
+    """
 
     return crud.get_blog_posts(db, skip=skip, limit=limit)
 
 @app.get("/blog/{blog_post_id}", response_model=BlogPostRead)
-def read_blog_post(
-    blog_post_id:UUID, 
-    db:Session = Depends(get_db)):
+def read_blog_post(blog_post_id:UUID, db:Session = Depends(get_db)) -> BlogPostRead:
+
+    """
+    
+    Read a single blog post from the database
+
+    Args:
+    blog_post_id (UUID): The ID of the blog post
+    db (Session): The database session
+    
+    Returns:
+    BlogPostRead: The blog post
+
+    """
 
     db_blog_post = crud.get_blog_post(db, blog_post_id=blog_post_id)
+
     if(db_blog_post is None):
         raise HTTPException(status_code=404, detail="Blog post not found")
+    
     return db_blog_post
 
 @app.put("/blog/{blog_post_id}", response_model=BlogPostRead)
-def update_blog_post(
-    blog_post_id:UUID, 
-    blog_post:BlogPostUpdate, 
-    db:Session = Depends(get_db), 
-    current_user:str = Depends(get_current_active_user)):
+def update_blog_post(blog_post_id:UUID, blog_post:BlogPostUpdate, db:Session = Depends(get_db), current_user:str = Depends(get_current_active_user)) -> BlogPostRead:
+    
+    """
+
+    Update a blog post
+
+    Args:
+    blog_post_id (UUID): The ID of the blog post
+    blog_post (BlogPostUpdate): The updated data for the blog post
+    db (Session): The database session
+    
+    Returns:
+    blog_post (BlogPostUpdate): The updated data for the blog post
+
+    """
 
     db_blog_post = crud.update_blog_post(db=db, blog_post_id=blog_post_id, blog_post=blog_post)
+
     if(db_blog_post is None):
         raise HTTPException(status_code=404, detail="Blog post not found")
+    
     return db_blog_post
 
 @app.delete("/blog/{blog_post_id}", response_model=BlogPostRead)
-def delete_blog_post(
-    blog_post_id:UUID, 
-    db:Session = Depends(get_db), 
-    current_user:str = Depends(get_current_active_user)):
+def delete_blog_post(blog_post_id:UUID, db:Session = Depends(get_db), current_user:str = Depends(get_current_active_user)) -> BlogPostRead:
+    
+    """
 
+    Delete a blog post
+
+    Args:
+    blog_post_id (UUID): The ID of the blog post
+    db (Session): The database session
+    current_user (str): The current user
+    
+    Returns:
+    BlogPostRead: The deleted blog post
+
+    """
+    
     db_blog_post = crud.delete_blog_post(db=db, blog_post_id=blog_post_id)
+
     if(db_blog_post is None):
         raise HTTPException(status_code=404, detail="Blog post not found")
+    
     return db_blog_post
 
 @app.get("/latest-blogs", response_model=list[BlogPostRead])
-def read_latest_blog_posts(
-    limit:int = 5,
-    db:Session = Depends(get_db)):
+def read_latest_blog_posts(limit:int = 5, db:Session = Depends(get_db)):
+    
+    """
+
+    Read the latest blog posts
+
+    Args:
+    limit (int): The number of posts to return
+    db (Session): The database session
+
+    """
 
     return crud.get_recent_blog_posts(db, skip=0, limit=limit)
 
 @app.get("/blog-count", response_model=int)
-def get_blog_count(db: Session = Depends(get_db)):
+def get_blog_count(db: Session = Depends(get_db)) -> int:
+
+    """
+    
+    Get the number of blog posts in the database
+
+    Args:
+    db (Session): The database session
+
+    Returns:
+    int: The number of blog posts in the database
+
+    """
+
+    
     return db.query(BlogPostModel).count()
 
 @app.get("/all-blogs", response_model=list[BlogPostRead])
 def read_all_blog_posts(db:Session = Depends(get_db)):
+
+    """
+
+    Read all blog posts from the database
+
+    Args:
+    db (Session): The database session
+
+    """
+
     return crud.get_all_blog_posts(db)
 
 @app.post("/replace-database")
-async def upload_backup(file: UploadFile = File(...),
-                        db:Session = Depends(get_db),
-                        current_user:str = Depends(get_current_active_user)):
+async def upload_backup(file: UploadFile = File(...),db:Session = Depends(get_db),current_user:str = Depends(get_current_active_user)) -> typing.Dict[str, str]:
+
+    """
+
+    Replace the database with a backup
+
+    Args:
+    file (UploadFile): The backup file
+    db (Session): The database session
+    current_user (str): The current user
+
+    Returns:
+    typing.Dict[str, str]: The result of the operation
+
+    """
 
     try:
         global maintenance_mode
