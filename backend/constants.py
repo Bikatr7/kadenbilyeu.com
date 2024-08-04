@@ -13,6 +13,9 @@ def get_env_variables() -> None:
 
     """
 
+    if(not os.path.exists(".env")):
+        raise NotImplementedError("There is no env found. If production please set the environment variables. Otherwise, run 'setup.py local'")
+
     with open(".env") as f:
         for line in f:
             key, value = line.strip().split("=")

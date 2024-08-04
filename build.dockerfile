@@ -5,9 +5,15 @@
 ## Stage 1: Build backend
 FROM python:3.11.8-slim as backend-build
 WORKDIR /app/backend
-COPY backend/main.py backend/requirements.txt ./
+
+## Copy necessary backend files
+COPY backend/main.py backend/requirements.txt backend/constants.py backend/backup.py backend/auth.py ./
+COPY backend/database/ /app/backend/database/
 
 ## Install required Python packages
+RUN pip install --no-cache-dir -r requirements.txt
+
+## Install required packages (linux)
 FROM python:3.11.8-slim
 WORKDIR /app
 
@@ -16,8 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ## Copy backend from the previous stage
-COPY --from=backend-build /app/backend/main.py /app/backend/main.py
-COPY --from=backend-build /app/backend/requirements.txt /app/backend/requirements.txt
+COPY --from=backend-build /app/backend /app/backend
 
 ## Install required Python packages
 RUN pip install --no-cache-dir -r /app/backend/requirements.txt

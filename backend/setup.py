@@ -41,7 +41,13 @@ def setup_local_environment() -> None:
         "ACCESS_TOKEN_SECRET": "secret",
         "REFRESH_TOKEN_SECRET": "secret",
         "NODE_ENV": "development",
-        "ENCRYPTION_KEY": "password"
+        "ENCRYPTION_KEY": "password",
+        "SMTP_SERVER": "none",
+        "SMTP_PORT": 8000,
+        "SMTP_USER": "none",
+        "SMTP_PASSWORD": "none",
+        "FROM_EMAIL": "none",
+        "TO_EMAIL": "none"
     }
 
 
