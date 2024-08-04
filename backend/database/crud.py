@@ -11,7 +11,10 @@ import typing
 from sqlalchemy.orm import Session
 
 ## custom modules
-from .entities import BlogPostModel, BlogPostUpdate
+try:
+    from .entities import BlogPostModel, BlogPostUpdate
+except:
+    from entities import BlogPostModel, BlogPostUpdate
 
 def get_blog_posts(db:Session, skip:int=0, limit:int=10) -> typing.List[BlogPostModel]:
     

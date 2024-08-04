@@ -23,19 +23,40 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 ## custom modules
-from .constants import get_env_variables
+
+try: 
+    from .constants import get_env_variables
+
+except:
+
+    from constants import get_env_variables
+
 
 get_env_variables()
 
-from .constants import ENCRYPTION_KEY, ENVIRONMENT, TOKEN_EXPIRE_MINUTES
+try:
 
-from .database import crud
-from .database.manager import Base, engine, replace_sqlite_db, get_db
-from .database.entities import BlogPostRead, BlogPostCreate, BlogPostModel, BlogPostUpdate
+    from .constants import ENCRYPTION_KEY, ENVIRONMENT, TOKEN_EXPIRE_MINUTES
 
-from .backup import decompress_file, decrypt_file
+    from .database import crud
+    from .database.manager import Base, engine, replace_sqlite_db, get_db
+    from .database.entities import BlogPostRead, BlogPostCreate, BlogPostModel, BlogPostUpdate
 
-from .auth import verify_credentials, verify_totp, verify_token, get_current_active_user, create_access_token, create_refresh_token
+    from .backup import decompress_file, decrypt_file, start_scheduler
+
+    from .auth import verify_credentials, verify_totp, verify_token, get_current_active_user, create_access_token, create_refresh_token
+
+except:
+
+    from constants import ENCRYPTION_KEY, ENVIRONMENT, TOKEN_EXPIRE_MINUTES
+
+    from database import crud
+    from database.manager import Base, engine, replace_sqlite_db, get_db
+    from database.entities import BlogPostRead, BlogPostCreate, BlogPostModel, BlogPostUpdate
+
+    from backup import decompress_file, decrypt_file, start_scheduler
+
+    from auth import verify_credentials, verify_totp, verify_token, get_current_active_user, create_access_token, create_refresh_token
 
 maintenance_mode = False
 maintenance_lock = threading.Lock()
@@ -63,6 +84,8 @@ class LoginToken(BaseModel):
 ##-----------------------------------------start-of-main----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 app = FastAPI()
+
+start_scheduler()
 
 ##-----------------------------------------start-of-middleware----------------------------------------------------------------------------------------------------------------------------------------------------------
 

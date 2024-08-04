@@ -20,8 +20,16 @@ from passlib.context import CryptContext
 import jwt
 from jwt import PyJWTError
 
+
 ## custom modules
-from .constants import ADMIN_USER, ADMIN_PASS_HASH, TOTP_SECRET, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, TOKEN_ALGORITHM
+
+try:
+
+    from .constants import ADMIN_USER, ADMIN_PASS_HASH, TOTP_SECRET, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, TOKEN_ALGORITHM
+
+except:
+    
+    from constants import ADMIN_USER, ADMIN_PASS_HASH, TOTP_SECRET, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, TOKEN_ALGORITHM
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")

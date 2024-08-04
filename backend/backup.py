@@ -18,10 +18,19 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 ## third-party libraries
+from apscheduler.schedulers.background import BackgroundScheduler
 from gnupg import GPG
+
+import atexit
+import shelve
+
+DIR = 'logs'
+
+if(not os.path.exists(DIR)):
+    os.makedirs(DIR)
 
 ##----------------------------------/----------------------------------##
 
@@ -267,7 +276,7 @@ def perform_backup() -> None:
 
     db_path = 'blog.db'
 
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     export_path = f'exported_db_{timestamp}.db'
 
@@ -291,6 +300,8 @@ def perform_backup() -> None:
         smtp_password=SMTP_PASSWORD
     )
 
+    os.remove(encrypted_path)
+
     try:
 
         os.remove(export_path)
@@ -308,3 +319,43 @@ def perform_backup() -> None:
 
         except:
             pass
+
+##----------------------------------/----------------------------------##
+
+def perform_backup_scheduled() -> None:
+
+    """
+
+    Perform the backup process on a scheduled interval
+
+    """
+
+    with shelve.open(os.path.join(DIR, 'backup_scheduler.db')) as db:
+        last_run = db.get('last_run', None)
+        
+        perform_backup()
+
+        db['last_run'] = datetime.now()
+
+##----------------------------------/----------------------------------##
+
+def start_scheduler():
+
+    should_run_initial = True
+
+    with shelve.open(os.path.join(DIR, 'backup_scheduler.db')) as db:
+        last_run = db.get('last_run', None)
+
+        if(last_run):
+            time_since_last_run = datetime.now() - last_run
+            if(time_since_last_run < timedelta(hours=6)):
+                should_run_initial = False
+
+    if(should_run_initial):
+        perform_backup_scheduled()
+
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(perform_backup_scheduled, 'interval', hours=6)
+    scheduler.start()
+
+    atexit.register(lambda: scheduler.shutdown())
