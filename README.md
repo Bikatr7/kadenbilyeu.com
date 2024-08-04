@@ -3,6 +3,11 @@
 
 - [**Introduction**](#introduction)
 - [**Setting Up A Local Build**](#setting-up-a-local-build)
+- [**For Production**](#for-production)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
+    - [To test the dockerfile locally](#to-test-the-dockerfile-locally)
+    - [To deploy to fly.io](#to-deploy-to-flyio)
 - [**Contributions**](#contributions)
 - [**License**](#license)
 
@@ -32,6 +37,26 @@ These steps must be followed _in order_.
 Default login is admin:password
 
 Also requires a totp code, default is JBSWY3DPEHPK3PXP so use that.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+## **For Production**<a name="for-production"></a>
+
+### Frontend
+
+Frontend is hosted on cloudflare pages. To deploy, push to the `production` branch. Development branch is for development only, intermediate builds deploy every commit.
+
+### Backend
+
+For production, the backend is hosted on fly.io via a dockerfile.
+
+#### To test the dockerfile locally
+1. docker build -t kadenbilyeu.com -f build.dockerfile .
+2. docker run -p 8000:8000 kadenbilyeu.com
+
+#### To deploy to fly.io
+1. Make sure you have the fly cli installed and are logged in.
+2. Run `fly deploy` in the root directory. This will build the dockerfile and deploy it to fly.io.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
