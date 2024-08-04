@@ -42,7 +42,7 @@ try:
     from .database.manager import Base, engine, replace_sqlite_db, get_db
     from .database.entities import BlogPostRead, BlogPostCreate, BlogPostModel, BlogPostUpdate
 
-    from .backup import decompress_file, decrypt_file, start_scheduler
+    from .backup import decompress_file, decrypt_file, start_scheduler, perform_backup
 
     from .auth import verify_credentials, verify_totp, verify_token, get_current_active_user, create_access_token, create_refresh_token
 
@@ -54,7 +54,7 @@ except:
     from database.manager import Base, engine, replace_sqlite_db, get_db
     from database.entities import BlogPostRead, BlogPostCreate, BlogPostModel, BlogPostUpdate
 
-    from backup import decompress_file, decrypt_file, start_scheduler
+    from backup import decompress_file, decrypt_file, start_scheduler, perform_backup
 
     from auth import verify_credentials, verify_totp, verify_token, get_current_active_user, create_access_token, create_refresh_token
 
@@ -351,7 +351,7 @@ def read_all_blog_posts(db:Session = Depends(get_db)):
     return crud.get_all_blog_posts(db)
 
 @app.post("/replace-database")
-async def upload_backup(file: UploadFile = File(...),db:Session = Depends(get_db),current_user:str = Depends(get_current_active_user)) -> typing.Dict[str, str]:
+async def upload_backup(file: UploadFile = File(...),current_user:str = Depends(get_current_active_user)) -> typing.Dict[str, str]:
 
     """
 
@@ -394,3 +394,22 @@ async def upload_backup(file: UploadFile = File(...),db:Session = Depends(get_db
     finally:
         with maintenance_lock:
             maintenance_mode = False
+
+@app.post('/force-backup')
+def force_backup(current_user:str = Depends(get_current_active_user)) -> typing.Dict[str, str]:
+
+    """
+
+    Force a backup
+
+    Args:
+    current_user (str): The current user
+
+    Returns:
+    typing.Dict[str, str]: The result of the operation
+
+    """
+
+    perform_backup()
+
+    return {"message": "Backup started"}

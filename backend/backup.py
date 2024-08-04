@@ -276,7 +276,7 @@ def perform_backup() -> None:
 
     db_path = 'blog.db'
 
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H_%M_%S")
 
     export_path = f'exported_db_{timestamp}.db'
 

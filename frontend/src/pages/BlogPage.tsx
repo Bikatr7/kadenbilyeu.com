@@ -225,6 +225,58 @@ const BlogPage: React.FC = () =>
     }
   };
 
+  const handleForceBackup = async () => 
+  {
+    const token = localStorage.getItem('token');
+
+    try 
+    {
+      const response = await fetch(getURL('/force-backup'), 
+      {
+        method: 'POST',
+        headers: 
+        {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) 
+      {
+        console.log('Backup forced successfully');
+        toast({
+          title: "Backup forced.",
+          description: "The backup has been successfully forced.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      } 
+      else 
+      {
+        const errorData = await response.json();
+        console.error('Error forcing backup:', errorData.detail);
+        toast({
+          title: "Error forcing backup.",
+          description: errorData.detail,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } 
+    catch (error) 
+    {
+      console.error('An error occurred while forcing the backup:', error);
+      toast({
+        title: "Error forcing backup.",
+        description: "An error occurred while forcing the backup.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow={'hidden'} maxHeight={'83vh'}>
       <BlogBackground />
@@ -233,12 +285,15 @@ const BlogPage: React.FC = () =>
         {isLoggedIn ? (
           <>
             <MakePost onPost={handleNewPost} />
-            <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
-              Logout
+            <Button onClick={handleForceBackup} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
+              Force Backup
             </Button>
             <Button as="label" _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
               Upload Database
               <input type="file" accept=".pgp" style={{ display: 'none' }} onChange={handleFileChange} />
+            </Button>
+            <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
+              Logout
             </Button>
           </>
         ) : (
