@@ -5,6 +5,7 @@
 ## built-in libraries
 from uuid import UUID
 
+import sys
 import typing
 import os
 import threading
@@ -21,6 +22,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
+
+## Add the parent directory to the path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
 
 ## custom modules
 
@@ -100,7 +106,12 @@ async def maintenance_middleware(request:Request, call_next):
     return response
 
 ## CORS setup
-origins = ["https://kadenbilyeu.com", "http://localhost:5173"]
+origins = [
+    "https://kadenbilyeu.com",
+    "http://localhost:5173",
+    "https://kadenbilyeu-com.pages.dev",
+    "https://*.kadenbilyeu-com.pages.dev"
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -117,6 +128,10 @@ Base.metadata.create_all(bind=engine)
 security = HTTPBasic()
 
 ##-----------------------------------------start-of-endpoints----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@app.get("/")
+async def api_home():
+    return {"message": "API is running"}
 
 @app.post("/login", response_model=LoginToken)
 def login(data:LoginModel) -> typing.Dict[str, str]:
