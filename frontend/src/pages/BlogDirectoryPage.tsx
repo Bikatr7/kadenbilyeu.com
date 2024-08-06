@@ -168,28 +168,34 @@ const BlogDirectoryPage: React.FC = () =>
                 zIndex="1"
             >
                 <VStack spacing="1rem" align="flex-start" width="100%">
-                    {blogPosts.map(post => (
-                        <Link
-                            to={`/blog/${post.id}`}
-                            key={post.id}
-                            style={{ width: '100%' }}
-                            state={{ from: location.pathname }}
-                            onContextMenu={isLoggedIn ? (e) => handleRightClick(e, post.id) : undefined}
-                        >
-                            <Flex
-                                justify="space-between"
-                                align="center"
-                                width="100%"
-                                paddingLeft="0.5rem"
-                                paddingRight="0.5rem"
-                                _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
-                                transition="background-color 0.2s"
+                    {blogPosts.length > 0 ? (
+                        blogPosts.map(post => (
+                            <Link
+                                to={`/blog/${post.id}`}
+                                key={post.id}
+                                style={{ width: '100%' }}
+                                state={{ from: location.pathname }}
+                                onContextMenu={isLoggedIn ? (e) => handleRightClick(e, post.id) : undefined}
                             >
-                                <Text fontSize="xl" color="yellow">{post.title}</Text>
-                                <Text fontSize="md" color="gray.300">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
-                            </Flex>
-                        </Link>
-                    ))}
+                                <Flex
+                                    justify="space-between"
+                                    align="center"
+                                    width="100%"
+                                    paddingLeft="0.5rem"
+                                    paddingRight="0.5rem"
+                                    _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
+                                    transition="background-color 0.2s"
+                                >
+                                    <Text fontSize="xl" color="yellow">{post.title}</Text>
+                                    <Text fontSize="md" color="gray.300">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
+                                </Flex>
+                            </Link>
+                        ))
+                    ) : (
+                        <Flex justify="center" align="center" width="100%" height="100%">
+                            <Text fontSize="xl" color="yellow">No Posts Available</Text>
+                        </Flex>
+                    )}
                 </VStack>
             </Box>
 

@@ -318,27 +318,33 @@ const BlogPage: React.FC = () =>
             overflow="hidden"
           >
             <VStack spacing="0.5rem" align="stretch" width="100%" height="100%" overflowY="auto" p="1rem">
-              {blogPosts.map(post => (
-                <Link
-                  to={`/blog/${post.id}`}
-                  key={post.id}
-                  style={{ width: '100%' }}
-                  state={{ from: location.pathname }}
-                  onContextMenu={isLoggedIn ? (e) => handleRightClick(e, post.id) : undefined}
-                >
-                  <Flex
-                    justify="space-between"
-                    align="center"
-                    width="100%"
-                    p="0.5rem"
-                    _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
-                    transition="background-color 0.2s"
+              {blogPosts.length > 0 ? (
+                blogPosts.map(post => (
+                  <Link
+                    to={`/blog/${post.id}`}
+                    key={post.id}
+                    style={{ width: '100%' }}
+                    state={{ from: location.pathname }}
+                    onContextMenu={isLoggedIn ? (e) => handleRightClick(e, post.id) : undefined}
                   >
-                    <Text fontSize="xl" color="yellow" isTruncated>{post.title}</Text>
-                    <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
-                  </Flex>
-                </Link>
-              ))}
+                    <Flex
+                      justify="space-between"
+                      align="center"
+                      width="100%"
+                      p="0.5rem"
+                      _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
+                      transition="background-color 0.2s"
+                    >
+                      <Text fontSize="xl" color="yellow" isTruncated>{post.title}</Text>
+                      <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
+                    </Flex>
+                  </Link>
+                ))
+              ) : (
+                <Flex justify="center" align="center" height="100%">
+                  <Text fontSize="xl" color="yellow">No Current Posts</Text>
+                </Flex>
+              )}
             </VStack>
           </Box>
 
