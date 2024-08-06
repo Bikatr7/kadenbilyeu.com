@@ -6,3 +6,5 @@ sqlalchemy==2.0.31
 python-gnupg==0.5.2
 uvicorn==0.30.0
 apscheduler==3.10.4
+pyjwt==2.8.0
+python-multipart==0.0.9

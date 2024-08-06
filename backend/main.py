@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, timezone
 
 import typing
 import os
+import time
 import threading
 import shutil
 
@@ -27,7 +28,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from pydantic import BaseModel
 
-from sqlalchemy import create_engine, Engine, Column, String, Text, DateTime
+from sqlalchemy import create_engine, Engine, Column, String, Text, DateTime, inspect, Inspector
 from sqlalchemy.orm import sessionmaker, close_all_sessions, Session
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy.dialects.postgresql import UUID as modelUUID
@@ -68,13 +69,12 @@ def get_env_variables() -> None:
     """
 
     if(not os.path.exists(".env")):
-        raise NotImplementedError("There is no env found. If production please set the environment variables. Otherwise, run 'setup.py local'")
+        return
 
     with open(".env") as f:
         for line in f:
             key, value = line.strip().split("=")
             os.environ[key] = value
-
 
 get_env_variables()
 
@@ -106,7 +106,7 @@ security = HTTPBasic()
 DIR = 'logs'
 
 if(not os.path.exists(DIR)):
-    os.makedirs(DIR)
+    os.makedirs(DIR, exist_ok=True)
 
 if(not any([ADMIN_USER, ADMIN_PASS_HASH, TOTP_SECRET, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, ENCRYPTION_KEY])):
     get_env_variables()
@@ -161,7 +161,13 @@ class BlogPostModel(Base):
 engine:Engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal:sessionmaker = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base.metadata.create_all(bind=engine)
+def create_tables_if_not_exist(engine, base:DeclarativeMeta) -> None:
+    inspector:Inspector = inspect(engine)
+    for table_name in base.metadata.tables.keys():
+        if(not inspector.has_table(table_name)):
+            base.metadata.tables[table_name].create(engine)
+
+create_tables_if_not_exist(engine, Base)
 
 ##----------------------------------/----------------------------------##
 
@@ -182,10 +188,11 @@ def get_envs() -> typing.Tuple[str, str, int, str, str, str, str]:
 
     """
 
-    with open(".env", "r") as f:
-        for line in f:
-            key, value = line.strip().split("=")
-            os.environ[key] = value
+    if(os.path.exists(".env")):
+        with open(".env", "r") as f:
+            for line in f:
+                key, value = line.strip().split("=")
+                os.environ[key] = value
 
     ENCRYPTION_KEY:str = os.getenv('ENCRYPTION_KEY') or ""
     SMTP_SERVER:str = os.getenv('SMTP_SERVER') or ""
@@ -468,16 +475,30 @@ def perform_backup_scheduled() -> None:
 ##----------------------------------/----------------------------------##
 
 def start_scheduler():
+    max_retries = 5
+    retry_delay = 3
 
-    should_run_initial = True
+    for _ in range(max_retries):
+        try:
+            with shelve.open(os.path.join(DIR, 'backup_scheduler.db')) as db:
+                last_run = db.get('last_run', None)
 
-    with shelve.open(os.path.join(DIR, 'backup_scheduler.db')) as db:
-        last_run = db.get('last_run', None)
+                should_run_initial = True
+                if(last_run):
+                    time_since_last_run = datetime.now() - last_run
+                    if(time_since_last_run < timedelta(hours=6)):
+                        should_run_initial = False
 
-        if(last_run):
-            time_since_last_run = datetime.now() - last_run
-            if(time_since_last_run < timedelta(hours=6)):
-                should_run_initial = False
+            break
+
+        except Exception as e:
+            if("Resource temporarily unavailable" in str(e)):
+                time.sleep(retry_delay)
+            else:
+                raise
+    else:
+        print("Failed to initialize scheduler after multiple attempts")
+        return
 
     if(should_run_initial):
         perform_backup_scheduled()
@@ -842,7 +863,9 @@ def get_url() -> str:
 
 app = FastAPI()
 
-start_scheduler()
+@app.on_event("startup")
+async def startup_event():
+    start_scheduler()
 
 ##-----------------------------------------start-of-middleware----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -865,6 +888,7 @@ origins = [
 ]
 app.add_middleware(
     CORSMiddleware,
+    allow_origin_regex=r"https://.*\.kadenbilyeu\-com\.pages\.dev",
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
