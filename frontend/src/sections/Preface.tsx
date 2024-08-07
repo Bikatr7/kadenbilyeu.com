@@ -44,7 +44,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                             More about me
                         </Button>
                         <Button as="a" href="/blog" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
-                            Blog (Coming Soon)
+                            My Blog   
                         </Button>
                         <Button as="a" href="https://github.com/Bikatr7" leftIcon={<IconBrandGithub />} rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                             My Github
