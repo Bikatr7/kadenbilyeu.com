@@ -55,8 +55,8 @@ const StorageNoticeModal: React.FC = () =>
                 <ModalCloseButton color="white" />
                 <ModalBody>
                     <Text color="white">
-                        This website uses browser storage for essential functionality. 
-                        No personal data is collected or shared. No cookies are used. 
+                        This website uses browser storage for essential functionality. <br /><br />
+                        No personal data is collected or shared. No cookies are used.  <br /><br />
                         By using this website, you agree to the use of browser storage. No action is required from you.
                     </Text>
                 </ModalBody>
