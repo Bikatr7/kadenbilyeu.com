@@ -16,10 +16,11 @@ module.exports =
     plugins: ['react-refresh'],
     rules: 
     {
-    'react-refresh/only-export-components': 
+        'react-refresh/only-export-components': 
         [
             'warn',
             {allowConstantExport: true},
         ],
+        'brace-style': ['error', 'allman']
     },
 }

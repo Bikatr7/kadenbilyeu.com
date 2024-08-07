@@ -2,6 +2,8 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
 // react
 import { lazy, Suspense } from 'react';
 
@@ -10,6 +12,7 @@ import { Box, Spinner } from "@chakra-ui/react";
 
 // custom components
 import NamedDivider from '../components/NamedDivider';
+import StorageNoticeModal from '../components/StorageNoticeModal';
 
 // sections
 import Preface from '../sections/Preface';
@@ -22,21 +25,21 @@ const AboutMe = lazy(() => import('../sections/AboutMe'));
 const AboutSite = lazy(() => import('../sections/AboutSite'));
 const Contact = lazy(() => import('../sections/Contact'));
 
-function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean }) {
+function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean })
+{
     return (
-        <Box bg="black" color="white" minHeight="100vh">
+        <Box bg="black" color="white" minHeight="83vh">
             <Preface showContent={showContent} toggleContent={toggleContent} />
             <NamedDivider name="Introduction" id="introduction" />
             <Introduction />
-            
-            <NamedDivider 
-                name={showContent ? "Projects" : "Click for More"} 
-                id="projects" 
+           
+            <NamedDivider
+                name={showContent ? "Projects" : "Click for More"}
+                id="projects"
                 isExpandable={true}
                 isExpanded={showContent}
                 onToggle={toggleContent}
             />
-
             {contentLoaded && (
                 <Suspense fallback={<Box textAlign="center" py={4}><Spinner /></Box>}>
                     {showContent && (
@@ -54,6 +57,7 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
                     )}
                 </Suspense>
             )}
+            <StorageNoticeModal />
         </Box>
     );
 }

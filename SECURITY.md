@@ -1,0 +1,116 @@
+# Security Policy
+
+## Introduction
+
+I take the security of omy site very seriously and appreciate your efforts to responsibly disclose your findings and will make every effort to acknowledge your contributions.
+
+Please note: Public disclosure of the vulnerability without prior agreement is not recommended, as it could put the wider user community at risk.
+
+## Reporting a Vulnerability
+
+Please report (suspected) security vulnerabilities to **[kadenbilyeu@proton.me](mailto:kadenbilyeu@proton.me)**. You should receive a response within 48 hours. If the issue is confirmed, I will release a fix as soon as possible depending on the complexity but typically within a few days.
+
+### What to include in a security report
+
+- A description of the vulnerability
+- The potential impact of the vulnerability
+- Steps to reproduce or proof of concept
+
+This information will help me to swiftly resolve potential vulnerabilities.
+
+## Encrypted Communication
+
+If you believe that your message needs to be encrypted, please use the following PGP key.
+
+The key belongs to me at "Kaden Bilyeu <kadenbilyeu@proton.me>".
+
+```plaintext
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mQINBGWSl0YBEACXqwjrmXBFS3wNADy3mkfveKY9d8RfxWmPdP8yn0OeDLIUjkaO
+gHkhJJy3WbI1LEJKPapWgkPn9ir9pm/ijxit6RPbUMc7WOJPy8Vue/9pCH99frVj
+S2nYDxZxH1GTmPJoC7enrkMOjMiiOJZ8CK4nlG+Jmjx7cVOvbZuROe8scduDp+CV
+lGztnkyQSGg2w2XHWRtLoSKfwNJZyJTUNebQ6lW7KNDGe+gY9+LLHTus8r1PFd4p
+T6MBtsNCeKnneCF4qjlSxFukqVVrJYVJPGsUyDQkEksidO8C+Lx65woke1affSjY
+QTPsHy89aG1etSVZGGwyGSSnwsaE01p2ES+7yH9XESZZEOqOXYxLhYHwsaJgn5E1
+9+3wVP+fzGHuLS4CQxEHG6Nn3t7PrYKPpKyIByrQJif09sVmwI/YMsvO8H2rpL2o
+5zwRmoxzmZmNI41sakk2YulwuXUcO4KMcBwGEHvIg3hdbTkFwjTHq/LVdcZ2mKtg
+Sm0yiDY8psbSFOqTGuh+eRugo0yZmEMDz+EoJrFM1JWbjZ0b4VEadAv+bU9vkDQk
+Y7ITFWMgzl0ZdwBCvoVvC5niXTYow3fbBBnjNvFm3Y7lSiRABWU4CxPoY4UZGUWz
+a+d4IMHtEccOQzFAnbbwDM0DFzZJX/4p1EvOwbgx42E9Wwdem7LY51fPXwARAQAB
+tCRLYWRlbiBCaWx5ZXUgPGthZGVuYmlseWV1QHByb3Rvbi5tZT6JAlEEEwEIADsW
+IQRsLkcqtlrIgSFgsFw4ksFLD7UwpgUCZk6RpwIbAwULCQgHAgIiAgYVCgkICwIE
+FgIDAQIeBwIXgAAKCRA4ksFLD7UwpqDZEACRtbcOKetAw0OqVsN3i9nqVBGkILu5
+/aTzuyXPeZXFDxwxX4tkKH/orqtpcEJ+5SZE5e5Q8yei1G3X05W/SegxzH6aGQ2X
+JP+UqKeUjrlli2rgYzbOcP5+riOPVilBhBCfZhnu4V2pOrxrrUMDCRvaos+txIyX
+2GIgOAauEZlq3qb5yHyX36eT15Ij6BWQ1HZzjbkK9jIcwLoRPLLg/vcebnSBpCp/
+QzjyQb8mnoQYDMoFBvGeRSHJPGsdpFacKwOD/QFggCXWGYTWMw5Yck01XHSbKpM4
+cH7uBuszsro/d2wO8tZOLK77ebkch0noUI7hiuy3RrbUduAXMCyU8+zIh0XTnKRo
+B+p2R2ZS9s5y5v3oOemysz+UnFdPKx11akSBxdSBdnts1/uJFGhuCQEuhRCPCqVO
+tv+rafw3qhZ5k5qpn++5EW0bXWVCxXEvE0JZAwLp8JfqDJ3iOs79QIii2sJOJxNe
+NRbufqS3F8P9mMQrI21ZWLSgy26SnE59hS/Idcapck7djFbZHzt1F8YqoNMfC2eA
+qQWPzpmHKegpQTAdRLxA37dkSIHQ5dL1HkCu8NjZzcWbr+mCla9mloI1ptuYTls9
+pU/nk01laJPHNvq+E+4B4hr4FQygTPbE7hEI9ENg1LyakyLXr1EoFhaEwQ5od7OR
+3hZLWU7aJHEfYoh1BBAWCgAdFiEEqEezjm7Z3Th9jQMzC54Sjv17OdkFAmZOkcEA
+CgkQC54Sjv17OdmVygD/e5iz1bDZVX6oDFTiw07reOsg+G0VHBhAIxEwpY3NRNsB
+ANvLYsZtQC2w9c3rSxOkhwLpu2Q5qpSNca8Rjdko4nYNtCVLYWRlbiBCaWx5ZXUg
+PGthZGVuYmlseWV1MEBnbWFpbC5jb20+iQJRBBMBCAA7FiEEbC5HKrZayIEhYLBc
+OJLBSw+1MKYFAmWSl0YCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ
+OJLBSw+1MKb5MA//dfJRdpMTEu7Njlv0lOI64Bw8Luz8IMGJUW3nJVlKXLmQ7s2c
++uzyOstgQEm2Gq8jAXZEVzpO1iwSsmwASp65h2izEX5zBtkPFK8aQGlsO5zdxpFF
+qKnbRM1eUCD8jYThXXWoSCePjNK3fULYsF6N6AVJrAG3JpGc35g1cToxnYLpEaii
+EfZUMqjlMeORHg3B8B8kHTKYlblpOI4iTe3lKmgRmX8n5dKv/fi0dxFF3cz1BOSW
+R+iPGAXA/Fu/9xMBmSnFGZlkrl8t6fLMII4oUTfOKSYs/MDlJmWJE5Ewwy6rBOuI
+c05t8aNi5QhMGI68gl7LlY3lJ9PYp5y9ChTjLM2ep2VMy8qg7bk6tAnZGIRfO9YT
+KozbC2xExyBtBlvyYnmVtmUT699i6ACYjZ5SwZCkVo+F0bRaI+62s97qh6lf8cHP
+Md8O4TmMByr+I1D9yC3jMGn0cRCPNpBG21mFJTyjsAtXuAwNlqqPKVIPLxpufcOS
+Jf3GfRrKISuQF8hAhTLIeTx3W9purYRxNY8bOio6uxMsZ5oODWHRmqqap/5O6LIv
+PkP3sGBx+/5mpSmqCfNFQTwIe9BX9sed4QdLNlorBUoiWtdzgficbg9N24PoT9Tn
+SRZLsX0uA2//2mJE1YxZkKNDaoRrZpZCfJWbgdftixAqnEPNsR6nvKIqscmJAjME
+EAEIAB0WIQQI+bMcPsjUnbanaRMZ18ipO+Wk9QUCZk6IlgAKCRAZ18ipO+Wk9csb
+D/4l5OFn5sFQAhb3z0eoEf1M4a/SCWMUjzn4+UXuh8mraD9qf5QdDhaWjPkNUvPI
+RjXHtqDNBTmrNgalA1mgSWE/wQLwbZ4ql8JMWP8Z6AqLbPmwIn0cac98GnZ5qDCD
+iFnOg7wf7SrMu9UD7YxNXl/igSZfkRSVAUyc/4q6hq7SAeyKHLjFaVBIKGc7lomj
+dhzPrKxEmyweWEUd+PDfq6uAZTRvMZYY/FWJUwWZC5iyjIc5gbLg7bd0gT0CrJ4T
+iLmudC4WtIdgMbpASoWzeWVv4lKRwdMROBMeG1w2nzMnIYJOmDM5ONRwBNPyk5Fr
+x0kojZ9NpRyUOgwzg+cZnqDwgT6z7MyU0zUK4CqYXPSD0L3y7INondBS0aH2VwzZ
+wRNOFH/58At76FtZytwzDdVk1VAooW9HX3heXDVt/kNSenBwMJG3wwO8LjWibiqG
+HgfYKwtcFQOb+vrxqDtxIsjD8k+ZG+wVtEezbcOi7QthCUT6mu/tQi/24DnpRkyW
+8jHpzC6rrKkYZVk+MLljM90OSVBOf1hqR2r5CwjKjGuhgE6R0ci367Ow+oSq1ouJ
+XBkjlW4zq3wxQ6Isx9kJJ+jpLy4fTCEnKtAkhPb2MF29TYmy5GZn6pmoyEjL3O07
+mBudDWP0fZJ77V++iXke7TWdytXTLKuaXzsEnztpfBpcKLkCDQRlkpdGARAAwAJ2
+LPZgrCueiEFNHetcn/RSIDngBdFMk46KNTn0ygD26McY8ukF7bGhfVWF5NXFuxY9
+CqHeWrTMpFX057Y3KPWARimW0Wg51DAWZqvVMxfneNv5vfl78nqLUE5pnlw6KBf3
+F1oXZMTlDS9YLzIKIcc4Xp25XHRVuQQoPUp1Bq3+g5yn/22AEB9YwQRXG6lzjqCY
+oaYKI8kqEhavAKTcvcaVXLdZpoG6T/5O0qnYwCxmMPMPNXb3nqpbdpTetwAGn4Fm
+sfqFjFTOecQtR6IG9tvsbkSkBVPDRla1fWvfBpV52z/+3M1b8yCnvh0oMwARQOqu
+oyU87qXRzf16ABuA0SIT35Gl0hR2sGwyiyz8S6hX35vckmJv9na8Vii63ecIZiz+
+LI2Yew5uyrH6t06K6O2rChq8xMFF6wyvW4RyveyvM+/t1R28LlapXuS0RhYDCBAR
+3+4dNjA9qbFLPUGDyvCEqTIwQ5Od4UY4Tm2W5fUp2kiJmEVg3/5L27phK4OsyQb/
+2uTvsp6wr8xhmj/X0XaS2HimLTERUt1YSOkJNxQs8Xg5nYB7HOwX1dST8iNEM4U9
+ldCyVY/oXeeZds/lm3JgNj1tzZCoG6CRPq7xoX0ABtYThK5UUFNRdjbv8ZmvhmyG
+rPny4zRbgT02zEK2SPS0akhE+kghEeog3x7vvxEAEQEAAYkCNgQYAQgAIBYhBGwu
+Ryq2WsiBIWCwXDiSwUsPtTCmBQJlkpdGAhsMAAoJEDiSwUsPtTCmjywP/RvTsNRI
+ri/FevXyfny5w/SeFVMijwdtb2WWO8ojEp7vAeo4Owq7TlzIw4reqFbWWxO28fNo
+nZj+YACc3e87w08nFh6CLMLDCVDrh70ytTtE+vfgD6px4vSAZl3fVg6APRoxOtXP
+Rza10Kyo240vbsQpy4eLNBF16gA+7w2xJZSv2w94w04s7w2GEa3D3Pv0Vv1yMpYW
+F6ap3of7o/El+o9ZWwmuO2T69Ui+pLLe8Gs/eAIJAnmj7ZDUVPFkQ+bnGu/jyrZ/
+nSFo953OaTYB18wyiiyeRS9n6WMa9PoIQUwX0aMMIdG3MwLn+IqQOpK+QCgZTtiz
+sAiMaFmz9HcZcTQET7i19LEaDiLHKWWsDm4xZ9QVcLyTgGMURlDeL3iFqr55yzOw
+oIchFYjqd842t3xdYiXjZ1GdfbmoyjV58+CLAJOkMLJ/Wdf7lFBeGKPz4h4sDVdh
+KorvPXhJGacjoPEyTMyHOdFcu0tkiEmyyNZvExPn5tdKPfzyXm0uUIcEbMoy+ua+
+ep8iE9f0b29YVEmQgd8wnImF2XAnJ5VwleDVyDWk9SRFpKun8Jww2XFc3Gs9/Auc
+Em4DN5md4lidav1hghdG/Ut9DCJ71BEZsd46KFhdEnyiG7zvrnHrDFxyxNACRb97
+1VwmxHnA+2k0LXKgRRwPMyzWH2jFyS1j3nc4
+=8ASj
+-----END PGP PUBLIC KEY BLOCK-----
+
+```
+
+## Policy on Security Updates
+
+I will keep you informed of the progress towards fixing the vulnerability and update my site as soon as possible.
+
+## Acknowledgements
+
+Individuals who report security vulnerabilities responsibly will be acknowledged in the site's documentation. If you would like to be acknowledged, please include a name or (reasonable) alias in your report.

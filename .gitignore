@@ -6,7 +6,7 @@
 __pycache__/
 
 ## env files
-.env
+*.env
 
 ## Logs
 logs
@@ -32,3 +32,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+## database
+backend/database/blog.db

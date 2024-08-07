@@ -4,15 +4,20 @@
 
 // maintain allman bracket style for consistency
 
-// react
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+const getURL = (path: string) => 
+{
+    let url;
 
-// root components
-import App from './App'
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-        <App/>
-    </React.StrictMode>,
-)
+    if(process.env.NODE_ENV === "production") 
+    {
+        url = "https://api.kadenbilyeu.com";
+    } 
+    else if (process.env.NODE_ENV === "development") 
+    {
+        url = "http://api.localhost:5000";
+    } 
+    
+    return url + path;
+}
+    
+export {getURL};

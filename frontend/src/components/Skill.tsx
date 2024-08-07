@@ -4,15 +4,19 @@
 
 // chakra-ui imports
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/opacity.css'; // Using opacity effect instead of blur
 
-interface SkillProps {
+// react imports
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/opacity.css';
+
+interface SkillProps 
+{
     name: string;
     image?: string | React.ReactNode;
 }
 
-const Skill: React.FC<SkillProps> = ({ name, image }) => {
+const Skill: React.FC<SkillProps> = ({ name, image }) => 
+{
     return (
         <Flex
             direction="row"

@@ -2,34 +2,18 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
-// chakra-ui imports
-import {
-    Box,
-    Button,
-    Collapse,
-    Container,
-    Flex,
-    Heading,
-    Icon,
-    IconButton,
-    Image,
-    Link,
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-    Stack,
-    Text,
-    useDisclosure,
-} from '@chakra-ui/react';
+// maintain allman bracket style for consistency
 
-// icons and images
+// chakra-ui 
+import { Box, Button, Collapse, Container, Flex, Heading, Icon, IconButton, Image, Link, Popover, PopoverContent, PopoverTrigger, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 
+// assets
 import logo from '../assets/images/personals/bikatr7_logo.webp';
-
 import resume from '../assets/pdfs/Kaden_Bilyeu_August_2024_Resume.pdf';
 
-export default function Navbar() {
+export default function Navbar() 
+{
     const { isOpen, onToggle } = useDisclosure();
 
     return (
@@ -109,7 +93,8 @@ export default function Navbar() {
     );
 }
 
-const DesktopNav = () => {
+const DesktopNav = () => 
+{
     const linkColor = "white"
     const linkHoverColor = "yellow"
     const popoverContentBgColor = "black"
@@ -162,7 +147,8 @@ const DesktopNav = () => {
     );
 };
 
-const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
+const DesktopSubNav = ({ label, href, subLabel }: NavItem) => 
+{
     return (
         <Link
             href={href}
@@ -196,7 +182,8 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
     );
 };
 
-const MobileNav = () => {
+const MobileNav = () => 
+{
     return (
         <Stack
             bg="black"
@@ -209,7 +196,8 @@ const MobileNav = () => {
     );
 };
 
-const MobileNavItem = ({ label, children, href }: NavItem) => {
+const MobileNavItem = ({ label, children, href }: NavItem) => 
+{
     const { isOpen, onToggle } = useDisclosure();
 
     return (
@@ -263,14 +251,16 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
     );
 };
 
-interface NavItem {
+interface NavItem 
+{
     label: string;
     subLabel?: string;
     children?: Array<NavItem>;
     href?: string;
 }
 
-const NAV_ITEMS: Array<NavItem> = [
+const NAV_ITEMS: Array<NavItem> = 
+[
     {
         label: 'Home',
         href: '/',

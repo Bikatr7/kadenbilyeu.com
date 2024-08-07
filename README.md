@@ -3,6 +3,11 @@
 
 - [**Introduction**](#introduction)
 - [**Setting Up A Local Build**](#setting-up-a-local-build)
+- [**For Production**](#for-production)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
+    - [To test the dockerfile locally](#to-test-the-dockerfile-locally)
+    - [To deploy to fly.io](#to-deploy-to-flyio)
 - [**Contributions**](#contributions)
 - [**License**](#license)
 
@@ -19,16 +24,39 @@ Built with React, Vite, and Typescript
 
 ## **Setting Up A Local Build**<a name="setting-up-a-local-build"></a>
 
-```bash
-cd frontend
+These steps must be followed _in order_.
 
-npm i
+1. Clone the repo, make sure you are using the correct branch (currently `production`)
+2. Navigate to the `backend` directory. `cd backend`. Inside is the python backend.
+3. Run the setup script with the local argument. This will install all requirements and setup the local env `python setup.py local`.
+4. Run the server. For local `uvicorn main:app --reload --port 5000`
+5. Open a new terminal and navigate to the `frontend` directory. `cd frontend`. Inside is the react (vite) frontend.
+6. First install all required packages, these are in `package.json`. Do `npm i`. Then run the dev server with `npm run dev`
+7. Website will be on localhost:5173 (frontend) and localhost:5000 (backend)
 
-npm run dev
+Default login is admin:password
 
-```
+Also requires a totp code, default is JBSWY3DPEHPK3PXP so use that.
 
-This will start the frontend build on localhost:5173.
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+## **For Production**<a name="for-production"></a>
+
+### Frontend
+
+Frontend is hosted on cloudflare pages. To deploy, push to the `production` branch. Development branch is for development only, intermediate builds deploy every commit.
+
+### Backend
+
+For production, the backend is hosted on fly.io via a dockerfile.
+
+#### To test the dockerfile locally
+1. docker build -t kadenbilyeu.com -f build.dockerfile .
+2. docker run -p 8000:8000 kadenbilyeu.com
+
+#### To deploy to fly.io
+1. Make sure you have the fly cli installed and are logged in.
+2. Run `fly deploy` in the root directory. This will build the dockerfile and deploy it to fly.io.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -2,6 +2,8 @@
 // Use of this source code is governed by an GNU Affero General Public License v3.0
 // license that can be found in the LICENSE file.
 
+// maintain allman bracket style for consistency
+
 // react
 import { useState} from 'react';
 
@@ -17,7 +19,6 @@ import Footer from "./components/Footer.tsx";
 import LoadingAnimation from './components/LoadingAnimation.tsx';
 
 import Router from './Router.tsx';
-
 
 function App() 
 {
@@ -38,7 +39,7 @@ function App()
 
     return (
         <ChakraProvider theme={theme}>
-            <Box bg="black" minH="100vh">
+            <Box bg="black">
                 {isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
                 {!isLoading && (
                     <>
