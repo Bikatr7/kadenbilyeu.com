@@ -11,7 +11,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Button, VStack, Text, Flex } from "@chakra-ui/react";
+import { Box, Button, VStack, Text, Flex, Spinner } from "@chakra-ui/react";
 import { ArrowBackIcon } from '@chakra-ui/icons';
 
 // components
@@ -35,12 +35,14 @@ const BlogDirectoryPage: React.FC = () =>
 {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, postId: string | null }>({ x: 0, y: 0, postId: null });
     const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
     const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
     const fetchBlogPosts = useCallback(async () => 
     {
+        setIsLoading(true);
         try 
         {
             const postsResponse = await fetch(getURL("/all-blogs"));
@@ -52,6 +54,10 @@ const BlogDirectoryPage: React.FC = () =>
         catch (error) 
         {
             console.error("Error fetching blog data:", error);
+        }
+        finally
+        {
+            setIsLoading(false);
         }
     }, []);
 
@@ -158,46 +164,52 @@ const BlogDirectoryPage: React.FC = () =>
                 )}
             </Flex>
 
-            <Box
-                flex="1"
-                display="flex"
-                justifyContent="center"
-                alignItems="flex-start"
-                p="1rem"
-                overflowY="auto"
-                zIndex="1"
-            >
-                <VStack spacing="1rem" align="flex-start" width="100%">
-                    {blogPosts.length > 0 ? (
-                        blogPosts.map(post => (
-                            <Link
-                                to={`/blog/${post.id}`}
-                                key={post.id}
-                                style={{ width: '100%' }}
-                                state={{ from: location.pathname }}
-                                onContextMenu={isLoggedIn ? (e) => handleRightClick(e, post.id) : undefined}
-                            >
-                                <Flex
-                                    justify="space-between"
-                                    align="center"
-                                    width="100%"
-                                    paddingLeft="0.5rem"
-                                    paddingRight="0.5rem"
-                                    _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
-                                    transition="background-color 0.2s"
+            {isLoading ? (
+                <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1000 }}>
+                    <Spinner size="xl" color="yellow" thickness="4px" />
+                </div>
+            ) : (
+                <Box
+                    flex="1"
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="flex-start"
+                    p="1rem"
+                    overflowY="auto"
+                    zIndex="1"
+                >
+                    <VStack spacing="1rem" align="flex-start" width="100%">
+                        {blogPosts.length > 0 ? (
+                            blogPosts.map(post => (
+                                <Link
+                                    to={`/blog/${post.id}`}
+                                    key={post.id}
+                                    style={{ width: '100%' }}
+                                    state={{ from: location.pathname }}
+                                    onContextMenu={isLoggedIn ? (e) => handleRightClick(e, post.id) : undefined}
                                 >
-                                    <Text fontSize="xl" color="yellow">{post.title}</Text>
-                                    <Text fontSize="md" color="gray.300">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
-                                </Flex>
-                            </Link>
-                        ))
-                    ) : (
-                        <Flex justify="center" align="center" width="100%" height="100%">
-                            <Text fontSize="xl" color="yellow">No Posts Available</Text>
-                        </Flex>
-                    )}
-                </VStack>
-            </Box>
+                                    <Flex
+                                        justify="space-between"
+                                        align="center"
+                                        width="100%"
+                                        paddingLeft="0.5rem"
+                                        paddingRight="0.5rem"
+                                        _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
+                                        transition="background-color 0.2s"
+                                    >
+                                        <Text fontSize="xl" color="yellow">{post.title}</Text>
+                                        <Text fontSize="md" color="gray.300">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
+                                    </Flex>
+                                </Link>
+                            ))
+                        ) : (
+                            <Flex justify="center" align="center" width="100%" height="100%">
+                                <Text fontSize="xl" color="yellow">No Posts Available</Text>
+                            </Flex>
+                        )}
+                    </VStack>
+                </Box>
+            )}
 
             {contextMenu.postId && isLoggedIn && (
                 <Box
