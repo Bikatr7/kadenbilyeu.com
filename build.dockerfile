@@ -8,7 +8,9 @@ FROM python:3.11.8-slim
 WORKDIR /app/
 
 ## Copy necessary backend files
-COPY backend/main.py backend/requirements.txt backend/.env ./
+COPY backend/main.py backend/requirements.txt ./
+## Testing COPY
+## COPY backend/main.py backend/requirements.txt backend/.env ./
 
 ## Install required Python packages
 RUN pip install --no-cache-dir -r requirements.txt

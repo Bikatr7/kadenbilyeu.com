@@ -34,4 +34,4 @@ dist-ssr
 *.sw?
 
 ## database
-backend/blog.db
+backend/database/blog.db

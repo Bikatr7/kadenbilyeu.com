@@ -4,7 +4,7 @@
 
 app = 'kadenbilyeu-com'
 primary_region = 'iad'
-swap_size_mb = 2048
+swap_size_mb = 512
 
 [build]
   dockerfile = 'build.dockerfile'
@@ -16,6 +16,11 @@ swap_size_mb = 2048
   auto_start_machines = true
   min_machines_running = 0
   processes = ['app']
+
+[[mounts]]
+  source = 'kb_database'
+  destination = '/app/database'
+
 
 [[vm]]
   memory = '1gb'

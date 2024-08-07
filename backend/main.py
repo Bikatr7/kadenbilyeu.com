@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 import typing
 import os
 import time
+import logging
 import threading
 import shutil
 
@@ -97,16 +98,23 @@ ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
 TOKEN_ALGORITHM = "HS256"
 TOKEN_EXPIRE_MINUTES = 1440
 
-DATABASE_URL:str = "sqlite:///./blog.db"
+if(not os.path.exists("database") and ADMIN_USER == "admin"):
+    os.makedirs("database", exist_ok=True)
+
+elif(not os.path.exists("database") and ADMIN_USER != "admin"):
+    raise NotImplementedError("Database volume not attached and running in production mode, please exit and attach the volume")
+
+DATABASE_URL: str = "sqlite:///./database/blog.db"
+DATABASE_PATH: str = "database/blog.db"
+BACKUP_LOGS_DIR = 'database/logs'
 
 Base:DeclarativeMeta = declarative_base()
 
 security = HTTPBasic()
 
-DIR = 'logs'
 
-if(not os.path.exists(DIR)):
-    os.makedirs(DIR, exist_ok=True)
+if(not os.path.exists(BACKUP_LOGS_DIR)):
+    os.makedirs(BACKUP_LOGS_DIR, exist_ok=True)
 
 if(not any([ADMIN_USER, ADMIN_PASS_HASH, TOTP_SECRET, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, ENCRYPTION_KEY])):
     get_env_variables()
@@ -412,13 +420,15 @@ def perform_backup() -> None:
 
     ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL = get_envs()
 
-    db_path = 'blog.db'
-
     timestamp = datetime.now().strftime("%Y-%m-%d %H_%M_%S")
+
+    db:Session = SessionLocal()
+
+    number_of_blog_posts = db.query(BlogPostModel).count()
 
     export_path = f'exported_db_{timestamp}.db'
 
-    export_db(db_path, export_path)
+    export_db(DATABASE_PATH, export_path)
 
     compressed_path = compress_file(export_path)
     os.remove(export_path)
@@ -427,8 +437,8 @@ def perform_backup() -> None:
     os.remove(compressed_path)
 
     send_email(
-        subject=f'Daily SQLite Database Backup ({timestamp})',
-        body='Please find the attached encrypted and compressed SQLite database backup. This email was sent automatically. Do not reply.',
+        subject=f'SQLite Database Backup ({timestamp})',
+        body='Please find the attached encrypted and compressed SQLite database backup. This email was sent automatically. Do not reply.\n\nNumber of blog posts: ' + str(number_of_blog_posts),
         to_email=TO_EMAIL,
         attachment_path=encrypted_path,
         from_email=FROM_EMAIL,
@@ -468,7 +478,7 @@ def perform_backup_scheduled() -> None:
 
     """
 
-    with shelve.open(os.path.join(DIR, 'backup_scheduler.db')) as db:
+    with shelve.open(os.path.join(BACKUP_LOGS_DIR, 'backup_scheduler.db')) as db:
         perform_backup()
         db['last_run'] = datetime.now()
 
@@ -480,7 +490,7 @@ def start_scheduler():
 
     for _ in range(max_retries):
         try:
-            with shelve.open(os.path.join(DIR, 'backup_scheduler.db')) as db:
+            with shelve.open(os.path.join(BACKUP_LOGS_DIR, 'backup_scheduler.db')) as db:
                 last_run = db.get('last_run', None)
 
                 should_run_initial = True
@@ -1179,7 +1189,7 @@ async def upload_backup(file: UploadFile = File(...),current_user:str = Depends(
             maintenance_mode = False
 
 @app.post('/force-backup')
-def force_backup(current_user:str = Depends(get_current_active_user)) -> typing.Dict[str, str]:
+def force_backup(current_user:str = Depends(get_current_active_user), db:Session = Depends(get_db)) -> typing.Dict[str, str]:
 
     """
 
