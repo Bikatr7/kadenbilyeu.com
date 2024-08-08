@@ -20,7 +20,7 @@ import BlogBackground from "../components/BlogBackground";
 import EditPost from "../components/EditPost";
 
 // utils
-import { getURL } from '../utils';
+import { getURL, formatDate } from '../utils';
 
 interface BlogPost 
 {
@@ -198,7 +198,7 @@ const BlogDirectoryPage: React.FC = () =>
                                         transition="background-color 0.2s"
                                     >
                                         <Text fontSize="xl" color="yellow">{post.title}</Text>
-                                        <Text fontSize="md" color="gray.300">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
+                                        <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{formatDate(post.created_at)} by {post.author}</Text>
                                     </Flex>
                                 </Link>
                             ))
