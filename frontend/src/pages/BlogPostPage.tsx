@@ -16,6 +16,7 @@ import { ArrowBackIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import BlogBackground from "../components/BlogBackground";
 import EditPost from "../components/EditPost";
 import { getURL } from '../utils';
+import EmbedSEO from '../components/EmbedSEO';
 
 // markdown
 import ReactMarkdown from 'react-markdown';
@@ -133,6 +134,13 @@ const BlogPostPage: React.FC = () =>
     return (
         <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" position="relative">
             <BlogBackground />
+
+            {blogPost && (
+                <EmbedSEO
+                    title={`${blogPost.title} | Kaden Bilyeu's Blog`}
+                    description={`Read '${blogPost.title}' by ${blogPost.author} on Kaden Bilyeu's blog. ${blogPost.content.substring(0, 50)}...`}
+                />
+            )}
             
             <Flex justify="space-between" p="1rem" bg="black">
                 <Button 

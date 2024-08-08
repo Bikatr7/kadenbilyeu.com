@@ -16,6 +16,7 @@ import BlogBackground from "../components/BlogBackground";
 import Login from "../components/Login";
 import MakePost from "../components/MakePost";
 import EditPost from "../components/EditPost";
+import EmbedSEO from '../components/EmbedSEO';
 
 // utils
 import { getURL, formatDate } from '../utils';
@@ -280,6 +281,11 @@ const BlogPage: React.FC = () =>
   return (
     <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow={'hidden'} maxHeight={'83vh'}>
       <BlogBackground />
+
+      <EmbedSEO
+      title="Kaden Bilyeu's Blog" 
+      description="Explore Kaden Bilyeu's latest blog posts on various topics including technology, programming, personal projects, and more."
+      />
 
       <Flex justify="flex-end" p="1rem" bg="black" width="100%" gap="1rem">
         {isLoggedIn ? (
