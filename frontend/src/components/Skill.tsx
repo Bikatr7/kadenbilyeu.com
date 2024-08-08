@@ -6,8 +6,12 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 
 // react imports
+import React from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/opacity.css';
+
+// icons
+import { IconCode } from '@tabler/icons-react';
 
 interface SkillProps 
 {
@@ -17,6 +21,8 @@ interface SkillProps
 
 const Skill: React.FC<SkillProps> = ({ name, image }) => 
 {
+    const imageSize = "30px";
+
     return (
         <Flex
             direction="row"
@@ -31,22 +37,37 @@ const Skill: React.FC<SkillProps> = ({ name, image }) =>
             width="100%"
             _hover={{ bg: "gray.700", transform: 'scale(1.05)'}}
         >
-            {image && (
-                <Box mr={3}>
-                    {typeof image === 'string' ? (
+            <Box 
+                width={imageSize} 
+                height={imageSize} 
+                mr={3} 
+                display="flex" 
+                alignItems="center" 
+                justifyContent="center"
+                overflow="hidden"
+            >
+                {image ? (
+                    typeof image === 'string' ? (
                         <LazyLoadImage
                             src={image}
                             alt={`${name} logo`}
                             effect="opacity"
-                            width={30}
-                            height={30}
+                            width={imageSize}
+                            height={imageSize}
+                            style={{
+                                objectFit: 'contain',
+                            }}
                         />
                     ) : (
-                        <Box style={{ width: '30px', height: '30px' }}>{image}</Box>
-                    )}
-                </Box>
-            )}
-            <Text fontSize="md" fontWeight="bold" textAlign="center">
+                        <Box width={imageSize} height={imageSize} display="flex" alignItems="center" justifyContent="center">
+                            {React.cloneElement(image as React.ReactElement, { size: imageSize })}
+                        </Box>
+                    )
+                ) : (
+                    <IconCode size={imageSize} stroke={1.5} />
+                )}
+            </Box>
+            <Text fontSize="md" fontWeight="bold" textAlign="left" flex={1}>
                 {name}
             </Text>
         </Flex>

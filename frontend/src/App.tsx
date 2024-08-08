@@ -10,6 +10,9 @@ import { useState} from 'react';
 // chakra-ui
 import { ChakraProvider, Box, Container} from "@chakra-ui/react";
 
+// helmet
+import { HelmetProvider } from 'react-helmet-async';
+
 // root components
 import theme from "./theme.ts";
 
@@ -38,24 +41,26 @@ function App()
     };
 
     return (
-        <ChakraProvider theme={theme}>
-            <Box bg="black">
-                {isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
-                {!isLoading && (
-                    <>
-                        <Navbar/>
-                        <Container maxW="6xl">
-                            <Router 
-                                showContent={showContent} 
-                                toggleContent={toggleContent} 
-                                contentLoaded={contentLoaded} 
-                            />
-                        </Container>
-                        <Footer/>
-                    </>
-                )}
-            </Box>
-        </ChakraProvider>
+        <HelmetProvider>
+            <ChakraProvider theme={theme}>
+                <Box bg="black">
+                    {isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
+                    {!isLoading && (
+                        <>
+                            <Navbar/>
+                            <Container maxW="6xl">
+                                <Router 
+                                    showContent={showContent} 
+                                    toggleContent={toggleContent} 
+                                    contentLoaded={contentLoaded} 
+                                />
+                            </Container>
+                            <Footer/>
+                        </>
+                    )}
+                </Box>
+            </ChakraProvider>
+        </HelmetProvider>
     );
 }
 

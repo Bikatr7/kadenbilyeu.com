@@ -18,9 +18,10 @@ import { ArrowBackIcon } from '@chakra-ui/icons';
 import Login from "../components/Login";
 import BlogBackground from "../components/BlogBackground";
 import EditPost from "../components/EditPost";
+import EmbedSEO from "../components/EmbedSEO";
 
 // utils
-import { getURL } from '../utils';
+import { getURL, formatDate } from '../utils';
 
 interface BlogPost 
 {
@@ -155,6 +156,11 @@ const BlogDirectoryPage: React.FC = () =>
         <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" position="relative">
             <BlogBackground />
 
+                <EmbedSEO
+                title="Kaden Bilyeu's Blog Directory"
+                description="View all of Kaden Bilyeu's blog posts in one place."
+                />
+
             <Flex justify="space-between" p="1rem" bg="black">
                 <Button leftIcon={<ArrowBackIcon />} as="a" href="/blog/" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>Go Back</Button>
                 {isLoggedIn ? (
@@ -198,7 +204,7 @@ const BlogDirectoryPage: React.FC = () =>
                                         transition="background-color 0.2s"
                                     >
                                         <Text fontSize="xl" color="yellow">{post.title}</Text>
-                                        <Text fontSize="md" color="gray.300">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
+                                        <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{formatDate(post.created_at)} by {post.author}</Text>
                                     </Flex>
                                 </Link>
                             ))

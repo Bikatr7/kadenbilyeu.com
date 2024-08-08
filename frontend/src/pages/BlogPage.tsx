@@ -16,9 +16,10 @@ import BlogBackground from "../components/BlogBackground";
 import Login from "../components/Login";
 import MakePost from "../components/MakePost";
 import EditPost from "../components/EditPost";
+import EmbedSEO from '../components/EmbedSEO';
 
 // utils
-import { getURL } from '../utils';
+import { getURL, formatDate } from '../utils';
 
 interface BlogPost 
 {
@@ -281,6 +282,11 @@ const BlogPage: React.FC = () =>
     <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow={'hidden'} maxHeight={'83vh'}>
       <BlogBackground />
 
+      <EmbedSEO
+      title="Kaden Bilyeu's Blog" 
+      description="Explore Kaden Bilyeu's latest blog posts on various topics including technology, programming, personal projects, and more."
+      />
+
       <Flex justify="flex-end" p="1rem" bg="black" width="100%" gap="1rem">
         {isLoggedIn ? (
           <>
@@ -336,7 +342,7 @@ const BlogPage: React.FC = () =>
                       transition="background-color 0.2s"
                     >
                       <Text fontSize="xl" color="yellow" isTruncated>{post.title}</Text>
-                      <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{new Date(post.created_at).toLocaleString()} by {post.author}</Text>
+                      <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{formatDate(post.created_at)} by {post.author}</Text>
                     </Flex>
                   </Link>
                 ))
