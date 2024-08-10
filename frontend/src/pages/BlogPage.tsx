@@ -279,15 +279,15 @@ const BlogPage: React.FC = () =>
   };
 
   return (
-    <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow={'hidden'} maxHeight={'83vh'}>
+    <Box bg="black" color="white" minHeight="100vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow="hidden">
       <BlogBackground />
 
       <EmbedSEO
-      title="Kaden Bilyeu's Blog" 
-      description="Explore Kaden Bilyeu's latest blog posts on various topics including technology, programming, personal projects, and more."
+        title="Kaden Bilyeu's Blog" 
+        description="Explore Kaden Bilyeu's latest blog posts on various topics including technology, programming, personal projects, and more."
       />
 
-      <Flex justify="flex-end" p="1rem" bg="black" width="100%" gap="1rem">
+      <Flex justify="flex-end" p="1rem" bg="black" width="100%" gap="1rem" flexWrap="wrap">
         {isLoggedIn ? (
           <>
             <MakePost onPost={handleNewPost} />
@@ -308,22 +308,19 @@ const BlogPage: React.FC = () =>
       </Flex>
 
       {isLoading ? (
-        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1000 }}>
-          <Spinner size="xl" color="yellow" thickness="4px" />
-        </div>
+        <Spinner size="xl" color="yellow" thickness="4px" />
       ) : (
         <>
           <Box
-            mt="15vh"
-            width="80%"
+            mt={["2vh", "5vh", "10vh", "15vh"]}
+            width={["95%", "90%", "80%"]}
             maxWidth="800px"
-            maxHeight="400px"
             border="2px solid darkgrey"
             bg="rgba(0, 0, 0, 0.7)"
             position="relative"
             overflow="hidden"
           >
-            <VStack spacing="0.5rem" align="stretch" width="100%" height="100%" overflowY="auto" p="1rem">
+            <VStack spacing="0.5rem" align="stretch" width="100%" maxHeight={["70vh", "60vh", "50vh"]} overflowY="auto" p="1rem">
               {blogPosts.length > 0 ? (
                 blogPosts.map(post => (
                   <Link
@@ -340,8 +337,10 @@ const BlogPage: React.FC = () =>
                       p="0.5rem"
                       _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
                       transition="background-color 0.2s"
+                      flexDirection={["column", "row"]}
+                      gap={["0.5rem", "0"]}
                     >
-                      <Text fontSize="xl" color="yellow" isTruncated>{post.title}</Text>
+                      <Text fontSize={["lg", "xl"]} color="yellow" isTruncated width={["100%", "auto"]}>{post.title}</Text>
                       <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{formatDate(post.created_at)} by {post.author}</Text>
                     </Flex>
                   </Link>

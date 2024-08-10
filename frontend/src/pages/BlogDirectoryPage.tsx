@@ -153,15 +153,15 @@ const BlogDirectoryPage: React.FC = () =>
     };
 
     return (
-        <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" position="relative">
+        <Box bg="black" color="white" minHeight="100vh" display="flex" flexDirection="column" position="relative">
             <BlogBackground />
 
-                <EmbedSEO
+            <EmbedSEO
                 title="Kaden Bilyeu's Blog Directory"
                 description="View all of Kaden Bilyeu's blog posts in one place."
-                />
+            />
 
-            <Flex justify="space-between" p="1rem" bg="black">
+            <Flex justify="space-between" p="1rem" bg="black" flexWrap="wrap" gap="1rem">
                 <Button leftIcon={<ArrowBackIcon />} as="a" href="/blog/" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>Go Back</Button>
                 {isLoggedIn ? (
                     <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>Logout</Button>
@@ -171,9 +171,9 @@ const BlogDirectoryPage: React.FC = () =>
             </Flex>
 
             {isLoading ? (
-                <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1000 }}>
+                <Flex justify="center" align="center" flex="1">
                     <Spinner size="xl" color="yellow" thickness="4px" />
-                </div>
+                </Flex>
             ) : (
                 <Box
                     flex="1"
@@ -184,7 +184,7 @@ const BlogDirectoryPage: React.FC = () =>
                     overflowY="auto"
                     zIndex="1"
                 >
-                    <VStack spacing="1rem" align="flex-start" width="100%">
+                    <VStack spacing="1rem" align="stretch" width="100%" maxWidth="800px">
                         {blogPosts.length > 0 ? (
                             blogPosts.map(post => (
                                 <Link
@@ -198,12 +198,13 @@ const BlogDirectoryPage: React.FC = () =>
                                         justify="space-between"
                                         align="center"
                                         width="100%"
-                                        paddingLeft="0.5rem"
-                                        paddingRight="0.5rem"
+                                        p="0.5rem"
                                         _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
                                         transition="background-color 0.2s"
+                                        flexDirection={["column", "row"]}
+                                        gap={["0.5rem", "0"]}
                                     >
-                                        <Text fontSize="xl" color="yellow">{post.title}</Text>
+                                        <Text fontSize={["lg", "xl"]} color="yellow" isTruncated width={["100%", "auto"]}>{post.title}</Text>
                                         <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{formatDate(post.created_at)} by {post.author}</Text>
                                     </Flex>
                                 </Link>
