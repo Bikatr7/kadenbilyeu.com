@@ -23,400 +23,403 @@ import { getURL, formatDate } from '../utils';
 
 interface BlogPost 
 {
-  id: string;
-  title: string;
-  created_at: string;
-  author: string;
-  content: string;
+    id: string;
+    title: string;
+    created_at: string;
+    author: string;
+    content: string;
 }
 
 const BlogPage: React.FC = () => 
 {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [contextMenu, setContextMenu] = useState<{ x: number, y: number, postId: string | null }>({ x: 0, y: 0, postId: null });
-  const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
-  const contextMenuRef = useRef<HTMLDivElement | null>(null);
-  const toast = useToast();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [contextMenu, setContextMenu] = useState<{ x: number, y: number, postId: string | null }>({ x: 0, y: 0, postId: null });
+    const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+    const contextMenuRef = useRef<HTMLDivElement | null>(null);
+    const toast = useToast();
 
-  const fetchBlogPosts = useCallback(async () => 
-  {
-    setIsLoading(true);
-    try 
+    const fetchBlogPosts = useCallback(async () => 
     {
-      const postsResponse = await fetch(getURL("/latest-blogs?limit=5"));
-      const newPosts = await postsResponse.json();
-      setBlogPosts(newPosts);
-      localStorage.setItem('blogPageBlogPosts', JSON.stringify(newPosts));
-      localStorage.setItem('blogPagePostCount', newPosts.length.toString());
-    } 
-    catch (error) 
-    {
-      console.error("Error fetching blog data:", error);
-    } 
-    finally 
-    {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => 
-  {
-    fetchBlogPosts();
-  }, [fetchBlogPosts]);
-
-  const handleLogin = () => setIsLoggedIn(true);
-  const handleLogout = () => 
-  {
-    localStorage.removeItem('token');
-    document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-    setIsLoggedIn(false);
-  };
-  const handleNewPost = () => 
-  {
-    fetchBlogPosts();
-    toast({
-      title: "New post created.",
-      description: "Your new post has been successfully created.",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-    });
-  };
-
-  const handleRightClick = (e: React.MouseEvent, postId: string) => 
-  {
-    if (isLoggedIn) 
-    {
-      e.preventDefault();
-      const linkElement = e.currentTarget as HTMLElement;
-      const rect = linkElement.getBoundingClientRect();
-      setContextMenu({ x: rect.left + window.scrollX - 390, y: rect.bottom + window.scrollY - 85, postId });
-    }
-  };
-
-  const handleClickOutside = (e: MouseEvent) => 
-  {
-    if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) 
-    {
-      setContextMenu({ x: 0, y: 0, postId: null });
-    }
-  };
-
-  const handleMouseLeave = () => 
-  {
-    setContextMenu({ x: 0, y: 0, postId: null });
-  };
-
-  useEffect(() => 
-  {
-    document.addEventListener('click', handleClickOutside);
-    return () => 
-    {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
-
-  const handleDelete = async (postId: string) => 
-  {
-    try 
-    {
-      const token = localStorage.getItem('token');
-      const response = await fetch(getURL(`/blog/${postId}`), 
-      {
-        method: 'DELETE',
-        headers: 
+        setIsLoading(true);
+        try 
         {
-          'Authorization': `Bearer ${token}`
+            const postsResponse = await fetch(getURL("/latest-blogs?limit=5"));
+            const newPosts = await postsResponse.json();
+            setBlogPosts(newPosts);
+            localStorage.setItem('blogPageBlogPosts', JSON.stringify(newPosts));
+            localStorage.setItem('blogPagePostCount', newPosts.length.toString());
+        } 
+        catch (error) 
+        {
+            console.error("Error fetching blog data:", error);
+        } 
+        finally 
+        {
+            setIsLoading(false);
         }
-      });
+    }, []);
 
-      if (response.ok) 
-      {
+    useEffect(() => 
+    {
         fetchBlogPosts();
-        setContextMenu({ x: 0, y: 0, postId: null }); 
-      } 
-      else 
-      {
-        const errorData = await response.json();
-        console.error("Error deleting blog post:", errorData.detail);
-      }
-    } 
-    catch (error) 
+    }, [fetchBlogPosts]);
+
+    const handleLogin = () => setIsLoggedIn(true);
+    const handleLogout = () => 
     {
-      console.error("An error occurred while deleting the blog post:", error);
-    }
-  };
-
-  const handleEditPost = () => 
-  {
-    fetchBlogPosts();
-    setEditingPost(null);
-    setContextMenu({ x: 0, y: 0, postId: null }); 
-  };
-
-  const handleCloseEditPost = () => 
-  {
-    setEditingPost(null);
-    setContextMenu({ x: 0, y: 0, postId: null }); 
-  };
-
-  const handleFileUpload = async (file: File) => 
-  {
-    const formData = new FormData();
-    formData.append('file', file);
-    const token = localStorage.getItem('token');
-
-    try 
+        localStorage.removeItem('token');
+        document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+        setIsLoggedIn(false);
+    };
+    const handleNewPost = () => 
     {
-      const response = await fetch(getURL('/replace-database/'), 
-      {
-        method: 'POST',
-        headers: 
-        {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      });
-
-      if (response.ok) 
-      {
-        console.log('Database replaced successfully');
+        fetchBlogPosts();
         toast({
-          title: "Database replaced.",
-          description: "The database has been successfully replaced.",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
+            title: "New post created.",
+            description: "Your new post has been successfully created.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
         });
-      } 
-      else 
-      {
-        const errorData = await response.json();
-        console.error('Error replacing database:', errorData.detail);
-        toast({
-          title: "Error replacing database.",
-          description: errorData.detail,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-    } 
-    catch (error) 
-    {
-      console.error('An error occurred while uploading the file:', error);
-      toast({
-        title: "Error replacing database.",
-        description: "An error occurred while uploading the file.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  };
+    };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => 
-  {
-    const file = event.target.files?.[0];
-    if (file) 
+    const handleRightClick = (e: React.MouseEvent, postId: string) => 
     {
-      handleFileUpload(file);
-    }
-  };
-
-  const handleForceBackup = async () => 
-  {
-    const token = localStorage.getItem('token');
-
-    try 
-    {
-      const response = await fetch(getURL('/force-backup'), 
-      {
-        method: 'POST',
-        headers: 
+        if (isLoggedIn) 
         {
-          'Authorization': `Bearer ${token}`
+            e.preventDefault();
+            const linkElement = e.currentTarget as HTMLElement;
+            const rect = linkElement.getBoundingClientRect();
+            setContextMenu({ x: rect.left + window.scrollX - 390, y: rect.bottom + window.scrollY - 85, postId });
         }
-      });
+    };
 
-      if (response.ok) 
-      {
-        console.log('Backup forced successfully');
-        toast({
-          title: "Backup forced.",
-          description: "The backup has been successfully forced.",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-      } 
-      else 
-      {
-        const errorData = await response.json();
-        console.error('Error forcing backup:', errorData.detail);
-        toast({
-          title: "Error forcing backup.",
-          description: errorData.detail,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-    } 
-    catch (error) 
+    const handleClickOutside = (e: MouseEvent) => 
     {
-      console.error('An error occurred while forcing the backup:', error);
-      toast({
-        title: "Error forcing backup.",
-        description: "An error occurred while forcing the backup.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  };
+        if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) 
+        {
+            setContextMenu({ x: 0, y: 0, postId: null });
+        }
+    };
 
-  return (
-    <Box bg="black" color="white" minHeight="100vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow="hidden">
-      <BlogBackground />
+    const handleMouseLeave = () => 
+    {
+        setContextMenu({ x: 0, y: 0, postId: null });
+    };
 
-      <EmbedSEO
-        title="Kaden Bilyeu's Blog" 
-        description="Explore Kaden Bilyeu's latest blog posts on various topics including technology, programming, personal projects, and more."
-      />
+    useEffect(() => 
+    {
+        document.addEventListener('click', handleClickOutside);
+        return () => 
+        {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
 
-      <Flex justify="flex-end" p="1rem" bg="black" width="100%" gap="1rem" flexWrap="wrap">
-        {isLoggedIn ? (
-          <>
-            <MakePost onPost={handleNewPost} />
-            <Button onClick={handleForceBackup} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
-              Force Backup
-            </Button>
-            <Button as="label" _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
-              Upload Database
-              <input type="file" accept=".pgp" style={{ display: 'none' }} onChange={handleFileChange} />
-            </Button>
-            <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
-              Logout
-            </Button>
-          </>
-        ) : (
-          <Login onLogin={handleLogin} onLogout={handleLogout} />
-        )}
-      </Flex>
+    const handleDelete = async (postId: string) => 
+    {
+        try 
+        {
+            const token = localStorage.getItem('token');
+            const response = await fetch(getURL(`/blog/${postId}`), 
+            {
+                method: 'DELETE',
+                headers: 
+                {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
-      {isLoading ? (
-        <Spinner size="xl" color="yellow" thickness="4px" />
-      ) : (
-        <>
-          <Box
-            mt={["2vh", "5vh", "10vh", "15vh"]}
-            width={["95%", "90%", "80%"]}
-            maxWidth="800px"
-            border="2px solid darkgrey"
-            bg="rgba(0, 0, 0, 0.7)"
-            position="relative"
-            overflow="hidden"
-          >
-            <VStack spacing="0.5rem" align="stretch" width="100%" maxHeight={["70vh", "60vh", "50vh"]} overflowY="auto" p="1rem">
-              {blogPosts.length > 0 ? (
-                blogPosts.map(post => (
-                  <Link
-                    to={`/blog/${post.id}`}
-                    key={post.id}
-                    style={{ width: '100%' }}
-                    state={{ from: location.pathname }}
-                    onContextMenu={isLoggedIn ? (e) => handleRightClick(e, post.id) : undefined}
-                  >
-                    <Flex
-                      justify="space-between"
-                      align="center"
-                      width="100%"
-                      p="0.5rem"
-                      _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
-                      transition="background-color 0.2s"
-                      flexDirection={["column", "row"]}
-                      gap={["0.5rem", "0"]}
-                    >
-                      <Text fontSize={["lg", "xl"]} color="yellow" isTruncated width={["100%", "auto"]}>{post.title}</Text>
-                      <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{formatDate(post.created_at)} by {post.author}</Text>
-                    </Flex>
-                  </Link>
-                ))
-              ) : (
-                <Flex justify="center" align="center" height="100%">
-                  <Text fontSize="xl" color="yellow">No Current Posts</Text>
-                </Flex>
-              )}
-            </VStack>
-          </Box>
-
-          <Button
-            as="a"
-            href="/blog/directory"
-            rounded="full"
-            _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
-            _active={{ transform: 'scale(0.99)' }}
-            mt="2rem"
-            mb="2rem"
-            width="auto"
-          >
-            All Posts
-          </Button>
-        </>
-      )}
-
-      {contextMenu.postId && isLoggedIn && (
-        <Box
-          ref={contextMenuRef}
-          position="absolute"
-          top={contextMenu.y}
-          left={contextMenu.x}
-          bg="black"
-          color="white"
-          p="0.5rem"
-          boxShadow="md"
-          zIndex={1000}
-          onMouseLeave={handleMouseLeave}
-          border={'1px solid darkgrey'}
-        >
-          <VStack align="stretch">
-            <Text
-              cursor="pointer"
-              _hover={{ color: 'yellow' }}
-              onClick={() => setEditingPost(blogPosts.find(post => post.id === contextMenu.postId) || null)}
-            >
-              Edit
-            </Text>
-            <Text
-              cursor="pointer"
-              _hover={{ color: 'yellow' }}
-              onClick={() => {
-                handleDelete(contextMenu.postId!);
+            if (response.ok) 
+            {
+                fetchBlogPosts();
                 setContextMenu({ x: 0, y: 0, postId: null }); 
-              }}
-            >
-              Delete
-            </Text>
-          </VStack>
-        </Box>
-      )}
+            } 
+            else 
+            {
+                const errorData = await response.json();
+                console.error("Error deleting blog post:", errorData.detail);
+            }
+        } 
+        catch (error) 
+        {
+            console.error("An error occurred while deleting the blog post:", error);
+        }
+    };
 
-      {editingPost && (
-        <EditPost
-          postId={editingPost.id}
-          onEdit={handleEditPost}
-          onClose={handleCloseEditPost} 
-          initialTitle={editingPost.title}
-          initialContent={editingPost.content}
-          initialAuthor={editingPost.author}
-          isOpen={true}
-        />
-      )}
-    </Box>
-  );
+    const handleEditPost = () => 
+    {
+        fetchBlogPosts();
+        setEditingPost(null);
+        setContextMenu({ x: 0, y: 0, postId: null }); 
+    };
+
+    const handleCloseEditPost = () => 
+    {
+        setEditingPost(null);
+        setContextMenu({ x: 0, y: 0, postId: null }); 
+    };
+
+    const handleFileUpload = async (file: File) => 
+    {
+        const formData = new FormData();
+        formData.append('file', file);
+        const token = localStorage.getItem('token');
+
+        try 
+        {
+            const response = await fetch(getURL('/replace-database/'), 
+            {
+                method: 'POST',
+                headers: 
+                {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            if (response.ok) 
+            {
+                console.log('Database replaced successfully');
+                toast({
+                    title: "Database replaced.",
+                    description: "The database has been successfully replaced.",
+                    status: "success",
+                    duration: 5000,
+                    isClosable: true,
+                });
+            } 
+            else 
+            {
+                const errorData = await response.json();
+                console.error('Error replacing database:', errorData.detail);
+                toast({
+                    title: "Error replacing database.",
+                    description: errorData.detail,
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                });
+            }
+        } 
+        catch (error) 
+        {
+            console.error('An error occurred while uploading the file:', error);
+            toast({
+                title: "Error replacing database.",
+                description: "An error occurred while uploading the file.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+        }
+    };
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => 
+    {
+        const file = event.target.files?.[0];
+        if (file) 
+        {
+            handleFileUpload(file);
+        }
+    };
+
+    const handleForceBackup = async () => 
+    {
+        const token = localStorage.getItem('token');
+
+        try 
+        {
+            const response = await fetch(getURL('/force-backup'), 
+            {
+                method: 'POST',
+                headers: 
+                {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) 
+            {
+                console.log('Backup forced successfully');
+                toast({
+                    title: "Backup forced.",
+                    description: "The backup has been successfully forced.",
+                    status: "success",
+                    duration: 5000,
+                    isClosable: true,
+                });
+            } 
+            else 
+            {
+                const errorData = await response.json();
+                console.error('Error forcing backup:', errorData.detail);
+                toast({
+                    title: "Error forcing backup.",
+                    description: errorData.detail,
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                });
+            }
+        } 
+        catch (error) 
+        {
+            console.error('An error occurred while forcing the backup:', error);
+            toast({
+                title: "Error forcing backup.",
+                description: "An error occurred while forcing the backup.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+        }
+    };
+
+    return (
+        <Box bg="black" color="white" minHeight="100vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow="hidden">
+            <BlogBackground />
+
+            <EmbedSEO
+                title="Kaden Bilyeu's Blog" 
+                description="Explore Kaden Bilyeu's latest blog posts on various topics including technology, programming, personal projects, and more."
+            />
+
+            <Flex justify="flex-end" p="1rem" bg="black" width="100%" gap="1rem" flexWrap="wrap">
+                {isLoggedIn ? (
+                    <>
+                        <MakePost onPost={handleNewPost} />
+                        <Button onClick={handleForceBackup} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
+                            Force Backup
+                        </Button>
+                        <Button as="label" _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
+                            Upload Database
+                            <input type="file" accept=".pgp" style={{ display: 'none' }} onChange={handleFileChange} />
+                        </Button>
+                        <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
+                            Logout
+                        </Button>
+                    </>
+                ) : (
+                    <Login onLogin={handleLogin} onLogout={handleLogout} />
+                )}
+            </Flex>
+
+            {isLoading ? (
+                <Flex justifyContent="center" alignItems="center" height="60vh">
+                    <Spinner size="xl" color="yellow" thickness="4px" />
+                </Flex>
+            ) : (
+                <>
+                    <Box
+                        mt={["7rem", "8rem", "10vh", "15vh"]}
+                        width={["95%", "90%", "80%"]}
+                        maxWidth="800px"
+                        border="2px solid darkgrey"
+                        bg="rgba(0, 0, 0, 0.7)"
+                        position="relative"
+                        overflow="hidden"
+                    >
+                        <VStack spacing="0.5rem" align="stretch" width="100%" maxHeight={["50vh", "55vh", "50vh"]} overflowY="auto" p="1rem">
+                            {blogPosts.length > 0 ? (
+                                blogPosts.map(post => (
+                                    <Link
+                                        to={`/blog/${post.id}`}
+                                        key={post.id}
+                                        style={{ width: '100%' }}
+                                        state={{ from: location.pathname }}
+                                        onContextMenu={isLoggedIn ? (e) => handleRightClick(e, post.id) : undefined}
+                                    >
+                                        <Flex
+                                            justify="space-between"
+                                            align="center"
+                                            width="100%"
+                                            p="0.5rem"
+                                            _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
+                                            transition="background-color 0.2s"
+                                            flexDirection={["column", "row"]}
+                                            gap={["0.5rem", "0"]}
+                                        >
+                                            <Text fontSize={["lg", "xl"]} color="yellow" isTruncated width={["100%", "auto"]}>{post.title}</Text>
+                                            <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{formatDate(post.created_at)} by {post.author}</Text>
+                                        </Flex>
+                                    </Link>
+                                ))
+                            ) : (
+                                <Flex justify="center" align="center" height="100%">
+                                    <Text fontSize="xl" color="yellow">No Current Posts</Text>
+                                </Flex>
+                            )}
+                        </VStack>
+                    </Box>
+
+                    <Button
+                        as="a"
+                        href="/blog/directory"
+                        rounded="full"
+                        _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
+                        _active={{ transform: 'scale(0.99)' }}
+                        mt="2rem"
+                        mb="2rem"
+                        width="auto"
+                    >
+                        All Posts
+                    </Button>
+                </>
+            )}
+
+            {contextMenu.postId && isLoggedIn && (
+                <Box
+                    ref={contextMenuRef}
+                    position="absolute"
+                    top={contextMenu.y}
+                    left={contextMenu.x}
+                    bg="black"
+                    color="white"
+                    p="0.5rem"
+                    boxShadow="md"
+                    zIndex={1000}
+                    onMouseLeave={handleMouseLeave}
+                    border={'1px solid darkgrey'}
+                >
+                    <VStack align="stretch">
+                        <Text
+                            cursor="pointer"
+                            _hover={{ color: 'yellow' }}
+                            onClick={() => setEditingPost(blogPosts.find(post => post.id === contextMenu.postId) || null)}
+                        >
+                            Edit
+                        </Text>
+                        <Text
+                            cursor="pointer"
+                            _hover={{ color: 'yellow' }}
+                            onClick={() => 
+                            {
+                                handleDelete(contextMenu.postId!);
+                                setContextMenu({ x: 0, y: 0, postId: null }); 
+                            }}
+                        >
+                            Delete
+                        </Text>
+                    </VStack>
+                </Box>
+            )}
+
+            {editingPost && (
+                <EditPost
+                    postId={editingPost.id}
+                    onEdit={handleEditPost}
+                    onClose={handleCloseEditPost} 
+                    initialTitle={editingPost.title}
+                    initialContent={editingPost.content}
+                    initialAuthor={editingPost.author}
+                    isOpen={true}
+                />
+            )}
+        </Box>
+    );
 };
 
 export default BlogPage;
