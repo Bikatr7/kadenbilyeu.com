@@ -172,6 +172,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) =>
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                     onKeyPress={handleKeyPress}
+                                    autoComplete="username"
                                 />
                                 <Input
                                     placeholder="Password"
@@ -182,6 +183,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) =>
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     onKeyPress={handleKeyPress}
+                                    autoComplete="current-password"
                                 />
                             </>
                         ) : (
@@ -195,6 +197,9 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) =>
                                     value={totp}
                                     onChange={(e) => setTotp(e.target.value)}
                                     onKeyPress={handleKeyPress}
+                                    autoComplete="one-time-code"
+                                    inputMode="numeric"
+                                    pattern="\d{6}"
                                 />
                             </>
                         )}
