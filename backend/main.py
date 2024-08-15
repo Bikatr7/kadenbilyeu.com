@@ -9,7 +9,6 @@ from datetime import datetime, timedelta, timezone
 import typing
 import os
 import time
-import logging
 import threading
 import shutil
 
@@ -22,14 +21,14 @@ from email.mime.base import MIMEBase
 from email import encoders
 
 ## third-party libraries
-from fastapi import FastAPI, HTTPException, status, Cookie, Depends, File, UploadFile, Request
+from fastapi import FastAPI, HTTPException, status, Cookie, Depends, File, UploadFile, Request, Header
 from fastapi.responses import JSONResponse
 from fastapi.security import  HTTPBasicCredentials, HTTPBasic, OAuth2PasswordBearer
 from fastapi.middleware.cors import CORSMiddleware
 
 from pydantic import BaseModel
 
-from sqlalchemy import create_engine, Engine, Column, String, Text, DateTime, inspect, Inspector
+from sqlalchemy import create_engine, Engine, Column, String, Text, DateTime, inspect, Inspector, Integer, text
 from sqlalchemy.orm import sessionmaker, close_all_sessions, Session
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy.dialects.postgresql import UUID as modelUUID
@@ -151,6 +150,7 @@ class BlogPostRead(BlogPostBase):
     id:schemaUUID
     created_at:datetime
     updated_at:datetime
+    view_count:int
 
     class Config:
         from_attributes = True
@@ -163,6 +163,26 @@ class BlogPostModel(Base):
     author = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    view_count = Column(Integer, default=0)
+
+##-----------------------------------------start-of-migrations----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def migrate_database(engine:Engine) -> None:
+
+    """
+
+    Performs database migrations if needed.
+    
+    """
+
+    inspector = inspect(engine)
+    columns = [col['name'] for col in inspector.get_columns('blog_posts')]
+    
+    ## Migration 1 (2024-08-14) (Addition of view_count to blog_posts)
+    if('view_count' not in columns):
+        with engine.connect() as connection:
+            connection.execute(text("ALTER TABLE blog_posts ADD COLUMN view_count INTEGER DEFAULT 0"))
+            connection.commit()
 
 ##----------------------------------/----------------------------------##
 
@@ -176,6 +196,8 @@ def create_tables_if_not_exist(engine, base:DeclarativeMeta) -> None:
             base.metadata.tables[table_name].create(engine)
 
 create_tables_if_not_exist(engine, Base)
+
+migrate_database(engine)
 
 ##----------------------------------/----------------------------------##
 
@@ -701,6 +723,7 @@ def replace_sqlite_db(extracted_db_path:str, current_db_path:str) -> None:
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+    migrate_database(engine)
 
 def get_db() -> typing.Generator[Session, None, None]:
     
@@ -860,6 +883,25 @@ def func_delete_blog_post(db:Session, blog_post_id:schemaUUID) -> BlogPostModel:
         db.commit()
     return db_blog_post
 
+def func_increment_view_count(db:Session, blog_post_id:schemaUUID):
+
+    """
+    
+    Increment the view count of the blog post with the given ID.
+
+    Args:
+    db (Session): The SQLAlchemy session
+    blog_post_id (UUID): The ID of the blog post 
+
+    Returns:
+    None
+
+    """
+
+    db_blog_post = db.query(BlogPostModel).filter(BlogPostModel.id == blog_post_id).first()
+    if(db_blog_post):
+        db_blog_post.view_count = db_blog_post.view_count + 1 # type: ignore
+        db.commit()
 
 ##-----------------------------------------start-of-utility-functions----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1002,7 +1044,8 @@ def create_blog_post(blog_post:BlogPostCreate, db:Session = Depends(get_db), cur
         content=blog_post.content,
         author=blog_post.author,
         created_at=datetime.now(timezone.utc),
-        updated_at=datetime.now(timezone.utc)
+        updated_at=datetime.now(timezone.utc),
+        view_count=0
     )
 
     return func_create_blog_post(db=db, db_blog_post=db_blog_post)
@@ -1026,7 +1069,7 @@ def read_blog_posts(skip:int = 0, limit:int = 10, db:Session = Depends(get_db)):
     return func_get_blog_posts(db, skip=skip, limit=limit)
 
 @app.get("/blog/{blog_post_id}", response_model=BlogPostRead)
-def read_blog_post(blog_post_id:schemaUUID, db:Session = Depends(get_db)) -> BlogPostRead:
+def read_blog_post(blog_post_id:schemaUUID, db:Session = Depends(get_db), authorization: str = Header(None)) -> BlogPostRead:
 
     """
     
@@ -1046,10 +1089,23 @@ def read_blog_post(blog_post_id:schemaUUID, db:Session = Depends(get_db)) -> Blo
     if(db_blog_post is None):
         raise HTTPException(status_code=404, detail="Blog post not found")
     
+    ## I'm the only one who can login and there's no point and logging at my own views
+    is_logged_in = False
+    if(authorization):
+        try:
+            token = authorization.split()[-1]
+            get_current_user(token)
+            is_logged_in = True
+        except:
+            pass
+
+    if(not is_logged_in):
+        func_increment_view_count(db, blog_post_id)
+
     return db_blog_post
 
 @app.put("/blog/{blog_post_id}", response_model=BlogPostRead)
-def update_blog_post(blog_post_id:schemaUUID, blog_post:BlogPostUpdate, db:Session = Depends(get_db), current_user:str = Depends(get_current_active_user)) -> BlogPostRead:
+def update_blog_post(blog_post_id:schemaUUID, blog_post:BlogPostUpdate, db:Session = Depends(get_db)) -> BlogPostRead:
     
     """
 
