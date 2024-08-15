@@ -176,13 +176,33 @@ def migrate_database(engine:Engine) -> None:
     """
 
     inspector = inspect(engine)
+
+    inspector.clear_cache()
+
     columns = [col['name'] for col in inspector.get_columns('blog_posts')]
     
     ## Migration 1 (2024-08-14) (Addition of view_count to blog_posts)
-    if('view_count' not in columns):
-        with engine.connect() as connection:
-            connection.execute(text("ALTER TABLE blog_posts ADD COLUMN view_count INTEGER DEFAULT 0"))
-            connection.commit()
+    try:
+        columns = [col['name'].lower() for col in inspector.get_columns('blog_posts')]
+
+        print(f"Current columns in blog_posts: {columns}")
+
+        if('view_count' not in columns):
+            print("view_count column not found. Attempting to add it.")
+            with engine.connect() as connection:
+                connection.execute(text("ALTER TABLE blog_posts ADD COLUMN view_count INTEGER DEFAULT 0"))
+                connection.commit()
+
+            print("Added view_count column to blog_posts table")
+        else:
+            print("view_count column already exists in blog_posts table")
+        
+        inspector.clear_cache()
+        columns = [col['name'].lower() for col in inspector.get_columns('blog_posts')]
+        
+    except Exception as e:
+        print(f"Error during migration: {str(e)}")
+        pass
 
 ##----------------------------------/----------------------------------##
 
