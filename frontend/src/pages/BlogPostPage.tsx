@@ -29,6 +29,7 @@ interface BlogPost
     title: string;
     content: string;
     author: string;
+    view_count: number;
 }
 
 const BlogPostPage: React.FC = () =>
@@ -45,7 +46,15 @@ const BlogPostPage: React.FC = () =>
     {
         const fetchBlogPost = async () => 
         {
-            const response = await fetch(getURL(`/blog/${id}`));
+            const token = localStorage.getItem('token');
+            const headers: HeadersInit = {};
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const response = await fetch(getURL(`/blog/${id}`), {
+                headers: headers
+            });
             const data = await response.json();
             setBlogPost(data);
         };
@@ -58,7 +67,7 @@ const BlogPostPage: React.FC = () =>
     const getBackLink = () => 
     {
         if (location.state?.from === '/blog' || location.state?.from === '/blog/directory')
-         {
+        {
             return location.state.from;
         }
         return '/blog/';
@@ -153,29 +162,37 @@ const BlogPostPage: React.FC = () =>
                 >
                     Go Back
                 </Button>
-                {isLoggedIn && (
-                    <Flex>
-                        <Button 
-                            leftIcon={<EditIcon />} 
-                            onClick={handleEdit}
-                            rounded="full" 
-                            mr={2}
-                            _hover={{ color: 'yellow', transform: 'scale(1.01)' }} 
-                            _active={{ transform: 'scale(0.99)' }}
-                        >
-                            Edit
-                        </Button>
-                        <Button 
-                            leftIcon={<DeleteIcon />} 
-                            onClick={handleDelete}
-                            rounded="full" 
-                            _hover={{ color: 'yellow', transform: 'scale(1.01)' }} 
-                            _active={{ transform: 'scale(0.99)' }}
-                        >
-                            Delete
-                        </Button>
-                    </Flex>
-                )}
+                <Flex align="center">
+
+                    {isLoggedIn && (
+                        <>
+                            {blogPost && (
+                                <Text mr={4} fontSize="sm" color="gray.300">
+                                    Views: {blogPost.view_count}
+                                </Text>
+                            )}
+                            <Button 
+                                leftIcon={<EditIcon />} 
+                                onClick={handleEdit}
+                                rounded="full" 
+                                mr={2}
+                                _hover={{ color: 'yellow', transform: 'scale(1.01)' }} 
+                                _active={{ transform: 'scale(0.99)' }}
+                            >
+                                Edit
+                            </Button>
+                            <Button 
+                                leftIcon={<DeleteIcon />} 
+                                onClick={handleDelete}
+                                rounded="full" 
+                                _hover={{ color: 'yellow', transform: 'scale(1.01)' }} 
+                                _active={{ transform: 'scale(0.99)' }}
+                            >
+                                Delete
+                            </Button>
+                        </>
+                    )}
+                </Flex>
             </Flex>
             
             <Box
