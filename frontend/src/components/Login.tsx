@@ -172,6 +172,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) =>
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                     onKeyPress={handleKeyPress}
+                                    autoComplete="username"
                                 />
                                 <Input
                                     placeholder="Password"
@@ -182,19 +183,27 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) =>
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     onKeyPress={handleKeyPress}
+                                    autoComplete="current-password"
                                 />
                             </>
                         ) : (
                             <>
                                 <Text mb={4}>Enter your TOTP code</Text>
                                 <Input
-                                    placeholder="TOTP Code"
+                                    placeholder="Enter 6-digit code"
                                     mb={4}
                                     borderColor="gray.500"
                                     focusBorderColor="gray.500"
                                     value={totp}
                                     onChange={(e) => setTotp(e.target.value)}
                                     onKeyPress={handleKeyPress}
+                                    autoComplete="off"
+                                    inputMode="numeric"
+                                    pattern="\d{6}"
+                                    maxLength={6}
+                                    name="totp"
+                                    aria-label="Time-based One-time Password"
+                                    type="text"
                                 />
                             </>
                         )}

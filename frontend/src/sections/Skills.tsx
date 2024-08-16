@@ -37,6 +37,9 @@ import react_logo from '../assets/images/skills/react_logo.webp';
 import spacy_logo from '../assets/images/skills/spacy_logo.webp';
 import typescript_logo from '../assets/images/skills/typescript_logo.webp';
 import vite_logo from '../assets/images/skills/vite_logo.webp';
+import plotly_logo from '../assets/images/skills/plotly.webp';
+import networkx_logo from '../assets/images/skills/networkx.webp';
+import numpy_logo from '../assets/images/skills/numpy.webp';
 
 // custom components
 import Skill from '../components/Skill';
@@ -69,11 +72,18 @@ const skillData = [
     { name: "spaCy", image: spacy_logo },
     { name: "PIL/Pillow" },
     { name: "Vite", image: vite_logo },
+    { name: "Dash", image: plotly_logo },
+    { name : "Plotly", image: plotly_logo },
+    { name: "NetworkX", image: networkx_logo },
+    { name: "NumPy", image: numpy_logo },
+    { name: "Pandas" },
+    { name: "scikit-learn" },
     { name: "OOP" },
     { name: "UI/UX" },
     { name: "CI/CD" },
     { name: "API Integration" },
     { name: "Teamwork" },
+    { name: "Problem Solving" },
 ];
 
 
