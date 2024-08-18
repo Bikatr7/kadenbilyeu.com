@@ -8,17 +8,10 @@
 import { useEffect, useState } from 'react';
 
 // chakra-ui
-import { Box, Text, keyframes } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 
-const textFadeIn = keyframes`
-  0% { color: grey; }
-  100% { color: white; }
-`;
-
-const backgroundTransition = keyframes`
-  0% { background-color: white; }
-  100% { background-color: black; }
-`;
+// animations
+import { textFadeIn, backgroundTransition } from '../animations/background';
 
 const LoadingAnimation: React.FC<{ onLoadingComplete: () => void }> = ({ onLoadingComplete }) => 
 {
