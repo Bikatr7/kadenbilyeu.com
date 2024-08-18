@@ -10,7 +10,7 @@ import { Button, Flex, Heading, Image, Stack, Text } from '@chakra-ui/react';
 // icons and images
 import { IconBrandGithub} from '@tabler/icons-react';
 
-import face from '../assets/images/personals/kadenbilyeu.webp';
+import face from '../../assets/images/personals/kadenbilyeu.webp';
 
 function Preface({ showContent, toggleContent }: { showContent: boolean, toggleContent: () => void }) {
     const handleClick = () => {

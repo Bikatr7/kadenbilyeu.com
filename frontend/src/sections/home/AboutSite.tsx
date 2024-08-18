@@ -17,7 +17,7 @@ function AboutSite() {
                 Thankfully, after a few months and making a site for my LLC (<Link href="https://kakusui.org" color={"gray.300"} _hover={{ color: "yellow" }} isExternal>kakusui.org</Link> btw for those interested), I learned a lot about React and proper web design. This site is the result of that learning and I'm quite proud of it.
             </Text>
             <Text fontSize="md" marginBottom="4" color="gray.500">
-                So this one is made with Vite and React. A nice and simple one page site that I can easily update and maintain.
+                So this one is made with Vite and React. A nice and simple site that I can easily update and maintain.
             </Text>
         </Box>
     );

@@ -15,15 +15,15 @@ import NamedDivider from '../components/NamedDivider';
 import StorageNoticeModal from '../components/StorageNoticeModal';
 
 // sections
-import Preface from '../sections/Preface';
-import Introduction from '../sections/Introduction';
+import Preface from '../sections/home/Preface';
+import Introduction from '../sections/home/Introduction';
 
 // Lazy load the other components
-const Projects = lazy(() => import('../sections/Projects'));
-const Skills = lazy(() => import('../sections/Skills'));
-const AboutMe = lazy(() => import('../sections/AboutMe'));
-const AboutSite = lazy(() => import('../sections/AboutSite'));
-const Contact = lazy(() => import('../sections/Contact'));
+const Projects = lazy(() => import('../sections/home/Projects'));
+const Skills = lazy(() => import('../sections/common/Skills'));
+const AboutMe = lazy(() => import('../sections/home/AboutMe'));
+const AboutSite = lazy(() => import('../sections/home/AboutSite'));
+const Contact = lazy(() => import('../sections/home/Contact'));
 
 function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean })
 {
