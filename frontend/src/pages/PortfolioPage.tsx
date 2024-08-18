@@ -3,3 +3,24 @@
 // license that can be found in the LICENSE file.
 
 // maintain allman bracket style for consistency
+
+// chakra ui
+import { Box } from "@chakra-ui/react";
+
+// components
+import NamedDivider from "../components/NamedDivider";
+import PortfolioIntroduction from "../sections/portfolio/PortfolioIntroduction";
+import Education from "../sections/portfolio/Education";
+
+function PortfolioPage() {
+    return (
+        <Box>
+            <PortfolioIntroduction />
+            <NamedDivider name="Education" id="education" />
+            <Education />
+        </Box>
+    );
+}
+
+export default PortfolioPage;
+

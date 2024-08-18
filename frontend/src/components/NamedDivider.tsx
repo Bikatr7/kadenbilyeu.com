@@ -10,7 +10,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 
 interface NamedDividerProps 
 {
-  name: string;
+  name?: string;
   id: string;
   isExpandable?: boolean;
   isExpanded?: boolean;
@@ -22,14 +22,16 @@ function NamedDivider({ name, id, isExpandable = false, isExpanded = false, onTo
   return (
     <Box id={id} position="relative" padding="10" cursor={isExpandable ? "pointer" : "default"} onClick={isExpandable ? onToggle : undefined}>
       <Divider />
-      <AbsoluteCenter bg="black" px="4">
-        <Text display="flex" alignItems="center">
-          {name}
-          {isExpandable && (
-            isExpanded ? <ChevronUpIcon ml={2} /> : <ChevronDownIcon ml={2} />
-          )}
-        </Text>
-      </AbsoluteCenter>
+      {name && (
+        <AbsoluteCenter bg="black" px="4">
+          <Text display="flex" alignItems="center">
+            {name}
+            {isExpandable && (
+              isExpanded ? <ChevronUpIcon ml={2} /> : <ChevronDownIcon ml={2} />
+            )}
+          </Text>
+        </AbsoluteCenter>
+      )}
     </Box>
   );
 }

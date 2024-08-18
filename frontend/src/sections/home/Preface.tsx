@@ -43,6 +43,9 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                         >
                             More about me
                         </Button>
+                        <Button as="a" href="/portfolio" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
+                            My Portfolio
+                        </Button>
                         <Button as="a" href="/blog" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                             My Blog   
                         </Button>

@@ -26,9 +26,10 @@ interface ProjectItemProps
   websiteUrl?: string;
   githubUrl?: string;
   tags?: string[];
+  useBulletPoints?: boolean;
 }
 
-const ProjectItem: React.FC<ProjectItemProps> = (
+const Item: React.FC<ProjectItemProps> = (
 {
   title,
   dateRange,
@@ -37,7 +38,8 @@ const ProjectItem: React.FC<ProjectItemProps> = (
   imageAlt,
   websiteUrl,
   githubUrl,
-  tags
+  tags,
+  useBulletPoints = true
 }) => 
 {
   return (
@@ -52,7 +54,7 @@ const ProjectItem: React.FC<ProjectItemProps> = (
           </Text>
           {description.map((item, index) => (
             <Text key={index} fontSize="xs" mb={1}>
-              • {item}
+              {useBulletPoints ? `• ${item}` : item}
             </Text>
           ))}
           {tags && (
@@ -116,4 +118,4 @@ const Card: React.FC<CardProps> = ({ title, children }) =>
   );
 };
 
-export { Card, ProjectItem };
+export { Card, Item };

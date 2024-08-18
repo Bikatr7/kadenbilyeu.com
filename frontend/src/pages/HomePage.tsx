@@ -16,7 +16,7 @@ import StorageNoticeModal from '../components/StorageNoticeModal';
 
 // sections
 import Preface from '../sections/home/Preface';
-import Introduction from '../sections/home/Introduction';
+import HomeIntroduction from '../sections/home/HomeIntroduction';
 
 // Lazy load the other components
 const Projects = lazy(() => import('../sections/home/Projects'));
@@ -31,7 +31,7 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
         <Box bg="black" color="white" minHeight="83vh">
             <Preface showContent={showContent} toggleContent={toggleContent} />
             <NamedDivider name="Introduction" id="introduction" />
-            <Introduction />
+            <HomeIntroduction />
            
             <NamedDivider
                 name={showContent ? "Projects" : "Click for More"}
