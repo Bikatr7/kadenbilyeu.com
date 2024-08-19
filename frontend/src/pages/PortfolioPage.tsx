@@ -11,6 +11,8 @@ import { Box } from "@chakra-ui/react";
 import NamedDivider from "../components/NamedDivider";
 import PortfolioIntroduction from "../sections/portfolio/PortfolioIntroduction";
 import Education from "../sections/portfolio/Education";
+import Experience from "../sections/portfolio/Experience";
+
 
 function PortfolioPage() {
     return (
@@ -18,9 +20,10 @@ function PortfolioPage() {
             <PortfolioIntroduction />
             <NamedDivider name="Education" id="education" />
             <Education />
+            <NamedDivider name="Experience" id="experience" />
+            <Experience /> 
         </Box>
     );
 }
 
 export default PortfolioPage;
-

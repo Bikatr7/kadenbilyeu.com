@@ -39,6 +39,12 @@ function PortfolioIntroduction() {
                 This is my portfolio page. It's a bit more detailed than my main page and has more information about my projects and education, and new things like my professional experience and accomplishments.
             </Text>
             <Text fontSize="md" marginBottom="4" color="gray.500">
+                I like to think of it as an expanded, digital version of my resume. Resume's are great, but they're stuffy, not reactive, and don't leave room for creativity. This allows me to say what I want, and show what I want.
+            </Text>
+            <Text fontSize="md" marginBottom="4" color="gray.500">
+                If you're looking for something strictly professional, you can download my resume with that button in the top right.
+            </Text>
+            <Text fontSize="md" marginBottom="4" color="gray.500">
                 It's a work in progress, so if I end up pushing to prod before it's finished, it's likely to be a bit incomplete.
             </Text>
         </Box>
