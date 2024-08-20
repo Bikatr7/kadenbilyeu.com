@@ -25,6 +25,7 @@ function Experience() {
                         "Thankfully, I was able to pick up the skills quickly, and I've been doing that along with editing the simulation itself which is mostly just a lot of math.",
                         "I was able to brush up on my NumPy and Pandas skills as well, which was nice."
                     ]}
+                    tags={["Python", "Dash", "Plotly", "NumPy", "Pandas", "Scikit-Learn"]}
                     useBulletPoints={false}
                 />
                 <Item
@@ -35,6 +36,7 @@ function Experience() {
                         "I can't say too much about exactly what I do, but it's mostly just using RLHF (Reinforcement Learning from Human Feedback) to train, fine-tune, and evaluate language models.",
                         "It involves a lot of writing and analyzing LLM outputs, which is something I would do already even without this gig work."
                     ]}
+                    tags={["Python", "LLM", "RLHF", "Reinforcement Learning", "Fine-Tuning", "Evaluation"]}
                     useBulletPoints={false}
                 />
                 <Item
@@ -46,6 +48,20 @@ function Experience() {
                         "I did some direct meetings with students to help them with their assignments when needed.",
                         "I recently was hired to be a TA again as these are seasonal roles, this time for a Programming in C with Agile course.",
                         "I haven't started yet, but I'm looking forward to it. Hopefully I'll be able to learn a lot from it and help students learn as well."
+                    ]}
+                    tags={["C", "Agile", "R", "RStudio", "Statistics", "Data Analysis"]}
+                    useBulletPoints={false}
+                />
+                <Item
+                    title="Freelance Developer"
+                    dateRange="January 2023 - Present"
+                    description={[
+                        "This is tricky, the date range would depend on what you would consider a 'Freelance Developer'.",
+                        "Personally, I define as when I started coding for people other than myself.",
+                        "In which case, it would be January 2023 when I started work on Kudasai. I could go on and on about Kudasai, and trust me I will later. But for now, let's just say it's when I started coding for others.",
+                        "I've done a lot of work since then, some unpaid, some paid. Sadly most of all that paid work has been closed source, so I can't really show it off.",
+                        "But I've learned a lot, and I still consider myself a Freelance Developer to this day, as I still do gigs here and there and contribute to open source projects (mostly my own)."
+
                     ]}
                     useBulletPoints={false}
                 />

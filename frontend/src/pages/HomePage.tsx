@@ -19,7 +19,7 @@ import Preface from '../sections/home/Preface';
 import HomeIntroduction from '../sections/home/HomeIntroduction';
 
 // Lazy load the other components
-const Projects = lazy(() => import('../sections/home/Projects'));
+const Projects = lazy(() => import('../sections/home/HomeProjects'));
 const Skills = lazy(() => import('../sections/common/Skills'));
 const AboutMe = lazy(() => import('../sections/home/AboutMe'));
 const AboutSite = lazy(() => import('../sections/home/AboutSite'));
