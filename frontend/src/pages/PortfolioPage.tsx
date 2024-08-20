@@ -13,6 +13,8 @@ import PortfolioIntroduction from "../sections/portfolio/PortfolioIntroduction";
 import Education from "../sections/portfolio/Education";
 import Experience from "../sections/portfolio/Experience";
 import PortfolioProjects from "../sections/portfolio/PortfolioProjects";
+import Skills from "../sections/common/Skills";
+import Accomplishments from "../sections/portfolio/Accomplishments";
 
 function PortfolioPage() {
     return (
@@ -24,6 +26,10 @@ function PortfolioPage() {
             <Experience />
             <NamedDivider name="Projects" id="projects" />
             <PortfolioProjects />
+            <NamedDivider name="Skills" id="skills" />
+            <Skills />
+            <NamedDivider name="Accomplishments" id="accomplishments" />
+            <Accomplishments />
         </Box>
     );
 }

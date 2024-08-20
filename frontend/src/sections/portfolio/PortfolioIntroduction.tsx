@@ -44,9 +44,6 @@ function PortfolioIntroduction() {
             <Text fontSize="md" marginBottom="4" color="gray.500">
                 If you're looking for something strictly professional, you can download my resume with that button in the top right.
             </Text>
-            <Text fontSize="md" marginBottom="4" color="gray.500">
-                It's a work in progress, so if I end up pushing to prod before it's finished, it's likely to be a bit incomplete.
-            </Text>
         </Box>
     );
 }
