@@ -11,38 +11,38 @@ import { useState } from 'react';
 import { Box, Button, SimpleGrid } from "@chakra-ui/react";
 
 // logos
-import agile_logo from '../assets/images/skills/agile_logo.webp';
-import c_logo from '../assets/images/skills/c_logo.webp';
-import cpp_logo from '../assets/images/skills/c++_logo.webp';
-import css_logo from '../assets/images/skills/css_logo.webp';
-import deepL_logo from '../assets/images/skills/deepL_logo.webp';
-import discordpy_logo from '../assets/images/skills/discord.py_logo.webp';
-import docker_logo from '../assets/images/skills/docker_logo.webp';
-import fastapi_logo from '../assets/images/skills/fastapi_logo.webp';
-import flask_logo from '../assets/images/skills/flask_logo.webp';
-import git_logo from '../assets/images/skills/git_logo.webp';
-import github_logo from '../assets/images/skills/github_logo.webp';
-import gradio_logo from '../assets/images/skills/gradio_logo.webp';
-import html_logo from '../assets/images/skills/html_logo.webp';
-import java_logo from '../assets/images/skills/java_logo.webp';
-import javascript_logo from '../assets/images/skills/javascript_logo.webp';
-import linux_logo from '../assets/images/skills/linux_logo.webp';
-import mysql_logo from '../assets/images/skills/mysql_logo.webp';
-import openai_logo from '../assets/images/skills/openai_logo.webp';
-import oracle_sql_logo from '../assets/images/skills/oracle_sql_logo.webp';
-import pl_sql_logo from '../assets/images/skills/pl_sql_logo.webp';
-import python_logo from '../assets/images/skills/python_logo.webp';
-import r_logo from '../assets/images/skills/r_logo.webp';
-import react_logo from '../assets/images/skills/react_logo.webp';
-import spacy_logo from '../assets/images/skills/spacy_logo.webp';
-import typescript_logo from '../assets/images/skills/typescript_logo.webp';
-import vite_logo from '../assets/images/skills/vite_logo.webp';
-import plotly_logo from '../assets/images/skills/plotly.webp';
-import networkx_logo from '../assets/images/skills/networkx.webp';
-import numpy_logo from '../assets/images/skills/numpy.webp';
+import agile_logo from '../../assets/images/skills/agile_logo.webp';
+import c_logo from '../../assets/images/skills/c_logo.webp';
+import cpp_logo from '../../assets/images/skills/c++_logo.webp';
+import css_logo from '../../assets/images/skills/css_logo.webp';
+import deepL_logo from '../../assets/images/skills/deepL_logo.webp';
+import discordpy_logo from '../../assets/images/skills/discord.py_logo.webp';
+import docker_logo from '../../assets/images/skills/docker_logo.webp';
+import fastapi_logo from '../../assets/images/skills/fastapi_logo.webp';
+import flask_logo from '../../assets/images/skills/flask_logo.webp';
+import git_logo from '../../assets/images/skills/git_logo.webp';
+import github_logo from '../../assets/images/skills/github_logo.webp';
+import gradio_logo from '../../assets/images/skills/gradio_logo.webp';
+import html_logo from '../../assets/images/skills/html_logo.webp';
+import java_logo from '../../assets/images/skills/java_logo.webp';
+import javascript_logo from '../../assets/images/skills/javascript_logo.webp';
+import linux_logo from '../../assets/images/skills/linux_logo.webp';
+import mysql_logo from '../../assets/images/skills/mysql_logo.webp';
+import openai_logo from '../../assets/images/skills/openai_logo.webp';
+import oracle_sql_logo from '../../assets/images/skills/oracle_sql_logo.webp';
+import pl_sql_logo from '../../assets/images/skills/pl_sql_logo.webp';
+import python_logo from '../../assets/images/skills/python_logo.webp';
+import r_logo from '../../assets/images/skills/r_logo.webp';
+import react_logo from '../../assets/images/skills/react_logo.webp';
+import spacy_logo from '../../assets/images/skills/spacy_logo.webp';
+import typescript_logo from '../../assets/images/skills/typescript_logo.webp';
+import vite_logo from '../../assets/images/skills/vite_logo.webp';
+import plotly_logo from '../../assets/images/skills/plotly.webp';
+import networkx_logo from '../../assets/images/skills/networkx.webp';
+import numpy_logo from '../../assets/images/skills/numpy.webp';
 
 // custom components
-import Skill from '../components/Skill';
+import Skill from '../../components/Skill';
 
 const skillData = [
     { name: "Python", image: python_logo },

@@ -10,11 +10,14 @@ import { Box, Button, Stack, Text } from "@chakra-ui/react";
 // icons
 import { IconBrandGithub, IconBrandTwitter, IconBrandLinkedin, IconMail} from '@tabler/icons-react';
 
-function Introduction() {
+function HomeIntroduction() {
     return (
         <Box padding="5">
             <Text fontSize="md" marginBottom="4" color="gray.500">
-                Welcome to my personal website! Below are my personal projects, skills, some info about me and the site, and my contact info. Just click the the divider! Feel free to reach out to me if you have any questions or would like to collaborate on a project.
+                Welcome to my personal website! Below are my personal projects, skills, some info about me and the site, and my contact info. Just click the the divider! If you want something more detailed, check out my portfolio page.
+            </Text>
+            <Text fontSize="md" marginBottom="4" color="gray.500">
+                Feel free to reach out to me if you have any questions or would like to collaborate on a project.
             </Text>
             <Text fontSize="md" marginBottom="4" color="gray.500">
                 I'm also currently looking for internships and job opportunities in software development. If you need anyone in Colorado Springs or remotely, please reach out to me.
@@ -37,4 +40,4 @@ function Introduction() {
     );
 }
 
-export default Introduction;
+export default HomeIntroduction;

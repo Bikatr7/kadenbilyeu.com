@@ -15,15 +15,15 @@ import NamedDivider from '../components/NamedDivider';
 import StorageNoticeModal from '../components/StorageNoticeModal';
 
 // sections
-import Preface from '../sections/Preface';
-import Introduction from '../sections/Introduction';
+import Preface from '../sections/home/Preface';
+import HomeIntroduction from '../sections/home/HomeIntroduction';
 
 // Lazy load the other components
-const Projects = lazy(() => import('../sections/Projects'));
-const Skills = lazy(() => import('../sections/Skills'));
-const AboutMe = lazy(() => import('../sections/AboutMe'));
-const AboutSite = lazy(() => import('../sections/AboutSite'));
-const Contact = lazy(() => import('../sections/Contact'));
+const Projects = lazy(() => import('../sections/home/HomeProjects'));
+const Skills = lazy(() => import('../sections/common/Skills'));
+const AboutMe = lazy(() => import('../sections/home/AboutMe'));
+const AboutSite = lazy(() => import('../sections/home/AboutSite'));
+const Contact = lazy(() => import('../sections/home/Contact'));
 
 function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean })
 {
@@ -31,7 +31,7 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
         <Box bg="black" color="white" minHeight="83vh">
             <Preface showContent={showContent} toggleContent={toggleContent} />
             <NamedDivider name="Introduction" id="introduction" />
-            <Introduction />
+            <HomeIntroduction />
            
             <NamedDivider
                 name={showContent ? "Projects" : "Click for More"}

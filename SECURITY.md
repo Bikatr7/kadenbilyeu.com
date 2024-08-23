@@ -2,7 +2,7 @@
 
 ## Introduction
 
-I take the security of omy site very seriously and appreciate your efforts to responsibly disclose your findings and will make every effort to acknowledge your contributions.
+I take the security of my site very seriously and appreciate your efforts to responsibly disclose your findings and will make every effort to acknowledge your contributions.
 
 Please note: Public disclosure of the vulnerability without prior agreement is not recommended, as it could put the wider user community at risk.
 

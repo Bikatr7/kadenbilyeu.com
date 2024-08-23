@@ -10,7 +10,7 @@ import { Button, Flex, Heading, Image, Stack, Text } from '@chakra-ui/react';
 // icons and images
 import { IconBrandGithub} from '@tabler/icons-react';
 
-import face from '../assets/images/personals/kadenbilyeu.webp';
+import face from '../../assets/images/personals/kadenbilyeu.webp';
 
 function Preface({ showContent, toggleContent }: { showContent: boolean, toggleContent: () => void }) {
     const handleClick = () => {
@@ -42,6 +42,9 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                             _active={{ transform: 'scale(0.99)'}}
                         >
                             More about me
+                        </Button>
+                        <Button as="a" href="/portfolio" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
+                            My Portfolio
                         </Button>
                         <Button as="a" href="/blog" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                             My Blog   

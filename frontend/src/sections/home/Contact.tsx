@@ -10,7 +10,7 @@ import { Box, Button, Image, Flex, Stack, Text } from "@chakra-ui/react";
 // icons and images
 import { IconBrandGithub, IconBrandTwitter, IconBrandLinkedin, IconMail, IconBrandDiscord} from '@tabler/icons-react';
 
-import face from '../assets/images/personals/kadenbilyeu.webp';
+import face from '../../assets/images/personals/kadenbilyeu.webp';
 
 function Contact() {
     return (

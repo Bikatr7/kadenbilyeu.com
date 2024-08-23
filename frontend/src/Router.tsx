@@ -12,11 +12,13 @@ import HomePage from './pages/HomePage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import BlogDirectoryPage from './pages/BlogDirectoryPage';
+import PortfolioPage from './pages/PortfolioPage';
 
 function Router({ showContent, toggleContent, contentLoaded }: { showContent: any, toggleContent: any, contentLoaded: any }) 
 {
     const routes = [
         { path: '/', element: <HomePage showContent={showContent} toggleContent={toggleContent} contentLoaded={contentLoaded} /> },
+        { path: '/portfolio', element: <PortfolioPage /> },
         { path: '/blog', element: <BlogPage /> },
         { path : '/blog/directory', element: <BlogDirectoryPage /> },
         { path: '/blog/:id', element: <BlogPostPage /> },
