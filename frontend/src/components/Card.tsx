@@ -20,7 +20,7 @@ interface ProjectItemProps
 {
   title: string;
   dateRange: string;
-  description: string[];
+  description?: string[];
   imageUrl?: string;
   imageAlt?: string;
   websiteUrl?: string;
@@ -52,7 +52,7 @@ const Item: React.FC<ProjectItemProps> = (
           <Text fontSize="xs" color="blue.300" mb={2}>
             {dateRange}
           </Text>
-          {description.map((item, index) => (
+          {description && description.map((item, index) => (
             <Text key={index} fontSize="xs" mb={1}>
               {useBulletPoints ? `• ${item}` : item}
             </Text>

@@ -14,6 +14,7 @@ import Education from "../sections/portfolio/Education";
 import Experience from "../sections/portfolio/Experience";
 import PortfolioProjects from "../sections/portfolio/PortfolioProjects";
 import Skills from "../sections/common/Skills";
+import Certifications from "../sections/portfolio/Certifications";
 import Accomplishments from "../sections/portfolio/Accomplishments";
 
 function PortfolioPage() {
@@ -28,6 +29,8 @@ function PortfolioPage() {
             <PortfolioProjects />
             <NamedDivider name="Skills" id="skills" />
             <Skills />
+            <NamedDivider name="Certifications" id="certifications" />
+            <Certifications />
             <NamedDivider name="Accomplishments" id="accomplishments" />
             <Accomplishments />
         </Box>
