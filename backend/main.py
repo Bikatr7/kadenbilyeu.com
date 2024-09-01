@@ -58,6 +58,28 @@ class LoginToken(BaseModel):
 class TokenData(BaseModel):
     username:str
 
+class BlogPostBase(BaseModel):
+    title:str
+    content:str
+    author:str
+
+class BlogPostCreate(BlogPostBase):
+    pass
+
+class BlogPostUpdate(BaseModel):
+    title:typing.Optional[str] = None
+    content:typing.Optional[str] = None
+    author:typing.Optional[str] = None
+
+class BlogPostRead(BlogPostBase):
+    id:schemaUUID
+    created_at:datetime
+    updated_at:datetime
+    view_count:int
+
+    class Config:
+        from_attributes = True
+
 ##-----------------------------------------start-of-constants----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def get_env_variables() -> None:
@@ -132,28 +154,6 @@ assert REFRESH_TOKEN_SECRET, "REFRESH_TOKEN_SECRET environment variable not set"
 assert ENCRYPTION_KEY, "ENCRYPTION_KEY environment variable not set"
 
 ##----------------------------------/----------------------------------##
-
-class BlogPostBase(BaseModel):
-    title:str
-    content:str
-    author:str
-
-class BlogPostCreate(BlogPostBase):
-    pass
-
-class BlogPostUpdate(BaseModel):
-    title:typing.Optional[str] = None
-    content:typing.Optional[str] = None
-    author:typing.Optional[str] = None
-
-class BlogPostRead(BlogPostBase):
-    id:schemaUUID
-    created_at:datetime
-    updated_at:datetime
-    view_count:int
-
-    class Config:
-        from_attributes = True
 
 class BlogPostModel(Base):
     __tablename__ = "blog_posts"

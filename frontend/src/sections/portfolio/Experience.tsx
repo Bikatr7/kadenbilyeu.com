@@ -15,8 +15,18 @@ function Experience() {
         <Box>
             <Card title="Experience">
                 <Item
+                    title="AI/ML Intern at OSCorp"
+                    dateRange="September 2024 - Present"
+                    description={[
+                        "Contributed to the development of cutting-edge AI/ML tools for space defense, focusing on enhancing autonomy and improving real-time decision-making capabilities for national security applications",
+                        "Utilized extensive space data to develop new algorithms that enhance sensor search and reacquisition capabilities, advancing U.S. space domain awareness efforts"
+                    ]}
+                    tags={["Python", "AI/ML", "Space Defense", "Algorithm Development", "Data Analysis"]}
+                    useBulletPoints={true}
+                />
+                <Item
                     title="Software Engineering Intern at Network Goods Institute"
-                    dateRange="July 2024 - Present"
+                    dateRange="July 2024 - September 2024"
                     description={[
                         "I was lucky enough to be given the opportunity to work with them.",
                         "I've spent most of my time here working on a visualization tool for an index wallet powered economy simulation. It's really interesting stuff, and while I must admit that most of it went over my head at first, I've come to realize that it's not as complicated as it seems.",
@@ -30,7 +40,7 @@ function Experience() {
                 />
                 <Item
                     title="'AI Trainer' at Outlier AI"
-                    dateRange="June 2024 - Present"
+                    dateRange="June 2024 - September 2024"
                     description={[
                         "I don't really have an official title, but in the middle of the summer I took some gig work for Outlier AI as it was more in line with my career goals than food service.",
                         "I can't say too much about exactly what I do, but it's mostly just using RLHF (Reinforcement Learning from Human Feedback) to train, fine-tune, and evaluate language models.",

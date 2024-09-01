@@ -17,7 +17,7 @@ function PortfolioIntroduction() {
     return (
         <Box padding="5">
         <Stack direction={{ base: 'column', md: 'row' }} bg="black" id="home" paddingTop={5} >
-            <Flex flex={1}>
+            <Flex flex={1} justifyContent={{ base: 'center', md: 'flex-start' }} alignItems="center">
                 <Image boxSize={400} alt="Kaden Bilyeu's Profile Picture" objectFit="cover" src={face} borderRadius={"full"} />
             </Flex>
             <Flex p={8} flex={1} align="center">
@@ -29,7 +29,7 @@ function PortfolioIntroduction() {
                         <br />
                     </Heading>
                     <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                        Computer science student at UCCS focusing on incorporating AI, LLMs, data science, and NER/NLP into software for real-world applications.
+                        Computer science student at UCCS focusing on incorporating AI/ML, LLMs, data science, and NER/NLP into software for real-world applications.
                     </Text>
                 </Stack>
             </Flex>

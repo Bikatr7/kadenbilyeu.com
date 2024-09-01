@@ -19,6 +19,15 @@ function Accomplishments()
             </Text>
             <Card title="Accomplishments">
                 <Item
+                    title="Officer for the ACM (Association for Computing Machinery - UCCS)"
+                    dateRange="September 2024 - Present"
+                    description={[
+                        "I've been a member since October of 2023, but recently was chosen as an officer (Secretary-Treasurer) for the 2024-2025 school year.",
+                        "I'm looking forward to doing more for the club and helping out in any way I can."
+                    ]}
+                    useBulletPoints={false}
+                />
+                <Item
                     title="Finalist in Backdrop Build v3"
                     dateRange="March 2024"
                     description={[

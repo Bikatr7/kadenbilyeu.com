@@ -30,7 +30,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                         <br />
                     </Heading>
                     <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                        Computer science student at UCCS focusing on incorporating AI, LLMs, data science, and NER/NLP into software for real-world applications.
+                        Computer science student at UCCS focusing on incorporating AI/ML, LLMs, data science, and NER/NLP into software for real-world applications.
                     </Text>
                     <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
                         <Button 
@@ -55,7 +55,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                     </Stack>
                 </Stack>
             </Flex>
-            <Flex flex={1}>
+            <Flex flex={1} justifyContent={{ base: 'center', md: 'flex-start' }} alignItems="center">
                 <Image boxSize={400} alt="Kaden Bilyeu's Profile Picture" objectFit="cover" src={face} borderRadius={"full"} />
             </Flex>
         </Stack>
