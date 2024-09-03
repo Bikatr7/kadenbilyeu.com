@@ -133,18 +133,8 @@ Base:DeclarativeMeta = declarative_base()
 
 security = HTTPBasic()
 
-
 if(not os.path.exists(BACKUP_LOGS_DIR)):
     os.makedirs(BACKUP_LOGS_DIR, exist_ok=True)
-
-if(not any([ADMIN_USER, ADMIN_PASS_HASH, TOTP_SECRET, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, ENCRYPTION_KEY])):
-    get_env_variables()
-    ADMIN_USER = os.environ.get("ADMIN_USER")
-    ADMIN_PASS_HASH = os.environ.get("ADMIN_PASS_HASH")
-    TOTP_SECRET = os.environ.get("TOTP_SECRET")
-    ACCESS_TOKEN_SECRET = os.environ.get("ACCESS_TOKEN_SECRET")
-    REFRESH_TOKEN_SECRET = os.environ.get("REFRESH_TOKEN_SECRET")
-    ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
 
 assert ADMIN_USER, "ADMIN_USER environment variable not set"
 assert ADMIN_PASS_HASH, "ADMIN_PASS_HASH environment variable not set"
@@ -152,6 +142,7 @@ assert TOTP_SECRET, "TOTP_SECRET environment variable not set"
 assert ACCESS_TOKEN_SECRET, "ACCESS_TOKEN_SECRET environment variable not set"
 assert REFRESH_TOKEN_SECRET, "REFRESH_TOKEN_SECRET environment variable not set"
 assert ENCRYPTION_KEY, "ENCRYPTION_KEY environment variable not set"
+assert TURNSTILE_SECRET_KEY
 
 ##----------------------------------/----------------------------------##
 
