@@ -29,9 +29,12 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                         </Text>
                         <br />
                     </Heading>
-                    <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                        Computer science student at UCCS focusing on incorporating AI/ML, LLMs, data science, and NER/NLP into software for real-world applications.
-                    </Text>
+                        <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
+                        Computer science junior at the University of Colorado Colorado Springs passionate in applying my skills on AI/ML, LLMs, data science, and NER/NLP into software for real-world applications.
+                        </Text>
+                        <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
+                            Eligible for security clearance. U.S. Citizen.
+                        </Text>
                     <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
                         <Button 
                             rounded="full" 

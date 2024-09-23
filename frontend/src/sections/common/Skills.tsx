@@ -40,11 +40,17 @@ import vite_logo from '../../assets/images/skills/vite_logo.webp';
 import plotly_logo from '../../assets/images/skills/plotly.webp';
 import networkx_logo from '../../assets/images/skills/networkx.webp';
 import numpy_logo from '../../assets/images/skills/numpy.webp';
+import django_logo from '../../assets/images/skills/django_logo.webp';
+import go_logo from '../../assets/images/skills/go_logo.webp';
+import keras_logo from '../../assets/images/skills/keras_logo.webp';
+import pytorch_logo from '../../assets/images/skills/pytorch_logo.webp';
+import tensorflow_logo from '../../assets/images/skills/tensorflow_logo.webp';
 
 // custom components
 import Skill from '../../components/Skill';
 
 const skillData = [
+    // Programming Languages
     { name: "Python", image: python_logo },
     { name: "Java", image: java_logo },
     { name: "JavaScript", image: javascript_logo },
@@ -52,42 +58,68 @@ const skillData = [
     { name: "C", image: c_logo },
     { name: "C++", image: cpp_logo },
     { name: "R", image: r_logo },
+    { name: "Go", image: go_logo },
+
+    // Web Technologies
     { name: "HTML", image: html_logo },
     { name: "CSS", image: css_logo },
+    { name: "React", image: react_logo },
+
+    // Databases
     { name: "MySQL", image: mysql_logo },
     { name: "Oracle SQL", image: oracle_sql_logo },
     { name: "PL/SQL", image: pl_sql_logo },
+
+    // Version Control
     { name: "Git", image: git_logo },
     { name: "GitHub", image: github_logo },
+
+    // DevOps & Cloud
     { name: "Docker", image: docker_logo },
+    { name: "AWS" },
+    { name: "Cloudflare" },
+    { name: "CI/CD" },
+
+    // Frameworks & Libraries
     { name: "FastAPI", image: fastapi_logo },
     { name: "Flask", image: flask_logo },
-    { name: "React", image: react_logo },
-    { name: "Linux", image: linux_logo },
-    { name: "Agile", image: agile_logo },
-    { name: "OpenAI API", image: openai_logo },
-    { name: "DeepL API", image: deepL_logo },
-    { name: "discord.py", image: discordpy_logo },
-    { name: "Gradio", image: gradio_logo },
-    { name: "spaCy", image: spacy_logo },
-    { name: "PIL/Pillow" },
+    { name: "Django", image: django_logo },
     { name: "Vite", image: vite_logo },
     { name: "Dash", image: plotly_logo },
-    { name : "Plotly", image: plotly_logo },
+    { name: "Plotly", image: plotly_logo },
     { name: "NetworkX", image: networkx_logo },
     { name: "NumPy", image: numpy_logo },
     { name: "Pandas" },
     { name: "scikit-learn" },
+    { name: "Keras", image: keras_logo },
+    { name: "PyTorch", image: pytorch_logo },
+    { name: "TensorFlow", image: tensorflow_logo },
+
+    // AI & NLP
+    { name: "OpenAI API", image: openai_logo },
+    { name: "spaCy", image: spacy_logo },
+
+    // Other Technologies
+    { name: "Linux", image: linux_logo },
+    { name: "DeepL API", image: deepL_logo },
+    { name: "discord.py", image: discordpy_logo },
+    { name: "Gradio", image: gradio_logo },
+    { name: "PIL/Pillow" },
+
+    // Methodologies & Concepts
+    { name: "Agile", image: agile_logo },
     { name: "OOP" },
     { name: "UI/UX" },
-    { name: "CI/CD" },
     { name: "API Integration" },
+
+    // Soft Skills
     { name: "Teamwork" },
-    { name: "Problem Solving" },
+    { name: "Problem Solving" }
 ];
 
 
-function Skills() {
+function Skills()
+{
     const [showMore, setShowMore] = useState(false);
     const visibleSkills = showMore ? skillData : skillData.slice(0, 15);
 

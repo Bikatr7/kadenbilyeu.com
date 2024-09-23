@@ -33,7 +33,7 @@ function Accomplishments()
                     description={[
                         "I entered Kudasai into the Backdrop Build v3 contest and made it to the finalists.",
                         "It was a fun experience and It gave me a lot of motivation to keep working on Kudasai.",
-                        "It wasn't particularly impressive, but hey, it was a fun experience and I got to meet some cool people."
+                        "I got to meet a lot of cool people and got some connections in the industry which was pretty cool."
                     ]}
                     websiteUrl="https://backdropbuild.com/builds/kudasai"
                     useBulletPoints={false}
