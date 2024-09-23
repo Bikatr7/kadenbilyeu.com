@@ -11,9 +11,9 @@ import { Box, Text } from "@chakra-ui/react";
 import { Card, Item } from "../../components/Card"
 
 // images
-import ibm from "../../assets/images/logos/portfolio/ibm_logo.webp";
+import ibm from '../../assets/images/logos/portfolio/ibm_logo.webp';
 
-function Accomplishments()
+function Certifications()
 {
     return (
         <Box>
@@ -27,9 +27,15 @@ function Accomplishments()
                     imageUrl={ibm}
                     useBulletPoints={false}
                 />
+                <Item
+                    title="Getting Started with Threat Intelligence and Hunting (IBM)"
+                    dateRange="Issued September 2024"
+                    imageUrl={ibm}
+                    useBulletPoints={false}
+                />
             </Card>
         </Box>
     );
 }
 
-export default Accomplishments;
+export default Certifications;

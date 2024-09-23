@@ -55,9 +55,12 @@ function Contact() {
                 </Box>
             </Flex>
             <Box textAlign="center" ml={5} mr={20}>
-                <Text fontSize="md" color="gray.500">
+                <Text fontSize="md" color="gray.500" marginBottom="4">
                     Feel free to reach out about anything! I'm always open to new opportunities and collaborations. I'm also looking for internships and job opportunities in software development.
                 </Text>
+            <Text fontSize="md" marginBottom="4" color="gray.500">
+                I'm specifically looking for Spring and Summer 2025 internships. Open to AI/ML, Cybersecurity, Software Engineering, and Data Science roles. Willing to relocate for summer 2025.
+            </Text>
             </Box>
             <Box textAlign="left" ml={9} mr={50} mt={4} mb={100}>
                 <Text fontSize="md" color="gray.500">

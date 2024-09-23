@@ -65,7 +65,6 @@ function PortfolioProjects() {
                         "Currently, it mostly just hosts BYOK methods for my other creations, those being EasyTL, Kairyou, and Elucidate.",
                         "At some point, I want to expand upon it further, maybe turn it into something of a SaaS Lite, where it looks nicer and offers paid translation features.",
                         "BYOK will always be free of course, and hosting costs are completely negligible for me. But having a way to provide paid translation features is something I'd like to do.",
-                        "Also, as I said, compared to this website it looks meh. So I will need to fix that."
                     ]}
                     imageUrl={kakusui_logo}
                     imageAlt="Kakusui Logo"

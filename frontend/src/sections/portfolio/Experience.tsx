@@ -18,10 +18,11 @@ function Experience() {
                     title="AI/ML Intern at OSCorp"
                     dateRange="September 2024 - Present"
                     description={[
-                        "Contributed to the development of cutting-edge AI/ML tools for space defense, focusing on enhancing autonomy and improving real-time decision-making capabilities for national security applications",
-                        "Utilized extensive space data to develop new algorithms that enhance sensor search and reacquisition capabilities, advancing U.S. space domain awareness efforts"
+                        "Designed new AI/ML systems for space defense using Python, C++, TensorFlow, and PyTorch, focusing on enhancing autonomy and real-time decision-making capabilities",
+                        "Analyzed extensive space data to create new algorithms while leveraging machine learning techniques and data analysis tools",
+                        "Enhanced U.S. space domain awareness efforts by improving sensor search and reacquisition capabilities"
                     ]}
-                    tags={["Python", "AI/ML", "Space Defense", "Algorithm Development", "Data Analysis"]}
+                    tags={["Python", "AI/ML", "Space Defense", "Algorithm Development", "Data Analysis", "TensorFlow", "PyTorch", "C++", "Machine Learning", "Keras", "Scikit-Learn"]}
                     useBulletPoints={true}
                 />
                 <Item
@@ -33,9 +34,10 @@ function Experience() {
                         "To be a bit honest, I wasn't too familiar with visualization in Python. My prior experience was solely with Gradio.",
                         "It however proved to be too limited for what we needed, so I learned how to use Plotly and Dash. I knew basically nothing about either, but I was able to pick it up quickly.",
                         "Thankfully, I was able to pick up the skills quickly, and I've been doing that along with editing the simulation itself which is mostly just a lot of math.",
-                        "I was able to brush up on my NumPy and Pandas skills as well, which was nice."
+                        "I was able to brush up on my NumPy and Pandas skills as well, which was nice.",
+                        "I learned a lot about the basics of Data Science, and how to apply it to real world problems."
                     ]}
-                    tags={["Python", "Dash", "Plotly", "NumPy", "Pandas", "Scikit-Learn"]}
+                    tags={["Python", "Dash", "Plotly", "NumPy", "Pandas", "Scikit-Learn", "Data Science"]}
                     useBulletPoints={false}
                 />
                 <Item
@@ -57,7 +59,7 @@ function Experience() {
                         "It was an interesting experience, most of my time was spent grading and answering direct questions from students.",
                         "I did some direct meetings with students to help them with their assignments when needed.",
                         "I recently was hired to be a TA again as these are seasonal roles, this time for a Programming in C with Agile course.",
-                        "I haven't started yet, but I'm looking forward to it. Hopefully I'll be able to learn a lot from it and help students learn as well."
+                        "It's mostly been more of the same, grading and helping students with their assignments when needed. But I've been a bit more hands on with the students here."
                     ]}
                     tags={["C", "Agile", "R", "RStudio", "Statistics", "Data Analysis"]}
                     useBulletPoints={false}
