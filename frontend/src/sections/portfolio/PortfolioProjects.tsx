@@ -17,6 +17,7 @@ import kairyou_logo from '../../assets/images/logos/projects/kairyou_logo.webp';
 import kakusui_logo from '../../assets/images/logos/projects/kakusui_logo.webp';
 import kudasai_logo from '../../assets/images/logos/projects/kudasai_logo.webp';
 import seisen_logo from '../../assets/images/logos/projects/seisen_logo.webp';
+import tltmi_logo from '../../assets/images/logos/projects/tltmi_logo.webp';
 import kb_logo from '../../assets/images/personals/kb.webp';
 
 function PortfolioProjects() {
@@ -99,6 +100,8 @@ function PortfolioProjects() {
                         "Think of it as a mini translation pipeline, currently it uses Helsinki-NLP's opus-mt batch of models.",
                         "That's all I really want to target, I don't really have much time right now so I'm trying to allocate it everywhere which leads to slow progress on my own."
                     ]}
+                    imageUrl={tltmi_logo}
+                    imageAlt="TLTMI Logo"
                     githubUrl="https://github.com/Kakusui/TLTMI"
                     tags={[]}
                     useBulletPoints={false}

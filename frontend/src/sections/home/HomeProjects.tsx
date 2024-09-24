@@ -11,6 +11,7 @@ import kairyou_logo from '../../assets/images/logos/projects/kairyou_logo.webp';
 import kakusui_logo from '../../assets/images/logos/projects/kakusui_logo.webp';
 import kudasai_logo from '../../assets/images/logos/projects/kudasai_logo.webp';
 import seisen_logo from '../../assets/images/logos/projects/seisen_logo.webp';
+import tltmi_logo from '../../assets/images/logos/projects/tltmi_logo.webp';
 import kb_logo from '../../assets/images/personals/kb.webp';
 
 // custom components
@@ -60,9 +61,9 @@ function Projects() {
            />
             <Project
                 title="TLTMI"
-                subtitle="A lightweight translation container using Huggingface Transformers (Logo Pending)"
-                imageUrl={kakusui_logo}
-                imageAlt="Logo Pending"
+                subtitle="A lightweight translation container using Huggingface Transformers"
+                imageUrl={tltmi_logo}
+                imageAlt="TLTMI Logo"
                 githubUrl="https://github.com/Kakusui/TLTMI"
                 tags={["Open Source", "Python", "Hugging Face", "FastAPI", "Docker"]}
             />
