@@ -47,7 +47,7 @@ function Contact() {
                             <Button as="a" href="https://discord.com/users/1141562307885936763" leftIcon={<IconBrandDiscord />} rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}} variant="outline">
                                 Discord
                             </Button>
-                            <Button as="a" href="https://twitter.com/kadenbilyeu0" leftIcon={<IconBrandTwitter />} rounded="full"_hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}} variant="outline">
+                            <Button as="a" href="https://twitter.com/bikatr7" leftIcon={<IconBrandTwitter />} rounded="full"_hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}} variant="outline">
                                 Twitter
                             </Button>
                         </Stack>
