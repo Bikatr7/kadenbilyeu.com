@@ -24,7 +24,7 @@ function Education() {
                     description={[
                         "I've attended UCCS for a bit over 2 years now and have been working towards my degree in Computer Science. I'm expected to graduate in May 2026.",
                         "Also I am working towards a minor in Japanese.",
-                        "I'm currently a member of the Association for Computing Machinery (ACM), I plan to run for an officer position in the fall of 2024.",
+                        "I'm currently a member of the Association for Computing Machinery (ACM), I became an officer in the fall of 2024.",
                         "Along with my minor, I am focusing in a cybersecurity track. Although a lot of my relevant experience is more in AI/ML or general software engineering which is self-taught."
                     ]}
                     imageUrl={uccs_logo}

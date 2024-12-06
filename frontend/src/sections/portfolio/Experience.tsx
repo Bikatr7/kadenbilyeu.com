@@ -15,12 +15,23 @@ function Experience() {
         <Box>
             <Card title="Experience">
                 <Item
+                    title="Software Engineering Intern at Network Goods Institute"
+                    dateRange="November 2024 - Present"
+                    description={[
+                        "Not much to say yet."
+                    ]}
+                    useBulletPoints={false}
+                />
+                <Item
                     title="AI/ML Intern at OSCorp"
-                    dateRange="September 2024 - Present"
+                    dateRange="September 2024 - November 2024"
                     description={[
                         "Designed new AI/ML systems for space defense using Python, C++, TensorFlow, and PyTorch, focusing on enhancing autonomy and real-time decision-making capabilities",
                         "Analyzed extensive space data to create new algorithms while leveraging machine learning techniques and data analysis tools",
-                        "Enhanced U.S. space domain awareness efforts by improving sensor search and reacquisition capabilities"
+                        "Enhanced U.S. space domain awareness efforts by improving sensor search and reacquisition capabilities",
+                        "----------------------------------------------",
+                        "I had a lot of fun here, I had the chance to work with OSCorp as the SDA TAP LAB in Colorado Springs. I got to work with some really cool people, and learn a lot about AI/ML and space defense.",
+                        "I'm not sure how much I can say without getting into too much detail, but I will say that it reaffirmed that I wanted to eventually work in the defense industry."
                     ]}
                     tags={["Python", "AI/ML", "Space Defense", "Algorithm Development", "Data Analysis", "TensorFlow", "PyTorch", "C++", "Machine Learning", "Keras", "Scikit-Learn"]}
                     useBulletPoints={true}

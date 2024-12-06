@@ -45,7 +45,7 @@ function PortfolioProjects() {
                     useBulletPoints={false}
                 />
                 <Item
-                    title="KadenBilyeu.com"
+                    title="kadenbilyeu.com"
                     dateRange="June 2024 - Present"
                     description={[
                         "This is my personal website, the one you're on right now. I'm very proud of this as well. It's funny because I made it solely out of spite because my friends said my old GitHub pages site was ugly (to be fair it was).",
@@ -59,7 +59,7 @@ function PortfolioProjects() {
                     useBulletPoints={false}
                 />
                 <Item
-                    title="Kakusui.org"
+                    title="kakusui.org"
                     dateRange="April 2024 - Present"
                     description={[
                         "This is the website for my LLC, Kakusui LLC. It was created for the sole purpose for me to well, have an LLC and structure my projects around Translation.",
@@ -86,9 +86,9 @@ function PortfolioProjects() {
                     ]}
                     imageUrl={easytl_logo}
                     imageAlt="EasyTL Logo"
-                    websiteUrl="https://kakusui.org/easytl"
+                    websiteUrl="https://easytl.org"
                     githubUrl="https://github.com/Bikatr7/EasyTL"
-                    tags={["Open Source", "Python", "Package", "OpenAI", "DeepL", "Google Translate", "Gemini", "Azure", "Anthropic"]}
+                    tags={["Open Source", "Python", "Package", "OpenAI", "DeepL", "Google Translate", "Gemini", "Azure", "Anthropic", "React", "TypeScript", "Vite", "FastAPI"]}
                     useBulletPoints={false}
                 />
                 <Item

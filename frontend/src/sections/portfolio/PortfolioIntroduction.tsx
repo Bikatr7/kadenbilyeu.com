@@ -32,7 +32,7 @@ function PortfolioIntroduction() {
                         Computer science junior at the University of Colorado Colorado Springs passionate in applying my skills on AI/ML, LLMs, data science, and NER/NLP into software for real-world applications.
                     </Text>
                     <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                        Eligible for security clearance. U.S. Citizen.
+                        Eligible for security clearance. Proud U.S. Citizen.
                     </Text>
                 </Stack>
             </Flex>
@@ -42,7 +42,7 @@ function PortfolioIntroduction() {
                 This is my portfolio page. It's a bit more detailed than my main page and has more information about my projects and education, and new things like my professional experience and accomplishments.
             </Text>
             <Text fontSize="md" marginBottom="4" color="gray.500">
-                I like to think of it as an expanded, digital version of my resume. Resume's are great, but they're stuffy, not reactive, and don't leave room for creativity. This allows me to say what I want, and show what I want.
+                I like to think of it as an expanded, digital version of my resume. Resume's are great, but they're stuffy, not reactive, and don't leave room for creativity. This allows me to say and show what I want.
             </Text>
             <Text fontSize="md" marginBottom="4" color="gray.500">
                 If you're looking for something strictly professional, you can download my resume with that button in the top right.
