@@ -308,8 +308,9 @@ const BlogPage: React.FC = () =>
             </Flex>
 
             {isLoading ? (
-                <Flex justifyContent="center" alignItems="center" height="60vh">
+                <Flex justifyContent="center" alignItems="center" height="60vh" flexDirection="column" gap={4}>
                     <Spinner size="xl" color="yellow" thickness="4px" />
+                    <Text color="yellow" fontSize="lg">Sorry for the wait, I don't pay for 100% uptime.</Text>
                 </Flex>
             ) : (
                 <>
