@@ -8,7 +8,7 @@
 import { useState } from 'react';
 
 // chakra-ui
-import { Box, Button, SimpleGrid } from "@chakra-ui/react";
+import { Box, Button, SimpleGrid, Text } from "@chakra-ui/react";
 
 // logos
 import agile_logo from '../../assets/images/skills/agile_logo.webp';
@@ -117,6 +117,11 @@ const skillData = [
     { name: "Problem Solving" }
 ];
 
+const developingSkills = [
+    "Supabase",
+    "Next.js",
+    "Tailwind CSS"
+];
 
 function Skills()
 {
@@ -142,9 +147,21 @@ function Skills()
                     {showMore ? "Show Less" : "Show More"}
                 </Button>
             </Box>
+            
+            {/* New developing skills section */}
+            <Box mt={6} textAlign="center">
+                <Box fontSize="sm" color="gray.500" mb={2}>
+                    Currently developing skills in the following
+                </Box>
+                <Box fontSize="md" color="gray.400">
+                    {developingSkills.join(" • ")}
+                </Box>
+                <Text fontSize="sm" color="gray.500" mt={2}>
+                    This is due to my current internship and personal interests.
+                </Text>
+            </Box>
         </Box>
     );
 }
-
 
 export default Skills;

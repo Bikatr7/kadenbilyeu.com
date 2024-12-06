@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Text, Button, Flex, useToast } from "@chakra-ui/react";
+import { Box, Text, Button, Flex, useToast, Spinner } from "@chakra-ui/react";
 import { ArrowBackIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 
 // components
@@ -288,7 +288,10 @@ const BlogPostPage: React.FC = () =>
                         </Box>
                     )
                 ) : (
-                    <Text textAlign="center">Loading...</Text>
+                    <Flex justify="center" align="center" height="60vh" flexDirection="column" gap={4}>
+                        <Spinner size="xl" color="yellow" thickness="4px" />
+                        <Text color="yellow" fontSize="lg">Sorry for the wait, I don't pay for 100% uptime.</Text>
+                    </Flex>
                 )}
             </Box>
         </Box>

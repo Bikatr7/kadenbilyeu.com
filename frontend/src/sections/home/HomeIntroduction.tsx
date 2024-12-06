@@ -20,10 +20,7 @@ function HomeIntroduction() {
                 Feel free to reach out to me if you have any questions or would like to collaborate on a project.
             </Text>
             <Text fontSize="md" marginBottom="4" color="gray.500">
-                I'm also currently looking for internships and job opportunities in software development. If you need anyone in Colorado Springs or remotely, please reach out to me.
-            </Text>
-            <Text fontSize="md" marginBottom="4" color="gray.500">
-                I'm specifically looking for Spring and Summer 2025 internships. Open to AI/ML, Cybersecurity, Software Engineering, and Data Science roles. Willing to relocate for summer 2025.
+                I've been lucky enough to already secure internship opportunities for Spring and Summer 2025. However, if you wish to talk about other opportunities, please reach out to me via any of the methods below.
             </Text>
             <Stack direction={{ base: 'column', md: 'row' }} spacing={4} justifyContent="center">
                 <Button as="a" href="mailto:kadenbilyeu@proton.me" leftIcon={<IconMail />} rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>

@@ -9,8 +9,8 @@ import { Box, Button, Collapse, Container, Flex, Heading, Icon, IconButton, Imag
 import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 
 // assets
-import logo from '../assets/images/personals/bikatr7_logo.webp';
-import resume from '../assets/pdfs/Kaden_Bilyeu_September_2024_Resume.pdf';
+import logo from '../assets/images/personals/kb.webp';
+import resume from '../assets/pdfs/Kaden_Truett_Bilyeu_Resume_December_2024.pdf';
 
 export default function Navbar() 
 {
@@ -54,7 +54,7 @@ export default function Navbar()
                             as="a"
                             bg="red.900"
                             href={resume}
-                            download="Kaden_Bilyeu_September_2024_Resume.pdf"
+                            download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
                             rounded="full"
                             _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                             _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
@@ -74,7 +74,7 @@ export default function Navbar()
                                 as="a"
                                 bg="red.900"
                                 href={resume}
-                                download="Kaden_Bilyeu_September_2024_Resume.pdf"
+                                download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
                                 rounded="full"
                                 _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                                 _active={{ bg: 'red.900', transform: 'scale(0.98)' }}

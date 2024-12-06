@@ -30,7 +30,7 @@ function Projects() {
                 tags={["Open Source", "Python", "Hugging Face", "sPacy", "Google Translate", "DeepL", "OpenAI", "Gemini", "Gradio"]}
             />
             <Project
-                title="KadenBilyeu.com"
+                title="kadenbilyeu.com"
                 subtitle="My personal website (the one you're on right now)"
                 imageUrl={kb_logo}
                 imageAlt="Kaden Bilyeu Logo"
@@ -40,7 +40,7 @@ function Projects() {
                 reverse={true}
             />
             <Project
-                title="Kakusui.org"
+                title="kakusui.org"
                 subtitle="The Official Website of Kakusui, a LLC aiming to revolutionize machine translation with new LLM and AI technologies."
                 imageUrl={kakusui_logo}
                 imageAlt="Kakusui Logo"
@@ -53,12 +53,12 @@ function Projects() {
                 subtitle="Seamless Multi-API Translation: Simplifying Language Barriers with DeepL, OpenAI, Gemini, Google Translate and More!"
                 imageUrl={easytl_logo}
                 imageAlt="EasyTL Logo"
-                linkUrl="https://kakusui.org/easytl"
+                linkUrl="https://easytl.org"
                 githubUrl="https://github.com/Bikatr7/EasyTL"
                 documentationUrl="https://easytl.readthedocs.io/en/latest/index.html"
-                tags={["Open Source", "Python", "Package", "OpenAI", "DeepL", "Google Translate", "Gemini", "Azure", "Anthropic"]}
+                tags={["Open Source", "Python", "Package", "OpenAI", "DeepL", "Google Translate", "Gemini", "Azure", "Anthropic", "React", "TypeScript", "Vite", "FastAPI"]}
                 reverse={true}
-           />
+            />
             <Project
                 title="TLTMI"
                 subtitle="A lightweight translation container using Huggingface Transformers"

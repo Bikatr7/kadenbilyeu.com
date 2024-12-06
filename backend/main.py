@@ -106,7 +106,6 @@ maintenance_lock = threading.Lock()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-TURNSTILE_SECRET_KEY = os.environ.get("TURNSTILE_SECRET_KEY")
 ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
 ADMIN_USER = os.environ.get("ADMIN_USER")
 ADMIN_PASS_HASH = os.environ.get("ADMIN_PASS_HASH")
@@ -142,8 +141,6 @@ assert TOTP_SECRET, "TOTP_SECRET environment variable not set"
 assert ACCESS_TOKEN_SECRET, "ACCESS_TOKEN_SECRET environment variable not set"
 assert REFRESH_TOKEN_SECRET, "REFRESH_TOKEN_SECRET environment variable not set"
 assert ENCRYPTION_KEY, "ENCRYPTION_KEY environment variable not set"
-assert TURNSTILE_SECRET_KEY
-
 ##----------------------------------/----------------------------------##
 
 class BlogPostModel(Base):

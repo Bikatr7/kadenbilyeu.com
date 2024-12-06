@@ -11,7 +11,7 @@ import { Box, Container,Divider, Flex, IconButton, Image, Stack, Text } from '@c
 import { IconBrandGithub } from '@tabler/icons-react';
 
 // logo
-import logo from '../assets/images/personals/bikatr7_logo.webp';
+import logo from '../assets/images/personals/kb.webp';
 
 function Footer() 
 {
