@@ -163,7 +163,6 @@ const BlogPostPage: React.FC = () =>
                     Go Back
                 </Button>
                 <Flex align="center">
-
                     {isLoggedIn && (
                         <>
                             {blogPost && (
@@ -199,7 +198,7 @@ const BlogPostPage: React.FC = () =>
                 flex="1" 
                 position="relative"
                 overflowY="auto"
-                p={6}
+                p={{ base: 3, md: 6 }}
                 zIndex="1"
                 sx={{
                     '::-webkit-scrollbar': {
@@ -222,19 +221,25 @@ const BlogPostPage: React.FC = () =>
                         />
                     ) : (
                         <Box
-                            width="80%"
-                            maxWidth="800px"
+                            width={{ base: "98%", md: "85%" }}
+                            maxWidth="1000px"
                             margin="0 auto"
                             bg="rgba(0, 0, 0, 0.7)"
                             borderRadius="md"
                             boxShadow="lg"
-                            p={6}
+                            p={{ base: 4, md: 6 }}
                             overflow="hidden"
                             border={`2px solid darkgrey`}
                         >
-                            <Text fontSize="3xl" mb={4} textAlign="center">{blogPost.title}</Text>
+                            <Text 
+                                fontSize={{ base: "2xl", md: "3xl" }} 
+                                mb={4} 
+                                textAlign="center"
+                            >
+                                {blogPost.title}
+                            </Text>
                             <Box 
-                                fontSize="lg" 
+                                fontSize={{ base: "md", md: "lg" }}
                                 className="markdown-body"
                                 sx={{
                                     'h1, h2, h3, h4, h5, h6': {
@@ -252,14 +257,17 @@ const BlogPostPage: React.FC = () =>
                                     'li': { marginBottom: '0.5em' },
                                     'code': {
                                         backgroundColor: 'gray.700',
-                                        padding: '0.2em 0.4em',
-                                        borderRadius: '3px',
+                                        padding: { base: '0.5em', md: '1em' },
+                                        overflowX: 'auto',
+                                        marginBottom: '1em',
+                                        fontSize: { base: '0.9em', md: '1em' }
                                     },
                                     'pre': {
                                         backgroundColor: 'gray.700',
-                                        padding: '1em',
+                                        padding: { base: '0.5em', md: '1em' },
                                         overflowX: 'auto',
                                         marginBottom: '1em',
+                                        fontSize: { base: '0.9em', md: '1em' }
                                     },
                                     'blockquote': {
                                         borderLeft: '4px solid',
@@ -275,6 +283,8 @@ const BlogPostPage: React.FC = () =>
                                     'img': {
                                         maxWidth: '100%',
                                         height: 'auto',
+                                        margin: '1em auto',
+                                        display: 'block'
                                     },
                                 }}
                             >
