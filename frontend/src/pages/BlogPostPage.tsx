@@ -22,6 +22,8 @@ import EmbedSEO from '../components/EmbedSEO';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface BlogPost 
 {
@@ -256,18 +258,19 @@ const BlogPostPage: React.FC = () =>
                                     },
                                     'li': { marginBottom: '0.5em' },
                                     'code': {
-                                        backgroundColor: 'gray.700',
-                                        padding: { base: '0.5em', md: '1em' },
-                                        overflowX: 'auto',
-                                        marginBottom: '1em',
-                                        fontSize: { base: '0.9em', md: '1em' }
+                                        backgroundColor: '#1e1e1e',
+                                        padding: '0.2em 0.4em',
+                                        borderRadius: '3px',
+                                        fontSize: '85%',
+                                        fontFamily: 'monospace'
                                     },
                                     'pre': {
-                                        backgroundColor: 'gray.700',
-                                        padding: { base: '0.5em', md: '1em' },
-                                        overflowX: 'auto',
-                                        marginBottom: '1em',
-                                        fontSize: { base: '0.9em', md: '1em' }
+                                        padding: '0 !important',
+                                        margin: '1em 0 !important',
+                                        backgroundColor: 'transparent !important',
+                                        border: '1px solid #333',
+                                        borderRadius: '4px',
+                                        overflow: 'hidden',
                                     },
                                     'blockquote': {
                                         borderLeft: '4px solid',
@@ -291,7 +294,32 @@ const BlogPostPage: React.FC = () =>
                                 <ReactMarkdown 
                                     remarkPlugins={[remarkGfm]} 
                                     rehypePlugins={[rehypeRaw]}
-                                >
+                                    components={{
+                                        code({className, children, ...props}: any) {
+                                            const match = /language-(\w+)/.exec(className || '');
+                                            const language = match ? match[1] : '';
+                                            
+                                            if (className) {
+                                                return (
+                                                    <SyntaxHighlighter
+                                                        language={language}
+                                                        PreTag="div"
+                                                        style={oneDark as any}
+                                                        customStyle={{
+                                                            margin: '0',
+                                                            width: '100%',
+                                                            backgroundColor: '#282c34',
+                                                        }}
+                                                        {...props}
+                                                    >
+                                                        {String(children).replace(/\n$/, '')}
+                                                    </SyntaxHighlighter>
+                                                );
+                                            }
+                                            return <code className={className} {...props}>{children}</code>;
+                                        }
+                                    }}
+                                    >
                                     {blogPost.content}
                                 </ReactMarkdown>
                             </Box>
