@@ -941,14 +941,17 @@ async def maintenance_middleware(request:Request, call_next):
 
 ## CORS setup
 origins = [
+    "https://bikatr7.com",
     "https://kadenbilyeu.com",
     "http://localhost:5173",
     "https://kadenbilyeu-com.pages.dev",
-    "https://*.kadenbilyeu-com.pages.dev"
+    "https://*.kadenbilyeu-com.pages.dev",
+    "https://*.bikatr7.com",
+    "https://bikatr7.pages.dev",
+    "https://*.bikatr7.pages.dev"
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"https://.*\.kadenbilyeu\-com\.pages\.dev",
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],

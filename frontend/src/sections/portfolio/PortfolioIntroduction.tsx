@@ -13,6 +13,8 @@ import NamedDivider from "../../components/NamedDivider";
 // images
 import face from "../../assets/images/personals/kadenbilyeu.webp";
 
+import { isBikatr7URL } from "../../utils";
+
 function PortfolioIntroduction() {
     return (
         <Box padding="5">
@@ -24,7 +26,7 @@ function PortfolioIntroduction() {
                 <Stack spacing={6} w="full" maxW="xl">
                     <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
                         <Text as="span" position="relative">
-                            Kaden Bilyeu
+                            {isBikatr7URL() ? "Kaden Bilyeu (Bikatr7)" : "Kaden Bilyeu"}
                         </Text>
                         <br />
                     </Heading>

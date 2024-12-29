@@ -13,6 +13,10 @@ import { Box, Text } from '@chakra-ui/react';
 // animations
 import { textFadeIn, backgroundTransition } from '../animations/background';
 
+// utils
+import { isBikatr7URL } from '../utils';
+
+
 const LoadingAnimation: React.FC<{ onLoadingComplete: () => void }> = ({ onLoadingComplete }) => 
 {
 
@@ -64,7 +68,7 @@ const LoadingAnimation: React.FC<{ onLoadingComplete: () => void }> = ({ onLoadi
         fontSize="4xl"
         animation={`${textFadeIn} 2s linear forwards`}
       >
-        Kaden Bilyeu
+        {isBikatr7URL() ? "Bikatr7" : "Kaden Bilyeu"}
       </Text>
     </Box>
   );

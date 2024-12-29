@@ -11,6 +11,7 @@ import { Button, Flex, Heading, Image, Stack, Text } from '@chakra-ui/react';
 import { IconBrandGithub} from '@tabler/icons-react';
 
 import face from '../../assets/images/personals/kadenbilyeu.webp';
+import { isBikatr7URL } from '../../utils';
 
 function Preface({ showContent, toggleContent }: { showContent: boolean, toggleContent: () => void }) {
     const handleClick = () => {
@@ -25,7 +26,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                 <Stack spacing={6} w="full" maxW="xl">
                     <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
                         <Text as="span" position="relative">
-                            Kaden Bilyeu
+                            {isBikatr7URL() ? "Kaden Bilyeu (Bikatr7)" : "Kaden Bilyeu"}
                         </Text>
                         <br />
                     </Heading>

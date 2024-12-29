@@ -54,5 +54,11 @@ const formatDate = (dateString: string) =>
     
     return formattedDate;
 };
-    
-export {getURL, formatDate};
+
+const isBikatr7URL = () => 
+{
+    const currentURL = window.location.href.toLowerCase();
+    return currentURL.includes('bikatr7');
+}
+
+export {getURL, formatDate, isBikatr7URL};

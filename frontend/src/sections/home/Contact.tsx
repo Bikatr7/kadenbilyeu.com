@@ -10,6 +10,8 @@ import { Box, Button, Image, Flex, Stack, Text } from "@chakra-ui/react";
 // icons and images
 import { IconBrandGithub, IconBrandTwitter, IconBrandLinkedin, IconMail, IconBrandDiscord} from '@tabler/icons-react';
 
+import { isBikatr7URL } from '../../utils';
+
 import face from '../../assets/images/personals/kadenbilyeu.webp';
 
 function Contact() {
@@ -26,7 +28,7 @@ function Contact() {
                 />
                 <Box textAlign="left">
                     <Text fontSize="lg" fontWeight="bold">
-                        Kaden Bilyeu
+                        {isBikatr7URL() ? "Kaden Bilyeu (Bikatr7)" : "Kaden Bilyeu"}
                     </Text>
                     <Text fontSize="md" color="gray.500" mb={4}>
                         kadenbilyeu@proton.me
