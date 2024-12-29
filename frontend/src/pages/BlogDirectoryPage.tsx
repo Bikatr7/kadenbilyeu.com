@@ -212,7 +212,7 @@ const BlogDirectoryPage: React.FC = () =>
                             ))
                         ) : (
                             <Flex justify="center" align="center" width="100%" height="100%">
-                                <Text fontSize="xl" color="yellow">No Posts Available</Text>
+                                <Text fontSize="xl" color="yellow">No Posts Available (if this is unexpected, my backend is likely down or some other issue is happening)</Text>
                             </Flex>
                         )}
                     </VStack>

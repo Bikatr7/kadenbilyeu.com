@@ -350,7 +350,7 @@ const BlogPage: React.FC = () =>
                                 ))
                             ) : (
                                 <Flex justify="center" align="center" height="100%">
-                                    <Text fontSize="xl" color="yellow">No Current Posts</Text>
+                                    <Text fontSize="xl" color="yellow">No Current Posts (if this is unexpected, my backend is likely down or some other issue is happening)</Text>
                                 </Flex>
                             )}
                         </VStack>
