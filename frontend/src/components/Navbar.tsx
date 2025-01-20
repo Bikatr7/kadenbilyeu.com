@@ -7,6 +7,8 @@
 // chakra-ui 
 import { Box, Button, Collapse, Container, Flex, Heading, Icon, IconButton, Image, Link, Popover, PopoverContent, PopoverTrigger, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { IconDeviceGamepad2 } from '@tabler/icons-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 // assets
 import logo from '../assets/images/personals/kb.webp';
@@ -15,11 +17,12 @@ import resume from '../assets/pdfs/Kaden_Truett_Bilyeu_Resume_December_2024.pdf'
 export default function Navbar() 
 {
     const { isOpen, onToggle } = useDisclosure();
+    const { isRetro, toggleRetro } = useTheme();
 
     return (
         <Box>
             <Flex
-                bg="black"
+                bg={isRetro ? "navy.900" : "black"}
                 color="white"
                 minH={'60px'}
                 py={{ base: 2 }}
@@ -70,6 +73,15 @@ export default function Navbar()
                         </Flex>
 
                         <Flex display={{ base: 'none', md: 'flex' }} ml='auto' align={'center'}>
+                            <IconButton
+                                aria-label="Toggle retro theme"
+                                icon={<IconDeviceGamepad2 />}
+                                variant="ghost"
+                                onClick={toggleRetro}
+                                color={isRetro ? "yellow" : "white"}
+                                _hover={{ color: 'yellow', transform: 'scale(1.1)' }}
+                                mr={3}
+                            />
                             <Button
                                 as="a"
                                 bg="red.900"

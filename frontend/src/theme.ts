@@ -18,6 +18,14 @@ const theme = extendTheme({
             'html, body': {
                 bg: 'black',
             },
+            '.retro-mode': {
+                fontFamily: "'Press Start 2P', monospace",
+                button: {
+                    borderRadius: '0',
+                    border: '2px solid yellow',
+                },
+                // Add more global retro styles
+            }
         },
     },
 })

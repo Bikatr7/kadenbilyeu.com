@@ -22,6 +22,7 @@ import Footer from "./components/Footer.tsx";
 import LoadingAnimation from './components/LoadingAnimation.tsx';
 
 import Router from './Router.tsx';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 function App() 
 {
@@ -41,26 +42,28 @@ function App()
     };
 
     return (
-        <HelmetProvider>
-            <ChakraProvider theme={theme}>
-                <Box bg="black">
-                    {isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
-                    {!isLoading && (
-                        <>
-                            <Navbar/>
-                            <Container maxW="6xl">
-                                <Router 
-                                    showContent={showContent} 
-                                    toggleContent={toggleContent} 
-                                    contentLoaded={contentLoaded} 
-                                />
-                            </Container>
-                            <Footer/>
-                        </>
-                    )}
-                </Box>
-            </ChakraProvider>
-        </HelmetProvider>
+        <ThemeProvider>
+            <HelmetProvider>
+                <ChakraProvider theme={theme}>
+                    <Box bg="black">
+                        {isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
+                        {!isLoading && (
+                            <>
+                                <Navbar/>
+                                <Container maxW="6xl">
+                                    <Router 
+                                        showContent={showContent} 
+                                        toggleContent={toggleContent} 
+                                        contentLoaded={contentLoaded} 
+                                    />
+                                </Container>
+                                <Footer/>
+                            </>
+                        )}
+                    </Box>
+                </ChakraProvider>
+            </HelmetProvider>
+        </ThemeProvider>
     );
 }
 

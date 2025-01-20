@@ -25,12 +25,28 @@ const AboutMe = lazy(() => import('../sections/home/AboutMe'));
 const AboutSite = lazy(() => import('../sections/home/AboutSite'));
 const Contact = lazy(() => import('../sections/home/Contact'));
 
+// Add this import
+import { useTheme } from '../contexts/ThemeContext';
+
 function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean })
 {
+    const { isRetro } = useTheme();
+
     return (
-        <Box bg="black" color="white" minHeight="83vh">
-            <Preface showContent={showContent} toggleContent={toggleContent} />
-            <NamedDivider name="Introduction" id="introduction" />
+        <Box 
+            bg={isRetro ? "navy.900" : "black"} 
+            color="white" 
+            minHeight="83vh"
+            className={isRetro ? 'retro-mode' : ''}
+        >
+            <Preface 
+                showContent={showContent} 
+                toggleContent={toggleContent}  
+            />
+            <NamedDivider 
+                name="Introduction" 
+                id="introduction"
+            />
             <HomeIntroduction />
            
             <NamedDivider
@@ -41,17 +57,21 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
                 onToggle={toggleContent}
             />
             {contentLoaded && (
-                <Suspense fallback={<Box textAlign="center" py={4}><Spinner /></Box>}>
+                <Suspense fallback={
+                    <Box textAlign="center" py={4}>
+                        <Spinner color={isRetro ? "yellow" : "white"} />
+                    </Box>
+                }>
                     {showContent && (
                         <>
-                            <Projects />
+                            <Projects/>
                             <NamedDivider name="Skills" id="skills" />
-                            <Skills />
+                            <Skills  />
                             <NamedDivider name="About Me" id="aboutme" />
                             <AboutMe />
                             <NamedDivider name="About The Site" id="aboutsite" />
-                            <AboutSite />
-                            <NamedDivider name="Contact" id="contact" />
+                            <AboutSite  />
+                            <NamedDivider name="Contact" id="contact"  />
                             <Contact />
                         </>
                     )}
