@@ -45,12 +45,12 @@ function App()
         <ThemeProvider>
             <HelmetProvider>
                 <ChakraProvider theme={theme}>
-                    <Box bg="black">
+                    <Box bg="black" minH="100vh" display="flex" flexDirection="column">
                         {isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
                         {!isLoading && (
                             <>
                                 <Navbar/>
-                                <Container maxW="6xl">
+                                <Container maxW="6xl" flex="1">
                                     <Router 
                                         showContent={showContent} 
                                         toggleContent={toggleContent} 

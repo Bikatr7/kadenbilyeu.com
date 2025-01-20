@@ -22,14 +22,15 @@ export default function Navbar()
     return (
         <Box>
             <Flex
-                bg={isRetro ? "navy.900" : "black"}
-                color="white"
+                bg="black"
+                color={isRetro ? "purple.200" : "white"}
                 minH={'60px'}
                 py={{ base: 2 }}
                 px={{ base: 4 }}
                 borderBottom={1}
                 borderStyle={'solid'}
-                borderColor={'gray.800'}
+                borderColor={isRetro ? 'purple.600' : 'gray.800'}
+                className={isRetro ? 'retro-mode' : ''}
                 align={'center'}>
                 <Container maxW={'6xl'}>
                     <Flex
@@ -55,12 +56,22 @@ export default function Navbar()
                         
                         <Button
                             as="a"
-                            bg="red.900"
+                            bg={isRetro ? "black" : "red.900"}
                             href={resume}
                             download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
-                            rounded="full"
-                            _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
-                            _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
+                            rounded={isRetro ? "none" : "full"}
+                            border={isRetro ? "2px solid" : "none"}
+                            borderColor={isRetro ? "purple.400" : "transparent"}
+                            color={isRetro ? "purple.200" : "white"}
+                            _hover={{ 
+                                color: isRetro ? 'purple.200' : 'yellow', 
+                                bg: isRetro ? 'purple.800' : 'red.900',
+                                transform: 'scale(1.01)' 
+                            }}
+                            _active={{ 
+                                bg: isRetro ? 'purple.700' : 'red.900', 
+                                transform: 'scale(0.98)' 
+                            }}
                             ml={5}>
                             Resume
                         </Button>
@@ -84,12 +95,22 @@ export default function Navbar()
                             />
                             <Button
                                 as="a"
-                                bg="red.900"
+                                bg={isRetro ? "black" : "red.900"}
                                 href={resume}
                                 download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
-                                rounded="full"
-                                _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
-                                _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
+                                rounded={isRetro ? "none" : "full"}
+                                border={isRetro ? "2px solid" : "none"}
+                                borderColor={isRetro ? "purple.400" : "transparent"}
+                                color={isRetro ? "purple.200" : "white"}
+                                _hover={{ 
+                                    color: isRetro ? 'purple.200' : 'yellow', 
+                                    bg: isRetro ? 'purple.800' : 'red.900',
+                                    transform: 'scale(1.01)' 
+                                }}
+                                _active={{ 
+                                    bg: isRetro ? 'purple.700' : 'red.900', 
+                                    transform: 'scale(0.98)' 
+                                }}
                                 ml={5}>
                                 Resume
                             </Button>
@@ -107,12 +128,14 @@ export default function Navbar()
 
 const DesktopNav = () => 
 {
+    const { isRetro } = useTheme();
     const linkColor = "white"
     const linkHoverColor = "yellow"
     const popoverContentBgColor = "black"
+    
     return (
         <Stack direction={'row'} spacing={4} align={'center'}>
-            {NAV_ITEMS.map((navItem) => (
+            {NAV_ITEMS.filter(item => !item.hideInRetro || !isRetro).map((navItem) => (
                 <Box key={navItem.label}>
                     <Popover trigger={'hover'} placement={'bottom-start'}>
                         <PopoverTrigger>
@@ -128,6 +151,7 @@ const DesktopNav = () =>
                                     fontSize={'md'}
                                     fontWeight={500}
                                     color={linkColor}
+                                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                                     _hover={{
                                         color: linkHoverColor,
                                         transform: 'scale(1.1)',
@@ -196,12 +220,14 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) =>
 
 const MobileNav = () => 
 {
+    const { isRetro } = useTheme();
+    
     return (
         <Stack
             bg="black"
             p={4}
             display={{ md: 'none' }}>
-            {NAV_ITEMS.map((navItem) => (
+            {NAV_ITEMS.filter(item => !item.hideInRetro || !isRetro).map((navItem) => (
                 <MobileNavItem key={navItem.label} {...navItem} />
             ))}
         </Stack>
@@ -269,6 +295,7 @@ interface NavItem
     subLabel?: string;
     children?: Array<NavItem>;
     href?: string;
+    hideInRetro?: boolean;
 }
 
 const NAV_ITEMS: Array<NavItem> = 
@@ -280,6 +307,7 @@ const NAV_ITEMS: Array<NavItem> =
     {
         label: 'Portfolio',
         href: '/portfolio',
+        hideInRetro: true,
     },
     {
         label: 'Blog',

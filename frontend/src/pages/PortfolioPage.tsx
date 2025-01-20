@@ -5,7 +5,7 @@
 // maintain allman bracket style for consistency
 
 // chakra ui
-import { Box } from "@chakra-ui/react";
+import { Box, VStack, Text, Button } from "@chakra-ui/react";
 
 // components
 import NamedDivider from "../components/NamedDivider";
@@ -17,9 +17,62 @@ import Skills from "../sections/common/Skills";
 import Certifications from "../sections/portfolio/Certifications";
 import Accomplishments from "../sections/portfolio/Accomplishments";
 
+// contexts
+import { useTheme } from '../contexts/ThemeContext';
+
 function PortfolioPage() {
+    const { isRetro, toggleRetro } = useTheme();
+
+    if (isRetro) {
+        return (
+            <Box 
+                flex="1" 
+                display="flex" 
+                alignItems="center" 
+                justifyContent="center" 
+                bg="black"
+            >
+                <VStack 
+                    spacing={6} 
+                    p={8} 
+                    bg="purple.900" 
+                    borderRadius="lg" 
+                    border="2px" 
+                    borderColor="purple.600"
+                    maxW="600px"
+                    w="90%"
+                    mt="25vh"
+                >
+                    <Text 
+                        fontSize="xl" 
+                        color="purple.200"
+                        fontFamily="'Press Start 2P', monospace"
+                        textAlign="center"
+                    >
+                        ERROR 404: PORTFOLIO NOT FOUND IN RETRO MODE
+                    </Text>
+                    <Button
+                        onClick={toggleRetro}
+                        bg="black"
+                        color="purple.200"
+                        _hover={{ bg: 'purple.800', transform: 'scale(1.1)' }}
+                        _active={{ bg: 'purple.700' }}
+                        borderRadius="none"
+                        border="2px"
+                        borderColor="purple.400"
+                        fontFamily="'Press Start 2P', monospace"
+                        fontSize="sm"
+                        p={6}
+                    >
+                        SWITCH TO PERSONAL MODE
+                    </Button>
+                </VStack>
+            </Box>
+        );
+    }
+
     return (
-        <Box>
+        <Box flex="1">
             <PortfolioIntroduction />
             <NamedDivider name="Education" id="education" />
             <Education />
