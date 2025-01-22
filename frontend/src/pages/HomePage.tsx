@@ -17,6 +17,7 @@ import StorageNoticeModal from '../components/StorageNoticeModal';
 // sections
 import Preface from '../sections/home/Preface';
 import HomeIntroduction from '../sections/home/HomeIntroduction';
+import HomeProjects from '../sections/home/HomeProjects';
 
 // Lazy load the other components
 const Projects = lazy(() => import('../sections/home/HomeProjects'));
@@ -24,8 +25,6 @@ const Skills = lazy(() => import('../sections/common/Skills'));
 const AboutMe = lazy(() => import('../sections/home/AboutMe'));
 const AboutSite = lazy(() => import('../sections/home/AboutSite'));
 const Contact = lazy(() => import('../sections/home/Contact'));
-
-// Add this import
 import { useTheme } from '../contexts/ThemeContext';
 
 function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean })
@@ -49,7 +48,15 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
             />
             <HomeIntroduction />
             
-            {!isRetro && (
+            {isRetro ? (
+                <>
+                    <NamedDivider 
+                        name="[Projects]" 
+                        id="projects"
+                    />
+                    <HomeProjects />
+                </>
+            ) : (
                 <>
                     <NamedDivider
                         name={showContent ? "Projects" : "Click for More"}
@@ -59,11 +66,7 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
                         onToggle={toggleContent}
                     />
                     {contentLoaded && (
-                        <Suspense fallback={
-                            <Box textAlign="center" py={4}>
-                                <Spinner color={isRetro ? "yellow" : "white"} />
-                            </Box>
-                        }>
+                        <Suspense fallback={<Box textAlign="center" py={4}><Spinner color="white" /></Box>}>
                             {showContent && (
                                 <>
                                     <Projects/>

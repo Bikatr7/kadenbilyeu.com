@@ -8,7 +8,7 @@
 import { Box, Button, Stack, Text } from "@chakra-ui/react";
 
 // icons
-import { IconBrandTwitter, IconBrandLinkedin, IconMail} from '@tabler/icons-react';
+import { IconBrandTwitter, IconBrandLinkedin, IconMail, IconBrandGithub } from '@tabler/icons-react';
 
 // context
 import { useTheme } from '../../contexts/ThemeContext';
@@ -54,13 +54,13 @@ function HomeIntroduction() {
                 <Stack 
                     direction={{ base: 'column', lg: 'row' }} 
                     spacing={0} 
-                    align={{ base: 'center', lg: 'flex-start' }}
+                    align="flex-start"
                 >
                     <Stack 
                         spacing={6} 
                         w="full" 
                         maxW="xl" 
-                        align={{ base: 'center', lg: 'flex-start' }}
+                        align="flex-start"
                     >
                         <Text 
                             fontSize="md" 
@@ -192,15 +192,33 @@ function HomeIntroduction() {
                     </Box>
                 </Stack>
             ) : (
-                <Stack spacing={6} align="center">
+                <Stack spacing={6} align="flex-start">
                     <>
-                        <Text fontSize="md" marginBottom="4" color="gray.500" textAlign="center">
+                        <Text 
+                            fontSize="md" 
+                            marginBottom="4" 
+                            color="gray.500" 
+                            textAlign="left"
+                            pl={8}
+                        >
                             Welcome to my personal website! Below are my personal projects, skills, some info about me and the site, and my contact info. Just click the the divider! If you want something more detailed, check out my portfolio page.
                         </Text>
-                        <Text fontSize="md" marginBottom="4" color="gray.500" textAlign="center">
+                        <Text 
+                            fontSize="md" 
+                            marginBottom="4" 
+                            color="gray.500" 
+                            textAlign="left"
+                            pl={8}
+                        >
                             Feel free to reach out to me if you have any questions or would like to collaborate on a project.
                         </Text>
-                        <Text fontSize="md" marginBottom="4" color="gray.500" textAlign="center">
+                        <Text 
+                            fontSize="md" 
+                            marginBottom="4" 
+                            color="gray.500" 
+                            textAlign="left"
+                            pl={8}
+                        >
                             I've been lucky enough to already secure internship opportunities for Spring and Summer 2025. However, if you wish to talk about other opportunities, please reach out to me via any of the methods below.
                         </Text>
                     </>
@@ -208,6 +226,7 @@ function HomeIntroduction() {
                         direction={{ base: 'column', md: 'row' }} 
                         spacing={4} 
                         justifyContent="center"
+                        width="100%"
                     >
                         <Button as="a" href="mailto:kadenbilyeu@proton.me" leftIcon={<IconMail />} rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                             Email Me
@@ -227,6 +246,19 @@ function HomeIntroduction() {
                             _active={{ transform: 'scale(0.99)'}}
                         >
                             Twitter
+                        </Button>
+                        <Button 
+                            as="a" 
+                            href="https://github.com/Bikatr7" 
+                            leftIcon={<IconBrandGithub />} 
+                            rounded="full"
+                            _hover={{ 
+                                color: 'yellow', 
+                                transform: 'scale(1.01)'
+                            }}
+                            _active={{ transform: 'scale(0.99)'}}
+                        >
+                            GitHub
                         </Button>
                     </Stack>
                 </Stack>

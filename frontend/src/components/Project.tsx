@@ -13,11 +13,39 @@ import { Stack, Flex, Image, Heading, Text, Link, Tag, Wrap, WrapItem, Box } fro
 // icons
 import { IconBrandGithub, IconExternalLink, IconBook } from "@tabler/icons-react";
 
+// framer motion
+import { motion } from 'framer-motion';
+
+// context
+import { useTheme } from '../contexts/ThemeContext';
+
 // animations
 import { iconAnimation, tagAnimation, imageAnimation } from '../animations/common';
 
-interface ProjectProps 
-{
+// animation variants for retro mode
+const cardVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5 }
+};
+
+const imageVariants = {
+    initial: { scale: 0.8, opacity: 0 },
+    animate: { scale: 1, opacity: 1 },
+    transition: { duration: 0.5 }
+};
+
+const iconVariants = {
+    initial: { scale: 0, opacity: 0 },
+    animate: { scale: 1, opacity: 1 },
+    whileHover: { 
+        scale: 1.2,
+        rotate: [0, -10, 10, -10, 0],
+        transition: { duration: 0.3 }
+    }
+};
+
+interface ProjectProps {
     title: string;
     subtitle: string;
     imageUrl: string;
@@ -29,10 +57,117 @@ interface ProjectProps
     tags?: string[];
 }
 
-const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, linkUrl, githubUrl, documentationUrl, reverse, tags }) => 
-{
+const MotionBox = motion(Box);
+
+const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, linkUrl, githubUrl, documentationUrl, reverse, tags }) => {
+    const { isRetro } = useTheme();
+
+    if (isRetro) {
+        return (
+            <MotionBox
+                initial="initial"
+                animate="animate"
+                variants={cardVariants}
+                border="2px solid"
+                borderColor="purple.400"
+                p={4}
+                mb={6}
+                bg="black"
+                width="100%"
+                height="100%"
+                display="flex"
+                flexDirection="column"
+            >
+                <Flex direction="column" align="center" flex="1">
+                    <MotionBox
+                        initial="initial"
+                        animate="animate"
+                        variants={imageVariants}
+                    >
+                        <Image 
+                            boxSize="100px"
+                            alt={imageAlt} 
+                            objectFit="cover" 
+                            src={imageUrl} 
+                            mb={4}
+                        />
+                    </MotionBox>
+                    <Heading 
+                        fontSize="md"
+                        color="purple.400"
+                        fontFamily="'Press Start 2P', monospace"
+                        textAlign="center"
+                        mb={3}
+                    >
+                        {title}
+                    </Heading>
+                    <Text 
+                        fontSize="xs"
+                        color="purple.200"
+                        fontFamily="'Press Start 2P', monospace"
+                        textAlign="center"
+                        mb={4}
+                    >
+                        {subtitle}
+                    </Text>
+                    <Stack 
+                        direction="row" 
+                        spacing={4} 
+                        justify="center"
+                        mt="auto"
+                    >
+                        {linkUrl && (
+                            <MotionBox
+                                variants={iconVariants}
+                                whileHover="whileHover"
+                            >
+                                <Link 
+                                    href={linkUrl} 
+                                    isExternal 
+                                    color="purple.400"
+                                    _hover={{ color: "purple.200" }}
+                                >
+                                    <IconExternalLink cursor="pointer" aria-label='External Link' />
+                                </Link>
+                            </MotionBox>
+                        )}
+                        {githubUrl && (
+                            <MotionBox
+                                variants={iconVariants}
+                                whileHover="whileHover"
+                            >
+                                <Link 
+                                    href={githubUrl} 
+                                    isExternal 
+                                    color="purple.400"
+                                    _hover={{ color: "purple.200" }}
+                                >
+                                    <IconBrandGithub cursor="pointer" aria-label='GitHub Link' />
+                                </Link>
+                            </MotionBox>
+                        )}
+                        {documentationUrl && (
+                            <MotionBox
+                                variants={iconVariants}
+                                whileHover="whileHover"
+                            >
+                                <Link 
+                                    href={documentationUrl} 
+                                    isExternal 
+                                    color="purple.400"
+                                    _hover={{ color: "purple.200" }}
+                                >
+                                    <IconBook cursor="pointer" aria-label='Documentation Link' />
+                                </Link>
+                            </MotionBox>
+                        )}
+                    </Stack>
+                </Flex>
+            </MotionBox>
+        );
+    }
+
     return (
-        <>
         <Box mb={20}>
             <Stack direction={{ base: 'column', md: reverse ? 'row-reverse' : 'row' }} marginBottom={25}>
                 <Flex flex={1} justifyContent="center">
@@ -79,7 +214,6 @@ const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, 
                 </Flex>
             </Stack>
         </Box>
-        </>
     );
 };
 
