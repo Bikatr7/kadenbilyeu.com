@@ -51,15 +51,23 @@ function HomeIntroduction() {
     return (
         <Box padding="5" position="relative">
             {isRetro ? (
-                // Retro mode layout
-                <Stack direction="row" spacing={0} align="flex-start">
-                    <Stack spacing={6} w="full" maxW="xl" align="flex-start">
+                <Stack 
+                    direction={{ base: 'column', lg: 'row' }} 
+                    spacing={0} 
+                    align={{ base: 'center', lg: 'flex-start' }}
+                >
+                    <Stack 
+                        spacing={6} 
+                        w="full" 
+                        maxW="xl" 
+                        align={{ base: 'center', lg: 'flex-start' }}
+                    >
                         <Text 
                             fontSize="md" 
                             marginBottom="4" 
                             color="purple.400"
                             fontFamily="'Press Start 2P', monospace"
-                            textAlign="left"
+                            textAlign={{ base: 'center', lg: 'left' }}
                         >
                             Yo, my name's Bikatr7. Welcome to my personal website. Feel free to click the controller icon in the top right for something more professional.
                             <br/><br/>
@@ -70,7 +78,8 @@ function HomeIntroduction() {
                         <Stack 
                             direction={{ base: 'column', md: 'row' }} 
                             spacing={4} 
-                            justifyContent="flex-start"
+                            justifyContent={{ base: 'center', lg: 'flex-start' }}
+                            width={{ base: "100%", md: "auto" }}
                         >
                             <Button 
                                 as="a" 
@@ -117,7 +126,7 @@ function HomeIntroduction() {
                         height="400px"
                         display={{ base: 'none', lg: 'block' }}
                         ml="-100px"
-                        mt="-50px"
+                        mt={0}
                         mr="-50px"
                     >
                         <Box
@@ -183,7 +192,6 @@ function HomeIntroduction() {
                     </Box>
                 </Stack>
             ) : (
-                // Non-retro mode layout
                 <Stack spacing={6} align="center">
                     <>
                         <Text fontSize="md" marginBottom="4" color="gray.500" textAlign="center">

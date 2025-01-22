@@ -151,10 +151,11 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                 <Box 
                     flex={1} 
                     display="flex" 
-                    justifyContent="flex-start"
+                    justifyContent={{ base: 'center', lg: 'flex-start' }}
                     alignItems="flex-start"
-                    pl={8}
+                    pl={{ base: 0, lg: 8 }}
                     mt={24}
+                    width={{ base: "100%", lg: "auto" }}
                 >
                     <GitHubActivity />
                 </Box>

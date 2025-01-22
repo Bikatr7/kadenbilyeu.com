@@ -70,7 +70,7 @@ function GitHubActivity() {
             border="2px solid"
             borderColor="purple.400"
             bg="black"
-            width="450px"
+            width={{ base: "100%", lg: "450px" }}
             mt={2}
         >
             <Heading 

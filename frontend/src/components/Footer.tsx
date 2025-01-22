@@ -57,7 +57,7 @@ function Footer()
                     <Text 
                         textAlign="center"
                         fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                        fontSize={isRetro ? "8px" : "inherit"}
+                        fontSize={isRetro ? { base: "10px", md: "xs" } : "inherit"}
                     >
                         © 2024 {isRetro ? 'Bikatr7' : 'Kaden Bilyeu (Bikatr7)'}. All rights reserved
                     </Text>
