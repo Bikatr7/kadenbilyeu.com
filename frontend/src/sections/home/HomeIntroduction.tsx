@@ -61,7 +61,7 @@ function HomeIntroduction() {
                             fontFamily="'Press Start 2P', monospace"
                             textAlign="left"
                         >
-                            Yo, my name's Bikatr7. Welcome to my personal website. Feel free to click the controller icon in the top right for something more profesinal.
+                            Yo, my name's Bikatr7. Welcome to my personal website. Feel free to click the controller icon in the top right for something more professional.
                             <br/><br/>
                             I'm a programmer, I mostly work on translation tech, and my current internship. I also go to school full time.
                             <br/><br/>

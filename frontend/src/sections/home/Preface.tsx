@@ -14,6 +14,7 @@ import face from '../../assets/images/personals/kadenbilyeu.webp';
 import { useTheme } from '../../contexts/ThemeContext';
 
 import { keyframes } from '@emotion/react';
+import GitHubActivity from '../../components/GitHubActivity';
 
 const scrollingTextKeyframes = keyframes`
   0% { transform: translateX(100%); }
@@ -145,6 +146,18 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                 <Flex flex={1} justifyContent={{ base: 'center', md: 'flex-start' }} alignItems="center">
                     <Image boxSize={400} alt="Kaden Bilyeu's Profile Picture" objectFit="cover" src={face} borderRadius={"full"} />
                 </Flex>
+            )}
+            {isRetro && (
+                <Box 
+                    flex={1} 
+                    display="flex" 
+                    justifyContent="flex-start"
+                    alignItems="flex-start"
+                    pl={8}
+                    mt={24}
+                >
+                    <GitHubActivity />
+                </Box>
             )}
         </Stack>
     );
