@@ -34,7 +34,7 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
 
     return (
         <Box 
-            bg={isRetro ? "navy.900" : "black"} 
+            bg="black"
             color="white" 
             minHeight="83vh"
             className={isRetro ? 'retro-mode' : ''}
@@ -48,34 +48,38 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
                 id="introduction"
             />
             <HomeIntroduction />
-           
-            <NamedDivider
-                name={showContent ? "Projects" : "Click for More"}
-                id="projects"
-                isExpandable={true}
-                isExpanded={showContent}
-                onToggle={toggleContent}
-            />
-            {contentLoaded && (
-                <Suspense fallback={
-                    <Box textAlign="center" py={4}>
-                        <Spinner color={isRetro ? "yellow" : "white"} />
-                    </Box>
-                }>
-                    {showContent && (
-                        <>
-                            <Projects/>
-                            <NamedDivider name="Skills" id="skills" />
-                            <Skills  />
-                            <NamedDivider name="About Me" id="aboutme" />
-                            <AboutMe />
-                            <NamedDivider name="About The Site" id="aboutsite" />
-                            <AboutSite  />
-                            <NamedDivider name="Contact" id="contact"  />
-                            <Contact />
-                        </>
+            
+            {!isRetro && (
+                <>
+                    <NamedDivider
+                        name={showContent ? "Projects" : "Click for More"}
+                        id="projects"
+                        isExpandable={true}
+                        isExpanded={showContent}
+                        onToggle={toggleContent}
+                    />
+                    {contentLoaded && (
+                        <Suspense fallback={
+                            <Box textAlign="center" py={4}>
+                                <Spinner color={isRetro ? "yellow" : "white"} />
+                            </Box>
+                        }>
+                            {showContent && (
+                                <>
+                                    <Projects/>
+                                    <NamedDivider name="Skills" id="skills" />
+                                    <Skills  />
+                                    <NamedDivider name="About Me" id="aboutme" />
+                                    <AboutMe />
+                                    <NamedDivider name="About The Site" id="aboutsite" />
+                                    <AboutSite  />
+                                    <NamedDivider name="Contact" id="contact"  />
+                                    <Contact />
+                                </>
+                            )}
+                        </Suspense>
                     )}
-                </Suspense>
+                </>
             )}
             <StorageNoticeModal />
         </Box>

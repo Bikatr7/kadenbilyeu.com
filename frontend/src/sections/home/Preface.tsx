@@ -5,13 +5,20 @@
 // maintain allman bracket style for consistency
 
 // chakra-ui
-import { Button, Flex, Heading, Image, Stack, Text} from '@chakra-ui/react';
+import { Button, Flex, Heading, Image, Stack, Text, Box } from '@chakra-ui/react';
 
 // icons and images
 import { IconBrandGithub} from '@tabler/icons-react';
 
 import face from '../../assets/images/personals/kadenbilyeu.webp';
 import { useTheme } from '../../contexts/ThemeContext';
+
+import { keyframes } from '@emotion/react';
+
+const scrollingTextKeyframes = keyframes`
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+`;
 
 function Preface({ showContent, toggleContent }: { showContent: boolean, toggleContent: () => void }) {
     const { isRetro } = useTheme();
@@ -24,46 +31,121 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
 
     return (
         <Stack direction={{ base: 'column', md: 'row' }} bg="black" id="home" paddingTop={5} >
-            <Flex p={8} flex={1} align="center">
+            <Flex 
+                p={8} 
+                flex={1} 
+                align="center" 
+                justify={isRetro ? "flex-start" : "flex-start"}
+            >
                 <Stack spacing={6} w="full" maxW="xl">
                     <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
-                        <Text as="span" position="relative">
-                            {isRetro ? "Kaden Bilyeu (Bikatr7)" : "Kaden Bilyeu"}
+                        <Text 
+                            as="span" 
+                            position="relative"
+                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                            color={isRetro ? "purple.200" : "white"}
+                        >
+                            {isRetro ? "Bikatr7" : "Kaden Bilyeu"}
                         </Text>
                         <br />
                     </Heading>
-                        <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                        Computer science junior at the University of Colorado Colorado Springs passionate in applying my skills on AI/ML, LLMs, data science, and NER/NLP into software for real-world applications.
-                        </Text>
-                        <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                            Eligible for security clearance. Proud U.S. Citizen.
-                        </Text>
+                    {isRetro ? (
+                        <Box 
+                            overflow="hidden" 
+                            width="100%" 
+                            position="relative"
+                            border="2px solid"
+                            borderColor="purple.400"
+                            p={2}
+                        >
+                            <Text 
+                                fontSize={{ base: 'md', lg: 'lg' }} 
+                                color="purple.400"
+                                fontFamily="'Press Start 2P', monospace"
+                                whiteSpace="nowrap"
+                                animation={`${scrollingTextKeyframes} 7s linear infinite`}
+                                display="inline-block"
+                            >
+                                SYSTEM ONLINE: Welcome to a mediocre website
+                            </Text>
+                        </Box>
+                    ) : (
+                        <>
+                            <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
+                                Computer science junior at the University of Colorado Colorado Springs passionate in applying my skills on AI/ML, LLMs, data science, and NER/NLP into software for real-world applications.
+                            </Text>
+                            <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
+                                Eligible for security clearance. Proud U.S. Citizen.
+                            </Text>
+                        </>
+                    )}
                     <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
+                        {!isRetro && (
+                            <>
+                                <Button 
+                                    rounded="full" 
+                                    as="a" 
+                                    href={showContent ? "#aboutme" : undefined} 
+                                    onClick={handleClick}
+                                    _hover={{ color: 'yellow', transform: 'scale(1.01)'}}
+                                    _active={{ transform: 'scale(0.99)'}}
+                                >
+                                    More about me
+                                </Button>
+                                <Button 
+                                    as="a" 
+                                    href="/portfolio" 
+                                    rounded="full" 
+                                    _hover={{ color: 'yellow', transform: 'scale(1.01)'}} 
+                                    _active={{ transform: 'scale(0.99)'}}
+                                >
+                                    My Portfolio
+                                </Button>
+                            </>
+                        )}
                         <Button 
-                            rounded="full" 
                             as="a" 
-                            href={showContent ? "#aboutme" : undefined} 
-                            onClick={handleClick}
-                            _hover={{ color: 'yellow', transform: 'scale(1.01)'}}
+                            href="/blog" 
+                            rounded={isRetro ? "none" : "full"}
+                            border={isRetro ? "2px solid" : "none"}
+                            borderColor={isRetro ? "purple.400" : "transparent"}
+                            bg={isRetro ? "black" : undefined}
+                            color={isRetro ? "purple.200" : undefined}
+                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                            _hover={{ 
+                                color: isRetro ? 'purple.400' : 'yellow', 
+                                transform: 'scale(1.01)'
+                            }}
                             _active={{ transform: 'scale(0.99)'}}
                         >
-                            More about me
-                        </Button>
-                        <Button as="a" href="/portfolio" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
-                            My Portfolio
-                        </Button>
-                        <Button as="a" href="/blog" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
                             My Blog   
                         </Button>
-                        <Button as="a" href="https://github.com/Bikatr7" leftIcon={<IconBrandGithub />} rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)'}} _active={{ transform: 'scale(0.99)'}}>
+                        <Button 
+                            as="a" 
+                            href="https://github.com/Bikatr7" 
+                            leftIcon={<IconBrandGithub />} 
+                            rounded={isRetro ? "none" : "full"}
+                            border={isRetro ? "2px solid" : "none"}
+                            borderColor={isRetro ? "purple.400" : "transparent"}
+                            bg={isRetro ? "black" : undefined}
+                            color={isRetro ? "purple.200" : undefined}
+                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                            _hover={{ 
+                                color: isRetro ? 'purple.400' : 'yellow', 
+                                transform: 'scale(1.01)'
+                            }}
+                            _active={{ transform: 'scale(0.99)'}}
+                        >
                             My Github
                         </Button>
                     </Stack>
                 </Stack>
             </Flex>
-            <Flex flex={1} justifyContent={{ base: 'center', md: 'flex-start' }} alignItems="center">
-                <Image boxSize={400} alt="Kaden Bilyeu's Profile Picture" objectFit="cover" src={face} borderRadius={"full"} />
-            </Flex>
+            {!isRetro && (
+                <Flex flex={1} justifyContent={{ base: 'center', md: 'flex-start' }} alignItems="center">
+                    <Image boxSize={400} alt="Kaden Bilyeu's Profile Picture" objectFit="cover" src={face} borderRadius={"full"} />
+                </Flex>
+            )}
         </Stack>
     );
 }
