@@ -22,12 +22,15 @@ import Footer from "./components/Footer.tsx";
 import LoadingAnimation from './components/LoadingAnimation.tsx';
 
 import Router from './Router.tsx';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { isBikatr7URL } from './utils';
 
 function App() 
 {
     const [isLoading, setIsLoading] = useState(true);
     const [showContent, setShowContent] = useState(false);
     const [contentLoaded, setContentLoaded] = useState(false);
+    const isBikatr7 = isBikatr7URL();
 
     const handleLoadingComplete = () => {
         setIsLoading(false);
@@ -41,26 +44,28 @@ function App()
     };
 
     return (
-        <HelmetProvider>
-            <ChakraProvider theme={theme}>
-                <Box bg="black">
-                    {isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
-                    {!isLoading && (
-                        <>
-                            <Navbar/>
-                            <Container maxW="6xl">
-                                <Router 
-                                    showContent={showContent} 
-                                    toggleContent={toggleContent} 
-                                    contentLoaded={contentLoaded} 
-                                />
-                            </Container>
-                            <Footer/>
-                        </>
-                    )}
-                </Box>
-            </ChakraProvider>
-        </HelmetProvider>
+        <ThemeProvider>
+            <HelmetProvider>
+                <ChakraProvider theme={theme}>
+                    <Box bg="black" minH="100vh" display="flex" flexDirection="column">
+                        {!isBikatr7 && isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
+                        {(isBikatr7 || !isLoading) && (
+                            <>
+                                <Navbar/>
+                                <Container maxW="6xl" flex="1">
+                                    <Router 
+                                        showContent={showContent} 
+                                        toggleContent={toggleContent} 
+                                        contentLoaded={contentLoaded} 
+                                    />
+                                </Container>
+                                <Footer/>
+                            </>
+                        )}
+                    </Box>
+                </ChakraProvider>
+            </HelmetProvider>
+        </ThemeProvider>
     );
 }
 

@@ -23,6 +23,9 @@ import EmbedSEO from "../components/EmbedSEO";
 // utils
 import { getURL, formatDate } from '../utils';
 
+// context
+import { useTheme } from '../contexts/ThemeContext';
+
 interface BlogPost 
 {
     id: string;
@@ -34,6 +37,7 @@ interface BlogPost
 
 const BlogDirectoryPage: React.FC = () => 
 {
+    const { isRetro } = useTheme();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -153,16 +157,40 @@ const BlogDirectoryPage: React.FC = () =>
     };
 
     return (
-        <Box bg="black" color="white" minHeight="100vh" display="flex" flexDirection="column" position="relative">
-            <BlogBackground />
+        <Box 
+            bg="black" 
+            color={isRetro ? "purple.400" : "white"} 
+            minHeight="83vh" 
+            display="flex" 
+            flexDirection="column" 
+            position="relative"
+            className={isRetro ? 'retro-mode' : ''}
+        >
+            {!isRetro && <BlogBackground />}
 
             <EmbedSEO
-                title="Kaden Bilyeu's Blog Directory"
-                description="View all of Kaden Bilyeu's blog posts in one place."
+                title={isRetro ? "Bikatr7's Blog Directory" : "Kaden Bilyeu's Blog Directory"}
+                description="View all blog posts in one place."
             />
 
             <Flex justify="space-between" p="1rem" bg="black" flexWrap="wrap" gap="1rem">
-                <Button leftIcon={<ArrowBackIcon />} as="a" href="/blog/" rounded="full" _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>Go Back</Button>
+                <Button 
+                    leftIcon={<ArrowBackIcon />} 
+                    as="a" 
+                    href="/blog/" 
+                    rounded={isRetro ? "none" : "full"}
+                    border={isRetro ? "2px solid" : "none"}
+                    borderColor="purple.400"
+                    bg={isRetro ? "black" : undefined}
+                    color={isRetro ? "purple.200" : undefined}
+                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                    _hover={{ 
+                        color: isRetro ? 'purple.400' : 'yellow', 
+                        transform: 'scale(1.01)'
+                    }}
+                >
+                    Go Back
+                </Button>
                 {isLoggedIn ? (
                     <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>Logout</Button>
                 ) : (
@@ -172,8 +200,18 @@ const BlogDirectoryPage: React.FC = () =>
 
             {isLoading ? (
                 <Flex justify="center" align="center" flex="1" flexDirection="column" gap={4}>
-                    <Spinner size="xl" color="yellow" thickness="4px" />
-                    <Text color="yellow" fontSize="lg">Sorry for the wait, I don't pay for 100% uptime.</Text>
+                    <Spinner 
+                        size="xl" 
+                        color={isRetro ? "purple.400" : "yellow"} 
+                        thickness="4px" 
+                    />
+                    <Text 
+                        color={isRetro ? "purple.400" : "yellow"} 
+                        fontSize="lg"
+                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                    >
+                        Sorry for the wait, I don't pay for 100% uptime.
+                    </Text>
                 </Flex>
             ) : (
                 <Box
@@ -185,7 +223,15 @@ const BlogDirectoryPage: React.FC = () =>
                     overflowY="auto"
                     zIndex="1"
                 >
-                    <VStack spacing="1rem" align="stretch" width="100%" maxWidth="800px">
+                    <VStack 
+                        spacing="1rem" 
+                        align="stretch" 
+                        width="100%" 
+                        maxWidth="800px"
+                        border={isRetro ? "2px solid" : "none"}
+                        borderColor="purple.400"
+                        p={isRetro ? 4 : 0}
+                    >
                         {blogPosts.length > 0 ? (
                             blogPosts.map(post => (
                                 <Link
@@ -200,19 +246,43 @@ const BlogDirectoryPage: React.FC = () =>
                                         align="center"
                                         width="100%"
                                         p="0.5rem"
-                                        _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
+                                        _hover={{ 
+                                            backgroundColor: isRetro ? 'rgba(147, 51, 234, 0.1)' : 'rgba(255, 255, 255, 0.1)', 
+                                            cursor: 'pointer' 
+                                        }}
                                         transition="background-color 0.2s"
                                         flexDirection={["column", "row"]}
                                         gap={["0.5rem", "0"]}
                                     >
-                                        <Text fontSize={["lg", "xl"]} color="yellow" isTruncated width={["100%", "auto"]}>{post.title}</Text>
-                                        <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{formatDate(post.created_at)} by {post.author}</Text>
+                                        <Text 
+                                            fontSize={["lg", "xl"]} 
+                                            color={isRetro ? "purple.400" : "yellow"} 
+                                            isTruncated 
+                                            width={["100%", "auto"]}
+                                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                        >
+                                            {post.title}
+                                        </Text>
+                                        <Text 
+                                            fontSize="sm" 
+                                            color={isRetro ? "purple.200" : "gray.300"}
+                                            whiteSpace="nowrap"
+                                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                        >
+                                            {formatDate(post.created_at)} by {isRetro ? "Bikatr7" : post.author}
+                                        </Text>
                                     </Flex>
                                 </Link>
                             ))
                         ) : (
                             <Flex justify="center" align="center" width="100%" height="100%">
-                                <Text fontSize="xl" color="yellow">No Posts Available (if this is unexpected, my backend is likely down or some other issue is happening)</Text>
+                                <Text 
+                                    fontSize="xl" 
+                                    color={isRetro ? "purple.400" : "yellow"}
+                                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                >
+                                    No Posts Available
+                                </Text>
                             </Flex>
                         )}
                     </VStack>

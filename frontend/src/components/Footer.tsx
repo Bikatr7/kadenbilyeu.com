@@ -6,6 +6,7 @@
 
 // chakra-ui imports
 import { Box, Container,Divider, Flex, IconButton, Image, Stack, Text } from '@chakra-ui/react';
+import { useTheme } from '../contexts/ThemeContext';
 
 // icons and images
 import { IconBrandGithub } from '@tabler/icons-react';
@@ -15,12 +16,19 @@ import logo from '../assets/images/personals/kb.webp';
 
 function Footer() 
 {
+    const { isRetro } = useTheme();
+
     return (
         <Box
             bg="black"
-            color="white"
-            width="100%">
-            <Divider />
+            color={isRetro ? "purple.200" : "white"}
+            width="100%"
+            position="relative"
+            mt="auto"
+            height="80px"
+            className={isRetro ? 'retro-mode' : ''}
+        >
+            <Divider borderColor={isRetro ? "purple.600" : "gray.800"} />
             <Container
                 as={Stack}
                 maxW={'6xl'}
@@ -30,14 +38,57 @@ function Footer()
                 justify={{ base: 'space-between', md: 'space-between' }}
                 align={{ base: 'center', md: 'center' }}>
                 <Flex display={{ base: 'flex', md: 'none' }} width="100%" justify="space-between" align="center">
-                    <IconButton as='a' href='https://github.com/Bikatr7' aria-label='Github' icon={<IconBrandGithub />} />
-                    <Text textAlign="center">© 2024 Kaden Bilyeu (Bikatr7). All rights reserved</Text>
-                    <Image src={logo} boxSize='30px' alt = "Kaden Bilyeu (Bikatr7) Logo" />
+                    <IconButton 
+                        as='a' 
+                        href='https://github.com/Bikatr7' 
+                        aria-label='Github' 
+                        icon={<IconBrandGithub />}
+                        bg="transparent"
+                        color={isRetro ? "purple.200" : "white"}
+                        border={isRetro ? "2px solid" : "none"}
+                        borderColor="purple.400"
+                        borderRadius="none"
+                        _hover={{
+                            bg: 'transparent',
+                            color: isRetro ? 'purple.400' : 'yellow',
+                            transform: 'scale(1.1)'
+                        }}
+                    />
+                    <Text 
+                        textAlign="center"
+                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                        fontSize={isRetro ? { base: "10px", md: "xs" } : "inherit"}
+                    >
+                        © 2024 {isRetro ? 'Bikatr7' : 'Kaden Bilyeu (Bikatr7)'}. All rights reserved
+                    </Text>
+                    <Image src={logo} boxSize='30px' alt="Kaden Bilyeu (Bikatr7) Logo" />
                 </Flex>
                 <Flex display={{ base: 'none', md: 'flex' }} width="100%" justify="space-between" align="center">
-                    <Image src={logo} boxSize='30px' alt = "Kaden Bilyeu (Bikatr7) Logo" />
-                    <Text textAlign="center" flex="1">© 2024 Kaden Bilyeu (Bikatr7). All rights reserved</Text>
-                    <IconButton as='a' href='https://github.com/Bikatr7' aria-label='Github' icon={<IconBrandGithub />} />
+                    <Image src={logo} boxSize='30px' alt="Kaden Bilyeu (Bikatr7) Logo" />
+                    <Text 
+                        textAlign="center" 
+                        flex="1"
+                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                        fontSize={isRetro ? "xs" : "inherit"}
+                    >
+                        © 2024 {isRetro ? 'Bikatr7' : 'Kaden Bilyeu (Bikatr7)'}. All rights reserved
+                    </Text>
+                    <IconButton 
+                        as='a' 
+                        href='https://github.com/Bikatr7' 
+                        aria-label='Github' 
+                        icon={<IconBrandGithub />}
+                        bg="transparent"
+                        color={isRetro ? "purple.200" : "white"}
+                        border={isRetro ? "2px solid" : "none"}
+                        borderColor="purple.400"
+                        borderRadius="none"
+                        _hover={{
+                            bg: 'transparent',
+                            color: isRetro ? 'purple.400' : 'yellow',
+                            transform: 'scale(1.1)'
+                        }}
+                    />
                 </Flex>
             </Container>
         </Box>

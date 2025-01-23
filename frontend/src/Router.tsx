@@ -16,11 +16,20 @@ import PortfolioPage from './pages/PortfolioPage';
 
 function Router({ showContent, toggleContent, contentLoaded }: { showContent: any, toggleContent: any, contentLoaded: any }) 
 {
+
+
     const routes = [
-        { path: '/', element: <HomePage showContent={showContent} toggleContent={toggleContent} contentLoaded={contentLoaded} /> },
+        { 
+            path: '/', 
+            element: <HomePage 
+                showContent={showContent} 
+                toggleContent={toggleContent} 
+                contentLoaded={contentLoaded}
+            /> 
+        },
         { path: '/portfolio', element: <PortfolioPage /> },
         { path: '/blog', element: <BlogPage /> },
-        { path : '/blog/directory', element: <BlogDirectoryPage /> },
+        { path: '/blog/directory', element: <BlogDirectoryPage /> },
         { path: '/blog/:id', element: <BlogPostPage /> },
     ];
 

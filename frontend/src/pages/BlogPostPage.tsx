@@ -25,6 +25,9 @@ import rehypeRaw from 'rehype-raw';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
+// context
+import { useTheme } from '../contexts/ThemeContext';
+
 interface BlogPost 
 {
     id: string;
@@ -43,6 +46,7 @@ const BlogPostPage: React.FC = () =>
     const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { isRetro } = useTheme();
 
     useEffect(() => 
     {
@@ -143,8 +147,16 @@ const BlogPostPage: React.FC = () =>
     };
 
     return (
-        <Box bg="black" color="white" minHeight="83vh" display="flex" flexDirection="column" position="relative">
-            <BlogBackground />
+        <Box 
+            bg="black" 
+            color={isRetro ? "purple.400" : "white"} 
+            minHeight="83vh" 
+            display="flex" 
+            flexDirection="column" 
+            position="relative"
+            className={isRetro ? 'retro-mode' : ''}
+        >
+            {!isRetro && <BlogBackground />}
 
             {blogPost && (
                 <EmbedSEO
@@ -158,9 +170,16 @@ const BlogPostPage: React.FC = () =>
                     leftIcon={<ArrowBackIcon />} 
                     as="a" 
                     href={getBackLink()} 
-                    rounded="full" 
-                    _hover={{ color: 'yellow', transform: 'scale(1.01)' }} 
-                    _active={{ transform: 'scale(0.99)' }}
+                    rounded={isRetro ? "none" : "full"}
+                    border={isRetro ? "2px solid" : "none"}
+                    borderColor="purple.400"
+                    bg={isRetro ? "black" : undefined}
+                    color={isRetro ? "purple.200" : undefined}
+                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                    _hover={{ 
+                        color: isRetro ? 'purple.400' : 'yellow', 
+                        transform: 'scale(1.01)'
+                    }}
                 >
                     Go Back
                 </Button>
@@ -168,26 +187,44 @@ const BlogPostPage: React.FC = () =>
                     {isLoggedIn && (
                         <>
                             {blogPost && (
-                                <Text mr={4} fontSize="sm" color="gray.300">
+                                <Text 
+                                    mr={4} 
+                                    fontSize="sm" 
+                                    color={isRetro ? "purple.200" : "gray.300"}
+                                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                >
                                     Views: {blogPost.view_count}
                                 </Text>
                             )}
                             <Button 
                                 leftIcon={<EditIcon />} 
                                 onClick={handleEdit}
-                                rounded="full" 
-                                mr={2}
-                                _hover={{ color: 'yellow', transform: 'scale(1.01)' }} 
-                                _active={{ transform: 'scale(0.99)' }}
+                                rounded={isRetro ? "none" : "full"}
+                                border={isRetro ? "2px solid" : "none"}
+                                borderColor="purple.400"
+                                bg={isRetro ? "black" : undefined}
+                                color={isRetro ? "purple.200" : undefined}
+                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                _hover={{ 
+                                    color: isRetro ? 'purple.400' : 'yellow', 
+                                    transform: 'scale(1.01)'
+                                }}
                             >
                                 Edit
                             </Button>
                             <Button 
                                 leftIcon={<DeleteIcon />} 
                                 onClick={handleDelete}
-                                rounded="full" 
-                                _hover={{ color: 'yellow', transform: 'scale(1.01)' }} 
-                                _active={{ transform: 'scale(0.99)' }}
+                                rounded={isRetro ? "none" : "full"}
+                                border={isRetro ? "2px solid" : "none"}
+                                borderColor="purple.400"
+                                bg={isRetro ? "black" : undefined}
+                                color={isRetro ? "purple.200" : undefined}
+                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                _hover={{ 
+                                    color: isRetro ? 'purple.400' : 'yellow', 
+                                    transform: 'scale(1.01)'
+                                }}
                             >
                                 Delete
                             </Button>
@@ -226,23 +263,24 @@ const BlogPostPage: React.FC = () =>
                             width={{ base: "98%", md: "85%" }}
                             maxWidth="1000px"
                             margin="0 auto"
-                            bg="rgba(0, 0, 0, 0.7)"
-                            borderRadius="md"
-                            boxShadow="lg"
+                            bg={isRetro ? "black" : "rgba(0, 0, 0, 0.7)"}
                             p={{ base: 4, md: 6 }}
                             overflow="hidden"
-                            border={`2px solid darkgrey`}
+                            border="2px solid"
+                            borderColor={isRetro ? "purple.400" : "darkgrey"}
                         >
                             <Text 
                                 fontSize={{ base: "2xl", md: "3xl" }} 
                                 mb={4} 
                                 textAlign="center"
+                                color={isRetro ? "purple.400" : "white"}
+                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                             >
                                 {blogPost.title}
                             </Text>
                             <Box 
                                 fontSize={{ base: "md", md: "lg" }}
-                                className="markdown-body"
+                                className={`markdown-body ${isRetro ? 'retro-markdown' : ''}`}
                                 sx={{
                                     'h1, h2, h3, h4, h5, h6': {
                                         marginTop: '1em',
@@ -289,6 +327,37 @@ const BlogPostPage: React.FC = () =>
                                         margin: '1em auto',
                                         display: 'block'
                                     },
+                                    ...(isRetro && {
+                                        'h1, h2, h3, h4, h5, h6': {
+                                            color: 'purple.400',
+                                            fontFamily: "'Press Start 2P', monospace",
+                                            marginTop: '1.5em',
+                                            marginBottom: '0.8em'
+                                        },
+                                        'p': { 
+                                            color: 'purple.200',
+                                            fontFamily: "'Press Start 2P', monospace",
+                                            marginBottom: '1.5em',
+                                            lineHeight: '1.8'
+                                        },
+                                        'blockquote': {
+                                            borderColor: 'purple.400',
+                                            color: 'purple.200',
+                                            margin: '1.5em 0',
+                                            padding: '0.8em'
+                                        },
+                                        'a': {
+                                            color: 'purple.400',
+                                            padding: '0.3em 0'
+                                        },
+                                        'ul, ol': {
+                                            marginBottom: '1.5em',
+                                            marginLeft: '2em'
+                                        },
+                                        'li': {
+                                            marginBottom: '0.8em'
+                                        }
+                                    })
                                 }}
                             >
                                 <ReactMarkdown 
@@ -327,8 +396,18 @@ const BlogPostPage: React.FC = () =>
                     )
                 ) : (
                     <Flex justify="center" align="center" height="60vh" flexDirection="column" gap={4}>
-                        <Spinner size="xl" color="yellow" thickness="4px" />
-                        <Text color="yellow" fontSize="lg">Sorry for the wait, I don't pay for 100% uptime.</Text>
+                        <Spinner 
+                            size="xl" 
+                            color={isRetro ? "purple.400" : "yellow"} 
+                            thickness="4px" 
+                        />
+                        <Text 
+                            color={isRetro ? "purple.400" : "yellow"} 
+                            fontSize="lg"
+                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                        >
+                            Sorry for the wait, I don't pay for 100% uptime.
+                        </Text>
                     </Flex>
                 )}
             </Box>

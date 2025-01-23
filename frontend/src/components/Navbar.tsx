@@ -7,6 +7,8 @@
 // chakra-ui 
 import { Box, Button, Collapse, Container, Flex, Heading, Icon, IconButton, Image, Link, Popover, PopoverContent, PopoverTrigger, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { IconDeviceGamepad2 } from '@tabler/icons-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 // assets
 import logo from '../assets/images/personals/kb.webp';
@@ -15,18 +17,20 @@ import resume from '../assets/pdfs/Kaden_Truett_Bilyeu_Resume_December_2024.pdf'
 export default function Navbar() 
 {
     const { isOpen, onToggle } = useDisclosure();
+    const { isRetro, toggleRetro } = useTheme();
 
     return (
         <Box>
             <Flex
                 bg="black"
-                color="white"
+                color={isRetro ? "purple.200" : "white"}
                 minH={'60px'}
                 py={{ base: 2 }}
                 px={{ base: 4 }}
                 borderBottom={1}
                 borderStyle={'solid'}
-                borderColor={'gray.800'}
+                borderColor={isRetro ? 'purple.600' : 'gray.800'}
+                className={isRetro ? 'retro-mode' : ''}
                 align={'center'}>
                 <Container maxW={'6xl'}>
                     <Flex
@@ -50,17 +54,38 @@ export default function Navbar()
                             <Image src={logo} boxSize='30px' ml={2} alt = "Bikatr7 (Kaden Bilyeu) Logo" />
                         </Flex>
                         
-                        <Button
-                            as="a"
-                            bg="red.900"
-                            href={resume}
-                            download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
-                            rounded="full"
-                            _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
-                            _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
-                            ml={5}>
-                            Resume
-                        </Button>
+                        <Flex alignItems="center" gap={2}>
+                            <IconButton
+                                aria-label="Toggle retro theme"
+                                icon={<IconDeviceGamepad2 />}
+                                variant="ghost"
+                                onClick={toggleRetro}
+                                color={isRetro ? "yellow" : "white"}
+                                _hover={{ color: 'yellow', transform: 'scale(1.1)' }}
+                            />
+                            <Button
+                                as="a"
+                                bg={isRetro ? "black" : "red.900"}
+                                href={resume}
+                                download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
+                                rounded={isRetro ? "none" : "full"}
+                                border={isRetro ? "2px solid" : "none"}
+                                borderColor={isRetro ? "purple.400" : "transparent"}
+                                color={isRetro ? "purple.200" : "white"}
+                                _hover={{ 
+                                    color: isRetro ? 'purple.400' : 'yellow', 
+                                    bg: isRetro ? 'purple.800' : 'red.900',
+                                    transform: 'scale(1.01)' 
+                                }}
+                                _active={{ 
+                                    bg: isRetro ? 'purple.700' : 'red.900', 
+                                    transform: 'scale(0.98)' 
+                                }}
+                                ml={5}
+                            >
+                                Resume
+                            </Button>
+                        </Flex>
                     </Flex>
                     <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align={'center'}>
                         <Image src={logo} boxSize='30px' display={{ base: 'none', md: 'block' }} alt = "Bikatr7 (Kaden Bilyeu) Logo" />
@@ -70,14 +95,33 @@ export default function Navbar()
                         </Flex>
 
                         <Flex display={{ base: 'none', md: 'flex' }} ml='auto' align={'center'}>
+                            <IconButton
+                                aria-label="Toggle retro theme"
+                                icon={<IconDeviceGamepad2 />}
+                                variant="ghost"
+                                onClick={toggleRetro}
+                                color={isRetro ? "yellow" : "white"}
+                                _hover={{ color: 'yellow', transform: 'scale(1.1)' }}
+                                mr={3}
+                            />
                             <Button
                                 as="a"
-                                bg="red.900"
+                                bg={isRetro ? "black" : "red.900"}
                                 href={resume}
                                 download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
-                                rounded="full"
-                                _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
-                                _active={{ bg: 'red.900', transform: 'scale(0.98)' }}
+                                rounded={isRetro ? "none" : "full"}
+                                border={isRetro ? "2px solid" : "none"}
+                                borderColor={isRetro ? "purple.400" : "transparent"}
+                                color={isRetro ? "purple.200" : "white"}
+                                _hover={{ 
+                                    color: isRetro ? 'purple.200' : 'yellow', 
+                                    bg: isRetro ? 'purple.800' : 'red.900',
+                                    transform: 'scale(1.01)' 
+                                }}
+                                _active={{ 
+                                    bg: isRetro ? 'purple.700' : 'red.900', 
+                                    transform: 'scale(0.98)' 
+                                }}
                                 ml={5}>
                                 Resume
                             </Button>
@@ -95,12 +139,11 @@ export default function Navbar()
 
 const DesktopNav = () => 
 {
-    const linkColor = "white"
-    const linkHoverColor = "yellow"
-    const popoverContentBgColor = "black"
+    const { isRetro } = useTheme();
+    
     return (
-        <Stack direction={'row'} spacing={4} align={'center'}>
-            {NAV_ITEMS.map((navItem) => (
+        <Stack direction={'row'} spacing={4}>
+            {NAV_ITEMS.filter(item => !item.hideInRetro || !isRetro).map((navItem) => (
                 <Box key={navItem.label}>
                     <Popover trigger={'hover'} placement={'bottom-start'}>
                         <PopoverTrigger>
@@ -113,12 +156,13 @@ const DesktopNav = () =>
                                 onClick={(e) => navItem.children && e.preventDefault()}>
                                 <Heading
                                     as="h2"
-                                    fontSize={'md'}
+                                    fontSize={{ base: 'md', md: 'lg' }}
                                     fontWeight={500}
-                                    color={linkColor}
+                                    color={isRetro ? "purple.400" : "white"}
+                                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                                     _hover={{
-                                        color: linkHoverColor,
-                                        transform: 'scale(1.1)',
+                                        color: isRetro ? 'purple.200' : 'yellow',
+                                        transform: 'scale(1.1)'
                                     }}>
                                     {navItem.label}
                                 </Heading>
@@ -129,7 +173,7 @@ const DesktopNav = () =>
                             <PopoverContent
                                 border={0}
                                 boxShadow={'xl'}
-                                bg={popoverContentBgColor}
+                                bg="black"
                                 p={4}
                                 rounded={'xl'}
                                 minW={'sm'}>
@@ -149,23 +193,33 @@ const DesktopNav = () =>
 
 const DesktopSubNav = ({ label, href, subLabel }: NavItem) => 
 {
+    const { isRetro } = useTheme();
+    
     return (
         <Link
             href={href}
             role={'group'}
             display={'block'}
             p={2}
-            rounded={'md'}
-            _hover={{ bg: "gray.700"}}>
+            rounded={isRetro ? 'none' : 'md'}
+            _hover={{ bg: isRetro ? "purple.900" : "gray.700" }}>
             <Stack direction={'row'} align={'center'}>
                 <Box>
                     <Text
                         transition={'all .3s ease'}
-                        _groupHover={{ color: 'yellow' }}
-                        fontWeight={500}>
+                        _groupHover={{ color: isRetro ? 'purple.200' : 'yellow' }}
+                        fontWeight={500}
+                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                        color={isRetro ? "purple.400" : "white"}>
                         {label}
                     </Text>
-                    <Text fontSize={'sm'}>{subLabel}</Text>
+                    <Text 
+                        fontSize={'sm'}
+                        color={isRetro ? "purple.200" : undefined}
+                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                    >
+                        {subLabel}
+                    </Text>
                 </Box>
                 <Flex
                     transition={'all .3s ease'}
@@ -175,30 +229,39 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) =>
                     justify={'flex-end'}
                     align={'center'}
                     flex={1}>
-                    <Icon color={'yellow'} w={5} h={5} as={ChevronRightIcon} />
+                    <Icon 
+                        color={isRetro ? 'purple.400' : 'yellow'} 
+                        w={5} 
+                        h={5} 
+                        as={ChevronRightIcon} 
+                    />
                 </Flex>
             </Stack>
         </Link>
     );
 };
 
-const MobileNav = () => 
-{
+const MobileNav = () => {
+    const { isRetro } = useTheme();
+    
     return (
         <Stack
             bg="black"
             p={4}
-            display={{ md: 'none' }}>
-            {NAV_ITEMS.map((navItem) => (
+            display={{ md: 'none' }}
+            borderTop={isRetro ? "2px solid" : "none"}
+            borderColor="purple.400"
+        >
+            {NAV_ITEMS.filter(item => !item.hideInRetro || !isRetro).map((navItem) => (
                 <MobileNavItem key={navItem.label} {...navItem} />
             ))}
         </Stack>
     );
 };
 
-const MobileNavItem = ({ label, children, href }: NavItem) => 
-{
+const MobileNavItem = ({ label, children, href }: NavItem) => {
     const { isOpen, onToggle } = useDisclosure();
+    const { isRetro } = useTheme();
 
     return (
         <Stack spacing={4} onClick={children && onToggle}>
@@ -214,10 +277,14 @@ const MobileNavItem = ({ label, children, href }: NavItem) =>
                 onClick={(e) => children && e.preventDefault()}>
                 <Heading
                     as="h2"
-                    fontSize={'lg'}
+                    fontSize={isRetro ? 'sm' : 'lg'}
                     fontWeight={600}
-                    color="white"
-                    _hover={{ transform: 'scale(1.1)', color: 'yellow' }}>
+                    color={isRetro ? "purple.400" : "white"}
+                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                    _hover={{ 
+                        color: isRetro ? 'purple.200' : 'yellow',
+                        transform: 'scale(1.1)'
+                    }}>
                     {label}
                 </Heading>
                 {children && (
@@ -227,6 +294,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) =>
                         transform={isOpen ? 'rotate(180deg)' : ''}
                         w={6}
                         h={6}
+                        color={isRetro ? "purple.400" : "white"}
                     />
                 )}
             </Flex>
@@ -237,11 +305,22 @@ const MobileNavItem = ({ label, children, href }: NavItem) =>
                     pl={4}
                     borderLeft={1}
                     borderStyle={'solid'}
-                    borderColor={'gray.700'}
+                    borderColor={isRetro ? 'purple.400' : 'gray.700'}
                     align={'start'}>
                     {children &&
                         children.map((child) => (
-                            <Link key={child.label} py={2} href={child.href} _hover={{color: 'yellow', textDecoration: 'none'}}>
+                            <Link 
+                                key={child.label} 
+                                py={2} 
+                                href={child.href}
+                                color={isRetro ? "purple.400" : "white"}
+                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                fontSize={isRetro ? "xs" : "md"}
+                                _hover={{
+                                    color: isRetro ? 'purple.200' : 'yellow',
+                                    textDecoration: 'none'
+                                }}
+                            >
                                 {child.label}
                             </Link>
                         ))}
@@ -257,6 +336,7 @@ interface NavItem
     subLabel?: string;
     children?: Array<NavItem>;
     href?: string;
+    hideInRetro?: boolean;
 }
 
 const NAV_ITEMS: Array<NavItem> = 
@@ -268,6 +348,7 @@ const NAV_ITEMS: Array<NavItem> =
     {
         label: 'Portfolio',
         href: '/portfolio',
+        hideInRetro: true,
     },
     {
         label: 'Blog',

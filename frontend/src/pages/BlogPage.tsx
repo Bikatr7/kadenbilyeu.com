@@ -21,6 +21,9 @@ import EmbedSEO from '../components/EmbedSEO';
 // utils
 import { getURL, formatDate } from '../utils';
 
+// contexts
+import { useTheme } from '../contexts/ThemeContext';
+
 interface BlogPost 
 {
     id: string;
@@ -32,6 +35,7 @@ interface BlogPost
 
 const BlogPage: React.FC = () => 
 {
+    const { isRetro } = useTheme();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -279,11 +283,21 @@ const BlogPage: React.FC = () =>
     };
 
     return (
-        <Box bg="black" color="white" minHeight="100vh" display="flex" flexDirection="column" alignItems="center" position="relative" overflow="hidden">
-            <BlogBackground />
+        <Box 
+            bg="black" 
+            color={isRetro ? "purple.400" : "white"} 
+            minHeight="83vh" 
+            display="flex" 
+            flexDirection="column" 
+            alignItems="center" 
+            position="relative" 
+            overflow="hidden"
+            className={isRetro ? 'retro-mode' : ''}
+        >
+            {!isRetro && <BlogBackground />}
 
             <EmbedSEO
-                title="Kaden Bilyeu's Blog" 
+                title={isRetro ? "Bikatr7's Blog" : "Kaden Bilyeu's Blog"}
                 description="Explore Kaden Bilyeu's latest blog posts on various topics including technology, programming, personal projects, and more."
             />
 
@@ -291,7 +305,17 @@ const BlogPage: React.FC = () =>
                 {isLoggedIn ? (
                     <>
                         <MakePost onPost={handleNewPost} />
-                        <Button onClick={handleForceBackup} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
+                        <Button 
+                            onClick={handleForceBackup} 
+                            rounded={isRetro ? "none" : "full"}
+                            border={isRetro ? "2px solid" : "none"}
+                            borderColor="purple.400"
+                            bg={isRetro ? "black" : undefined}
+                            _hover={{ 
+                                color: isRetro ? 'purple.400' : 'yellow', 
+                                transform: 'scale(1.01)'
+                            }}
+                        >
                             Force Backup
                         </Button>
                         <Button as="label" _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
@@ -309,8 +333,18 @@ const BlogPage: React.FC = () =>
 
             {isLoading ? (
                 <Flex justifyContent="center" alignItems="center" height="60vh" flexDirection="column" gap={4}>
-                    <Spinner size="xl" color="yellow" thickness="4px" />
-                    <Text color="yellow" fontSize="lg">Sorry for the wait, I don't pay for 100% uptime.</Text>
+                    <Spinner 
+                        size="xl" 
+                        color={isRetro ? "purple.400" : "yellow"} 
+                        thickness="4px" 
+                    />
+                    <Text 
+                        color={isRetro ? "purple.400" : "yellow"} 
+                        fontSize="lg"
+                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                    >
+                        Sorry for the wait, I don't pay for 100% uptime.
+                    </Text>
                 </Flex>
             ) : (
                 <>
@@ -318,8 +352,9 @@ const BlogPage: React.FC = () =>
                         mt={["7rem", "8rem", "10vh", "15vh"]}
                         width={["95%", "90%", "80%"]}
                         maxWidth="800px"
-                        border="2px solid darkgrey"
-                        bg="rgba(0, 0, 0, 0.7)"
+                        border={isRetro ? "2px solid" : "2px solid darkgrey"}
+                        borderColor={isRetro ? "purple.400" : "darkgrey"}
+                        bg={isRetro ? "black" : "rgba(0, 0, 0, 0.7)"}
                         position="relative"
                         overflow="hidden"
                     >
@@ -338,19 +373,43 @@ const BlogPage: React.FC = () =>
                                             align="center"
                                             width="100%"
                                             p="0.5rem"
-                                            _hover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }}
+                                            _hover={{ 
+                                                backgroundColor: isRetro ? 'rgba(147, 51, 234, 0.1)' : 'rgba(255, 255, 255, 0.1)', 
+                                                cursor: 'pointer' 
+                                            }}
                                             transition="background-color 0.2s"
                                             flexDirection={["column", "row"]}
                                             gap={["0.5rem", "0"]}
                                         >
-                                            <Text fontSize={["lg", "xl"]} color="yellow" isTruncated width={["100%", "auto"]}>{post.title}</Text>
-                                            <Text fontSize="sm" color="gray.300" whiteSpace="nowrap">{formatDate(post.created_at)} by {post.author}</Text>
+                                            <Text 
+                                                fontSize={["lg", "xl"]} 
+                                                color={isRetro ? "purple.400" : "yellow"} 
+                                                isTruncated 
+                                                width={["100%", "auto"]}
+                                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                            >
+                                                {post.title}
+                                            </Text>
+                                            <Text 
+                                                fontSize="sm" 
+                                                color={isRetro ? "purple.200" : "gray.300"}
+                                                whiteSpace="nowrap"
+                                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                            >
+                                                {formatDate(post.created_at)} by {isRetro ? "Bikatr7" : post.author}
+                                            </Text>
                                         </Flex>
                                     </Link>
                                 ))
                             ) : (
                                 <Flex justify="center" align="center" height="100%">
-                                    <Text fontSize="xl" color="yellow">No Current Posts (if this is unexpected, my backend is likely down or some other issue is happening)</Text>
+                                    <Text 
+                                        fontSize="xl" 
+                                        color={isRetro ? "purple.400" : "yellow"}
+                                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                    >
+                                        No Current Posts
+                                    </Text>
                                 </Flex>
                             )}
                         </VStack>
@@ -359,9 +418,16 @@ const BlogPage: React.FC = () =>
                     <Button
                         as="a"
                         href="/blog/directory"
-                        rounded="full"
-                        _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
-                        _active={{ transform: 'scale(0.99)' }}
+                        rounded={isRetro ? "none" : "full"}
+                        border={isRetro ? "2px solid" : "none"}
+                        borderColor="purple.400"
+                        bg={isRetro ? "black" : undefined}
+                        color={isRetro ? "purple.200" : undefined}
+                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                        _hover={{ 
+                            color: isRetro ? 'purple.400' : 'yellow', 
+                            transform: 'scale(1.01)'
+                        }}
                         mt="2rem"
                         mb="2rem"
                         width="auto"
