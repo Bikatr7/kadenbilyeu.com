@@ -26,10 +26,12 @@ const AboutMe = lazy(() => import('../sections/home/AboutMe'));
 const AboutSite = lazy(() => import('../sections/home/AboutSite'));
 const Contact = lazy(() => import('../sections/home/Contact'));
 import { useTheme } from '../contexts/ThemeContext';
+import { isBikatr7URL } from '../utils';
 
 function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean })
 {
     const { isRetro } = useTheme();
+    const isBikatr7 = isBikatr7URL();
 
     return (
         <Box 
@@ -84,7 +86,7 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
                     )}
                 </>
             )}
-            <StorageNoticeModal />
+            {!isBikatr7 && <StorageNoticeModal />}
         </Box>
     );
 }
