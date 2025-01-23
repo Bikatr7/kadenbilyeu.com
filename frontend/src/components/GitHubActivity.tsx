@@ -1,4 +1,4 @@
-import { Box, Text, VStack, Progress, Heading } from "@chakra-ui/react";
+import { Box, Text, VStack, Progress, Heading, Spinner, Center } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 interface RepoActivity {
@@ -56,9 +56,28 @@ function GitHubActivity() {
 
     if (isLoading) {
         return (
-            <Box p={4}>
-                <Text color="purple.400" fontFamily="'Press Start 2P', monospace">Loading...</Text>
-            </Box>
+            <VStack 
+                spacing={2}
+                align="stretch" 
+                p={3}
+                border="2px solid"
+                borderColor="purple.400"
+                bg="black"
+                width={{ base: "100%", lg: "450px" }}
+                mt={2}
+                height="150px"
+                justifyContent="center"
+            >
+                <Center>
+                    <Spinner 
+                        color="purple.400"
+                        size="md"
+                        thickness="3px"
+                        speed="0.8s"
+                        emptyColor="purple.900"
+                    />
+                </Center>
+            </VStack>
         );
     }
 

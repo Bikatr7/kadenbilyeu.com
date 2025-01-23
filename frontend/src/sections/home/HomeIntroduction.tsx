@@ -131,9 +131,9 @@ function HomeIntroduction() {
                     >
                         <Box
                             position="absolute"
-                            top="50%"
+                            top="45%"
                             left="60%"
-                            transform="translate(-50%, -50%) scale(1.6)"
+                            transform="translate(-50%, -60%) scale(1.6)"
                         >
                             <motion.svg
                                 width="300"

@@ -156,7 +156,7 @@ const DesktopNav = () =>
                                 onClick={(e) => navItem.children && e.preventDefault()}>
                                 <Heading
                                     as="h2"
-                                    fontSize={'sm'}
+                                    fontSize={{ base: 'md', md: 'lg' }}
                                     fontWeight={500}
                                     color={isRetro ? "purple.400" : "white"}
                                     fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
