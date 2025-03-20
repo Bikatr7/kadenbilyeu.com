@@ -28,8 +28,7 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 // context
 import { useTheme } from '../contexts/ThemeContext';
 
-interface BlogPost 
-{
+interface BlogPost {
     id: string;
     title: string;
     content: string;
@@ -37,8 +36,7 @@ interface BlogPost
     view_count: number;
 }
 
-const BlogPostPage: React.FC = () =>
-{
+const BlogPostPage: React.FC = () => {
     const { id } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
@@ -48,10 +46,8 @@ const BlogPostPage: React.FC = () =>
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const { isRetro } = useTheme();
 
-    useEffect(() => 
-    {
-        const fetchBlogPost = async () => 
-        {
+    useEffect(() => {
+        const fetchBlogPost = async () => {
             const token = localStorage.getItem('token');
             const headers: HeadersInit = {};
             if (token) {
@@ -70,22 +66,18 @@ const BlogPostPage: React.FC = () =>
         setIsLoggedIn(!!token);
     }, [id]);
 
-    const getBackLink = () => 
-    {
-        if (location.state?.from === '/blog' || location.state?.from === '/blog/directory')
-        {
+    const getBackLink = () => {
+        if (location.state?.from === '/blog' || location.state?.from === '/blog/directory') {
             return location.state.from;
         }
         return '/blog/';
     };
 
-    const handleEdit = () => 
-    {
+    const handleEdit = () => {
         setIsEditing(true);
     };
 
-    const handleEditSubmit = async () => 
-    {
+    const handleEditSubmit = async () => {
         const response = await fetch(getURL(`/blog/${id}`));
         const data = await response.json();
         setBlogPost(data);
@@ -98,21 +90,18 @@ const BlogPostPage: React.FC = () =>
         });
     };
 
-    const handleDelete = async () => 
-    {
-        try 
-        {
+    const handleDelete = async () => {
+        try {
             const token = localStorage.getItem('token');
-            const response = await fetch(getURL(`/blog/${id}`), 
-            {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            const response = await fetch(getURL(`/blog/${id}`),
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
 
-            if (response.ok) 
-            {
+            if (response.ok) {
                 toast({
                     title: "Post deleted",
                     status: "success",
@@ -120,9 +109,8 @@ const BlogPostPage: React.FC = () =>
                     isClosable: true,
                 });
                 navigate('/blog');
-            } 
-            else 
-            {
+            }
+            else {
                 const errorData = await response.json();
                 toast({
                     title: "Error deleting post",
@@ -132,9 +120,8 @@ const BlogPostPage: React.FC = () =>
                     isClosable: true,
                 });
             }
-        } 
-        catch (error) 
-        {
+        }
+        catch (error) {
             console.error("An error occurred while deleting the blog post:", error);
             toast({
                 title: "Error",
@@ -147,12 +134,12 @@ const BlogPostPage: React.FC = () =>
     };
 
     return (
-        <Box 
-            bg="black" 
-            color={isRetro ? "purple.400" : "white"} 
-            minHeight="83vh" 
-            display="flex" 
-            flexDirection="column" 
+        <Box
+            bg="black"
+            color={isRetro ? "purple.400" : "white"}
+            minHeight="83vh"
+            display="flex"
+            flexDirection="column"
             position="relative"
             className={isRetro ? 'retro-mode' : ''}
         >
@@ -161,23 +148,25 @@ const BlogPostPage: React.FC = () =>
             {blogPost && (
                 <EmbedSEO
                     title={`${blogPost.title} | Kaden Bilyeu's Blog`}
-                    description={`Read '${blogPost.title}' by ${blogPost.author} on Kaden Bilyeu's blog. ${blogPost.content.substring(0, 50)}...`}
+                    description={`Read '${blogPost.title}' by ${blogPost.author} on Kaden Bilyeu's blog. ${blogPost.content.substring(0, 150)}...`}
+                    url={`${window.location.origin}/blog/${blogPost.id}`}
+                    image={`${window.location.origin}/kb.webp`}
                 />
             )}
-            
+
             <Flex justify="space-between" p="1rem" bg="black">
-                <Button 
-                    leftIcon={<ArrowBackIcon />} 
-                    as="a" 
-                    href={getBackLink()} 
+                <Button
+                    leftIcon={<ArrowBackIcon />}
+                    as="a"
+                    href={getBackLink()}
                     rounded={isRetro ? "none" : "full"}
                     border={isRetro ? "2px solid" : "none"}
                     borderColor="purple.400"
                     bg={isRetro ? "black" : undefined}
                     color={isRetro ? "purple.200" : undefined}
                     fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                    _hover={{ 
-                        color: isRetro ? 'purple.400' : 'yellow', 
+                    _hover={{
+                        color: isRetro ? 'purple.400' : 'yellow',
                         transform: 'scale(1.01)'
                     }}
                 >
@@ -187,17 +176,17 @@ const BlogPostPage: React.FC = () =>
                     {isLoggedIn && (
                         <>
                             {blogPost && (
-                                <Text 
-                                    mr={4} 
-                                    fontSize="sm" 
+                                <Text
+                                    mr={4}
+                                    fontSize="sm"
                                     color={isRetro ? "purple.200" : "gray.300"}
                                     fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                                 >
                                     Views: {blogPost.view_count}
                                 </Text>
                             )}
-                            <Button 
-                                leftIcon={<EditIcon />} 
+                            <Button
+                                leftIcon={<EditIcon />}
                                 onClick={handleEdit}
                                 rounded={isRetro ? "none" : "full"}
                                 border={isRetro ? "2px solid" : "none"}
@@ -205,15 +194,15 @@ const BlogPostPage: React.FC = () =>
                                 bg={isRetro ? "black" : undefined}
                                 color={isRetro ? "purple.200" : undefined}
                                 fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                                _hover={{ 
-                                    color: isRetro ? 'purple.400' : 'yellow', 
+                                _hover={{
+                                    color: isRetro ? 'purple.400' : 'yellow',
                                     transform: 'scale(1.01)'
                                 }}
                             >
                                 Edit
                             </Button>
-                            <Button 
-                                leftIcon={<DeleteIcon />} 
+                            <Button
+                                leftIcon={<DeleteIcon />}
                                 onClick={handleDelete}
                                 rounded={isRetro ? "none" : "full"}
                                 border={isRetro ? "2px solid" : "none"}
@@ -221,8 +210,8 @@ const BlogPostPage: React.FC = () =>
                                 bg={isRetro ? "black" : undefined}
                                 color={isRetro ? "purple.200" : undefined}
                                 fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                                _hover={{ 
-                                    color: isRetro ? 'purple.400' : 'yellow', 
+                                _hover={{
+                                    color: isRetro ? 'purple.400' : 'yellow',
                                     transform: 'scale(1.01)'
                                 }}
                             >
@@ -232,9 +221,9 @@ const BlogPostPage: React.FC = () =>
                     )}
                 </Flex>
             </Flex>
-            
+
             <Box
-                flex="1" 
+                flex="1"
                 position="relative"
                 overflowY="auto"
                 p={{ base: 3, md: 6 }}
@@ -269,16 +258,16 @@ const BlogPostPage: React.FC = () =>
                             border="2px solid"
                             borderColor={isRetro ? "purple.400" : "darkgrey"}
                         >
-                            <Text 
-                                fontSize={{ base: "2xl", md: "3xl" }} 
-                                mb={4} 
+                            <Text
+                                fontSize={{ base: "2xl", md: "3xl" }}
+                                mb={4}
                                 textAlign="center"
                                 color={isRetro ? "purple.400" : "white"}
                                 fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                             >
                                 {blogPost.title}
                             </Text>
-                            <Box 
+                            <Box
                                 fontSize={{ base: "md", md: "lg" }}
                                 className={`markdown-body ${isRetro ? 'retro-markdown' : ''}`}
                                 sx={{
@@ -290,7 +279,7 @@ const BlogPostPage: React.FC = () =>
                                     'h1': { fontSize: '2em' },
                                     'h2': { fontSize: '1.5em' },
                                     'p': { marginBottom: '1em' },
-                                    'ul, ol': { 
+                                    'ul, ol': {
                                         marginLeft: '2em',
                                         marginBottom: '1em',
                                     },
@@ -334,7 +323,7 @@ const BlogPostPage: React.FC = () =>
                                             marginTop: '1.5em',
                                             marginBottom: '0.8em'
                                         },
-                                        'p': { 
+                                        'p': {
                                             color: 'purple.200',
                                             fontFamily: "'Press Start 2P', monospace",
                                             marginBottom: '1.5em',
@@ -360,14 +349,14 @@ const BlogPostPage: React.FC = () =>
                                     })
                                 }}
                             >
-                                <ReactMarkdown 
-                                    remarkPlugins={[remarkGfm]} 
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm]}
                                     rehypePlugins={[rehypeRaw]}
                                     components={{
-                                        code({className, children, ...props}: any) {
+                                        code({ className, children, ...props }: any) {
                                             const match = /language-(\w+)/.exec(className || '');
                                             const language = match ? match[1] : '';
-                                            
+
                                             if (className) {
                                                 return (
                                                     <SyntaxHighlighter
@@ -388,7 +377,7 @@ const BlogPostPage: React.FC = () =>
                                             return <code className={className} {...props}>{children}</code>;
                                         }
                                     }}
-                                    >
+                                >
                                     {blogPost.content}
                                 </ReactMarkdown>
                             </Box>
@@ -396,13 +385,13 @@ const BlogPostPage: React.FC = () =>
                     )
                 ) : (
                     <Flex justify="center" align="center" height="60vh" flexDirection="column" gap={4}>
-                        <Spinner 
-                            size="xl" 
-                            color={isRetro ? "purple.400" : "yellow"} 
-                            thickness="4px" 
+                        <Spinner
+                            size="xl"
+                            color={isRetro ? "purple.400" : "yellow"}
+                            thickness="4px"
                         />
-                        <Text 
-                            color={isRetro ? "purple.400" : "yellow"} 
+                        <Text
+                            color={isRetro ? "purple.400" : "yellow"}
                             fontSize="lg"
                             fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                         >
