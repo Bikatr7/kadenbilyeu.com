@@ -226,7 +226,7 @@ const BlogPostPage: React.FC = () => {
                 flex="1"
                 position="relative"
                 overflowY="auto"
-                p={{ base: 3, md: 6 }}
+                p={{ base: 1, md: 6 }}
                 zIndex="1"
                 sx={{
                     '::-webkit-scrollbar': {
@@ -249,11 +249,11 @@ const BlogPostPage: React.FC = () => {
                         />
                     ) : (
                         <Box
-                            width={{ base: "98%", md: "85%" }}
+                            width={{ base: "100%", md: "85%" }}
                             maxWidth="1000px"
                             margin="0 auto"
                             bg={isRetro ? "black" : "rgba(0, 0, 0, 0.7)"}
-                            p={{ base: 4, md: 6 }}
+                            p={{ base: 2, md: 6 }}
                             overflow="hidden"
                             border="2px solid"
                             borderColor={isRetro ? "purple.400" : "darkgrey"}
