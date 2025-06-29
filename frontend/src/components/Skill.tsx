@@ -13,14 +13,12 @@ import 'react-lazy-load-image-component/src/effects/opacity.css';
 // icons
 import { IconCode } from '@tabler/icons-react';
 
-interface SkillProps 
-{
+interface SkillProps {
     name: string;
     image?: string | React.ReactNode;
 }
 
-const Skill: React.FC<SkillProps> = ({ name, image }) => 
-{
+const Skill: React.FC<SkillProps> = ({ name, image }) => {
     const imageSize = "30px";
 
     return (
@@ -35,14 +33,14 @@ const Skill: React.FC<SkillProps> = ({ name, image }) =>
             m={2}
             maxWidth="200px"
             width="100%"
-            _hover={{ bg: "gray.700", transform: 'scale(1.05)'}}
+            _hover={{ bg: "gray.700", transform: 'scale(1.05)' }}
         >
-            <Box 
-                width={imageSize} 
-                height={imageSize} 
-                mr={3} 
-                display="flex" 
-                alignItems="center" 
+            <Box
+                width={imageSize}
+                height={imageSize}
+                mr={3}
+                display="flex"
+                alignItems="center"
                 justifyContent="center"
                 overflow="hidden"
             >
@@ -52,6 +50,7 @@ const Skill: React.FC<SkillProps> = ({ name, image }) =>
                             src={image}
                             alt={`${name} logo`}
                             effect="opacity"
+                            loading="eager"
                             width={imageSize}
                             height={imageSize}
                             style={{

@@ -823,6 +823,38 @@ def func_get_blog_post(db:Session, blog_post_id:schemaUUID) -> BlogPostModel:
 
     return db.query(BlogPostModel).filter(BlogPostModel.id == blog_post_id).first()
 
+def func_get_blog_post_by_slug(db:Session, slug:str) -> typing.Optional[BlogPostModel]:
+
+    """
+
+    Get the blog post from the database with the given slug.
+
+    Args:
+    db (Session): The SQLAlchemy session
+    slug (str): The slug of the blog post
+
+    Returns:
+    typing.Optional[BlogPostModel]: The blog post or None if not found
+
+    """
+
+    import re
+    
+    def create_slug(title: str) -> str:
+        result = re.sub(r'[^\w\s-]', '', title.lower())
+        result = re.sub(r'\s+', '-', result)
+        result = re.sub(r'--+', '-', result)
+        return result.strip().strip('-')
+    
+    all_posts = db.query(BlogPostModel).all()
+    
+    for post in all_posts:
+        post_slug = create_slug(str(post.title))
+        if post_slug == slug:
+            return post
+    
+    return None
+
 def func_create_blog_post(db:Session, db_blog_post:BlogPostModel) -> BlogPostModel:
 
     """
@@ -1061,9 +1093,7 @@ def create_blog_post(blog_post:BlogPostCreate, db:Session = Depends(get_db), cur
 
     return func_create_blog_post(db=db, db_blog_post=db_blog_post)
 
-from typing import List, Union
-
-@app.get("/blog", response_model=List[BlogPostRead])
+@app.get("/blog", response_model=list[BlogPostRead])
 def read_blog_posts(skip:int = 0, limit:int = 10, db:Session = Depends(get_db)):
     
     """
@@ -1111,7 +1141,43 @@ def read_blog_post(blog_post_id:schemaUUID, db:Session = Depends(get_db), author
             pass
 
     if(not is_logged_in):
-        func_increment_view_count(db, blog_post_id)
+        func_increment_view_count(db, db_blog_post.id)  # type: ignore
+
+    return db_blog_post
+
+@app.get("/blog/slug/{slug}", response_model=BlogPostRead)
+def read_blog_post_by_slug(slug:str, db:Session = Depends(get_db), authorization: str = Header(None)) -> BlogPostRead:
+
+    """
+    
+    Read a single blog post from the database by slug
+
+    Args:
+    slug (str): The slug of the blog post
+    db (Session): The database session
+    
+    Returns:
+    BlogPostRead: The blog post
+
+    """
+
+    db_blog_post = func_get_blog_post_by_slug(db, slug=slug)
+
+    if(db_blog_post is None):
+        raise HTTPException(status_code=404, detail="Blog post not found")
+    
+    ## I'm the only one who can login and there's no point and logging at my own views
+    is_logged_in = False
+    if(authorization):
+        try:
+            token = authorization.split()[-1]
+            get_current_user(token)
+            is_logged_in = True
+        except:
+            pass
+
+    if(not is_logged_in):
+        func_increment_view_count(db, db_blog_post.id)  # type: ignore
 
     return db_blog_post
 

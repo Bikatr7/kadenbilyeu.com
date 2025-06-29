@@ -31,12 +31,14 @@ These steps must be followed _in order_.
 3. Run the setup script with the local argument. This will install all requirements and setup the local env `python setup.py local`.
 4. Run the server. For local `uvicorn main:app --reload --port 5000`
 5. Open a new terminal and navigate to the `frontend` directory. `cd frontend`. Inside is the react (vite) frontend.
-6. First install all required packages, these are in `package.json`. Do `npm i`. Then run the dev server with `npm run dev`
+6. First install all required packages using `pnpm`. Run `pnpm install`. Then start the dev server with `pnpm dev`
 7. Website will be on localhost:5173 (frontend) and localhost:5000 (backend)
 
 Default login is admin:password
 
 Also requires a totp code, default is JBSWY3DPEHPK3PXP so use that.
+
+8. To serve the built site locally, use `pnpm preview` or simply `pnpm start` (alias).
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 

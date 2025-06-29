@@ -5,10 +5,10 @@
 // maintain allman bracket style for consistency
 
 // react
-import { useState} from 'react';
+import { useState } from 'react';
 
 // chakra-ui
-import { ChakraProvider, Box, Container} from "@chakra-ui/react";
+import { ChakraProvider, Box, Container } from "@chakra-ui/react";
 
 // helmet
 import { HelmetProvider } from 'react-helmet-async';
@@ -20,13 +20,13 @@ import theme from "./theme.ts";
 import Navbar from "./components/Navbar.tsx";
 import Footer from "./components/Footer.tsx";
 import LoadingAnimation from './components/LoadingAnimation.tsx';
+import GlobalSEO from './components/GlobalSEO.tsx';
 
 import Router from './Router.tsx';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { isBikatr7URL } from './utils';
 
-function App() 
-{
+function App() {
     const [isLoading, setIsLoading] = useState(true);
     const [showContent, setShowContent] = useState(false);
     const [contentLoaded, setContentLoaded] = useState(false);
@@ -47,19 +47,20 @@ function App()
         <ThemeProvider>
             <HelmetProvider>
                 <ChakraProvider theme={theme}>
+                    <GlobalSEO />
                     <Box bg="black" minH="100vh" display="flex" flexDirection="column">
                         {!isBikatr7 && isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
                         {(isBikatr7 || !isLoading) && (
                             <>
-                                <Navbar/>
+                                <Navbar />
                                 <Container maxW="6xl" flex="1">
-                                    <Router 
-                                        showContent={showContent} 
-                                        toggleContent={toggleContent} 
-                                        contentLoaded={contentLoaded} 
+                                    <Router
+                                        showContent={showContent}
+                                        toggleContent={toggleContent}
+                                        contentLoaded={contentLoaded}
                                     />
                                 </Container>
-                                <Footer/>
+                                <Footer />
                             </>
                         )}
                     </Box>

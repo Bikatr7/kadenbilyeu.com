@@ -19,7 +19,7 @@ import EditPost from "../components/EditPost";
 import EmbedSEO from '../components/EmbedSEO';
 
 // utils
-import { getURL, formatDate } from '../utils';
+import { getURL, formatDate, createSlug } from '../utils';
 
 // contexts
 import { useTheme } from '../contexts/ThemeContext';
@@ -299,6 +299,8 @@ const BlogPage: React.FC = () =>
             <EmbedSEO
                 title={isRetro ? "Bikatr7's Blog" : "Kaden Bilyeu's Blog"}
                 description="Explore Kaden Bilyeu's latest blog posts on various topics including technology, programming, personal projects, and more."
+                image={`${window.location.origin}/kb.webp`}
+                imageAlt="Kaden Bilyeu (Bikatr7) Profile Picture"
             />
 
             <Flex justify="flex-end" p="1rem" bg="black" width="100%" gap="1rem" flexWrap="wrap">
@@ -362,7 +364,7 @@ const BlogPage: React.FC = () =>
                             {blogPosts.length > 0 ? (
                                 blogPosts.map(post => (
                                     <Link
-                                        to={`/blog/${post.id}`}
+                                        to={`/blog/${createSlug(post.title)}`}
                                         key={post.id}
                                         style={{ width: '100%' }}
                                         state={{ from: location.pathname }}

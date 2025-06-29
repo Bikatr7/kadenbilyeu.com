@@ -7,6 +7,9 @@
 // chakra-ui
 import { Box } from "@chakra-ui/react";
 
+// helmet
+import { Helmet } from 'react-helmet-async';
+
 // components
 import { Card, Item } from "../../components/Card";
 
@@ -21,8 +24,58 @@ import tltmi_logo from '../../assets/images/logos/projects/tltmi_logo.webp';
 import kb_logo from '../../assets/images/personals/kb.webp';
 
 function PortfolioProjects() {
+    const projectsSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Software Development Projects',
+        description: 'Portfolio of software development projects by Kaden Bilyeu',
+        itemListElement: [
+            {
+                '@type': 'SoftwareApplication',
+                name: 'Kudasai',
+                description: 'Japanese translation application using multiple APIs',
+                url: 'https://github.com/Bikatr7/kudasai',
+                applicationCategory: 'Translation Software',
+                operatingSystem: 'Cross-platform',
+                programmingLanguage: ['Python'],
+                author: {
+                    '@type': 'Person',
+                    name: 'Kaden Bilyeu'
+                }
+            },
+            {
+                '@type': 'WebSite',
+                name: 'kadenbilyeu.com',
+                description: 'Personal portfolio website',
+                url: 'https://kadenbilyeu.com',
+                author: {
+                    '@type': 'Person',
+                    name: 'Kaden Bilyeu'
+                },
+                programmingLanguage: ['TypeScript', 'Python']
+            },
+            {
+                '@type': 'SoftwareApplication',
+                name: 'EasyTL',
+                description: 'Translation API wrapper library',
+                url: 'https://github.com/Bikatr7/EasyTL',
+                applicationCategory: 'Software Library',
+                programmingLanguage: ['Python'],
+                author: {
+                    '@type': 'Person',
+                    name: 'Kaden Bilyeu'
+                }
+            }
+        ]
+    };
+
     return (
         <Box>
+            <Helmet>
+                <script type="application/ld+json">
+                    {JSON.stringify(projectsSchema)}
+                </script>
+            </Helmet>
             <Card title="Projects">
                 <Item
                     title="Kudasai"

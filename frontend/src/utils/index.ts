@@ -60,5 +60,22 @@ const isBikatr7URL = () =>
     const currentURL = window.location.href.toLowerCase();
     return currentURL.includes('bikatr7');
 }
+const createSlug = (title: string): string =>
+{
+    return title
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/--+/g, '-')
+        .trim()
+        .replace(/^-+|-+$/g, '');
+}
 
-export {getURL, formatDate, isBikatr7URL};
+const parseSlugOrId = (param: string): { isSlug: boolean; value: string } =>
+{
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(param);
+    const isSlug = !isUUID;
+    return { isSlug, value: param };
+}
+
+export {getURL, formatDate, isBikatr7URL, createSlug, parseSlugOrId}

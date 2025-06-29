@@ -15,7 +15,7 @@ import { ArrowBackIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 // components
 import BlogBackground from "../components/BlogBackground";
 import EditPost from "../components/EditPost";
-import { getURL } from '../utils';
+import { getURL, parseSlugOrId, createSlug } from '../utils';
 import EmbedSEO from '../components/EmbedSEO';
 
 // markdown
@@ -34,6 +34,8 @@ interface BlogPost {
     content: string;
     author: string;
     view_count: number;
+    created_at: string;
+    updated_at?: string;
 }
 
 const BlogPostPage: React.FC = () => {
@@ -42,22 +44,41 @@ const BlogPostPage: React.FC = () => {
     const navigate = useNavigate();
     const toast = useToast();
     const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const { isRetro } = useTheme();
 
     useEffect(() => {
         const fetchBlogPost = async () => {
+            if (!id) return;
+
             const token = localStorage.getItem('token');
             const headers: HeadersInit = {};
             if (token) {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const response = await fetch(getURL(`/blog/${id}`), {
+            const { isSlug, value } = parseSlugOrId(id);
+            const endpoint = isSlug ? `/blog/slug/${encodeURIComponent(value)}` : `/blog/${value}`;
+
+            const response = await fetch(getURL(endpoint), {
                 headers: headers
             });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    setError('Blog post not found');
+                } else if (response.status === 422) {
+                    setError('Invalid blog post URL');
+                } else {
+                    setError('Failed to load blog post');
+                }
+                return;
+            }
+
             const data = await response.json();
+            setError(null);
             setBlogPost(data);
         };
         fetchBlogPost();
@@ -148,9 +169,15 @@ const BlogPostPage: React.FC = () => {
             {blogPost && (
                 <EmbedSEO
                     title={`${blogPost.title} | Kaden Bilyeu's Blog`}
-                    description={`Read '${blogPost.title}' by ${blogPost.author} on Kaden Bilyeu's blog. ${blogPost.content.substring(0, 150)}...`}
-                    url={`${window.location.origin}/blog/${blogPost.id}`}
+                    description={blogPost.content.replace(/[#*`\[\]]/g, '').substring(0, 160).trim() + (blogPost.content.length > 160 ? '...' : '')}
+                    url={`${window.location.origin}/blog/${createSlug(blogPost.title)}`}
                     image={`${window.location.origin}/kb.webp`}
+                    imageAlt="Kaden Bilyeu (Bikatr7) Profile Picture"
+                    type="article"
+                    author={blogPost.author}
+                    publishedTime={blogPost.created_at}
+                    modifiedTime={blogPost.updated_at}
+                    tags={blogPost.title.split(' ').filter(word => word.length > 3).slice(0, 5)}
                 />
             )}
 
@@ -385,18 +412,49 @@ const BlogPostPage: React.FC = () => {
                     )
                 ) : (
                     <Flex justify="center" align="center" height="60vh" flexDirection="column" gap={4}>
-                        <Spinner
-                            size="xl"
-                            color={isRetro ? "purple.400" : "yellow"}
-                            thickness="4px"
-                        />
-                        <Text
-                            color={isRetro ? "purple.400" : "yellow"}
-                            fontSize="lg"
-                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                        >
-                            Sorry for the wait, I don't pay for 100% uptime.
-                        </Text>
+                        {error ? (
+                            <>
+                                <Text
+                                    color={isRetro ? "purple.400" : "red.400"}
+                                    fontSize="xl"
+                                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                    textAlign="center"
+                                >
+                                    {error}
+                                </Text>
+                                <Button
+                                    as="a"
+                                    href="/blog"
+                                    rounded={isRetro ? "none" : "full"}
+                                    border={isRetro ? "2px solid" : "none"}
+                                    borderColor={isRetro ? "purple.400" : "transparent"}
+                                    bg={isRetro ? "black" : undefined}
+                                    color={isRetro ? "purple.200" : undefined}
+                                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                    _hover={{
+                                        color: isRetro ? 'purple.400' : 'yellow',
+                                        transform: 'scale(1.01)'
+                                    }}
+                                >
+                                    Back to Blog
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <Spinner
+                                    size="xl"
+                                    color={isRetro ? "purple.400" : "yellow"}
+                                    thickness="4px"
+                                />
+                                <Text
+                                    color={isRetro ? "purple.400" : "yellow"}
+                                    fontSize="lg"
+                                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                >
+                                    Sorry for the wait, I don't pay for 100% uptime.
+                                </Text>
+                            </>
+                        )}
                     </Flex>
                 )}
             </Box>

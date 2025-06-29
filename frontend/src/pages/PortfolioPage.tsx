@@ -4,47 +4,55 @@
 
 // maintain allman bracket style for consistency
 
-// chakra ui
-import { Box, VStack, Text, Button } from "@chakra-ui/react";
+import { lazy, Suspense } from 'react';
+
+import { Box, VStack, Text, Button, Spinner } from "@chakra-ui/react";
 
 // components
 import NamedDivider from "../components/NamedDivider";
-import PortfolioIntroduction from "../sections/portfolio/PortfolioIntroduction";
-import Education from "../sections/portfolio/Education";
-import Experience from "../sections/portfolio/Experience";
-import PortfolioProjects from "../sections/portfolio/PortfolioProjects";
-import Skills from "../sections/common/Skills";
-import Certifications from "../sections/portfolio/Certifications";
-import Accomplishments from "../sections/portfolio/Accomplishments";
+import EmbedSEO from "../components/EmbedSEO";
 
-// contexts
+import PortfolioIntroduction from "../sections/portfolio/PortfolioIntroduction";
+
+const Education = lazy(() => import("../sections/portfolio/Education"));
+const Experience = lazy(() => import("../sections/portfolio/Experience"));
+const PortfolioProjects = lazy(() => import("../sections/portfolio/PortfolioProjects"));
+const Skills = lazy(() => import("../sections/common/Skills"));
+const Certifications = lazy(() => import("../sections/portfolio/Certifications"));
+const Accomplishments = lazy(() => import("../sections/portfolio/Accomplishments"));
+
 import { useTheme } from '../contexts/ThemeContext';
+const SectionLoader = () => (
+    <Box textAlign="center" py={4}>
+        <Spinner color="teal.500" />
+    </Box>
+);
 
 function PortfolioPage() {
     const { isRetro, toggleRetro } = useTheme();
 
     if (isRetro) {
         return (
-            <Box 
-                flex="1" 
-                display="flex" 
-                alignItems="center" 
-                justifyContent="center" 
+            <Box
+                flex="1"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
                 bg="black"
             >
-                <VStack 
-                    spacing={6} 
-                    p={8} 
-                    bg="purple.900" 
-                    borderRadius="lg" 
-                    border="2px" 
+                <VStack
+                    spacing={6}
+                    p={8}
+                    bg="purple.900"
+                    borderRadius="lg"
+                    border="2px"
                     borderColor="purple.600"
                     maxW="600px"
                     w="90%"
                     mt="25vh"
                 >
-                    <Text 
-                        fontSize="xl" 
+                    <Text
+                        fontSize="xl"
                         color="purple.200"
                         fontFamily="'Press Start 2P', monospace"
                         textAlign="center"
@@ -73,19 +81,43 @@ function PortfolioPage() {
 
     return (
         <Box flex="1">
+            <EmbedSEO
+                title="Portfolio | Kaden Bilyeu"
+                description="Detailed look at Kaden Bilyeu's education, experience, projects, skills, and accomplishments."
+                image={`${window.location.origin}/kb.webp`}
+                imageAlt="Kaden Bilyeu (Bikatr7) Profile Picture"
+            />
             <PortfolioIntroduction />
+
             <NamedDivider name="Education" id="education" />
-            <Education />
+            <Suspense fallback={<SectionLoader />}>
+                <Education />
+            </Suspense>
+
             <NamedDivider name="Experience" id="experience" />
-            <Experience />
+            <Suspense fallback={<SectionLoader />}>
+                <Experience />
+            </Suspense>
+
             <NamedDivider name="Projects" id="projects" />
-            <PortfolioProjects />
+            <Suspense fallback={<SectionLoader />}>
+                <PortfolioProjects />
+            </Suspense>
+
             <NamedDivider name="Skills" id="skills" />
-            <Skills />
+            <Suspense fallback={<SectionLoader />}>
+                <Skills />
+            </Suspense>
+
             <NamedDivider name="Certifications" id="certifications" />
-            <Certifications />
+            <Suspense fallback={<SectionLoader />}>
+                <Certifications />
+            </Suspense>
+
             <NamedDivider name="Accomplishments" id="accomplishments" />
-            <Accomplishments />
+            <Suspense fallback={<SectionLoader />}>
+                <Accomplishments />
+            </Suspense>
         </Box>
     );
 }
