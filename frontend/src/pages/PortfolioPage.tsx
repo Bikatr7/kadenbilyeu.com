@@ -16,6 +16,7 @@ import PortfolioProjects from "../sections/portfolio/PortfolioProjects";
 import Skills from "../sections/common/Skills";
 import Certifications from "../sections/portfolio/Certifications";
 import Accomplishments from "../sections/portfolio/Accomplishments";
+import EmbedSEO from "../components/EmbedSEO";
 
 // contexts
 import { useTheme } from '../contexts/ThemeContext';
@@ -25,26 +26,26 @@ function PortfolioPage() {
 
     if (isRetro) {
         return (
-            <Box 
-                flex="1" 
-                display="flex" 
-                alignItems="center" 
-                justifyContent="center" 
+            <Box
+                flex="1"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
                 bg="black"
             >
-                <VStack 
-                    spacing={6} 
-                    p={8} 
-                    bg="purple.900" 
-                    borderRadius="lg" 
-                    border="2px" 
+                <VStack
+                    spacing={6}
+                    p={8}
+                    bg="purple.900"
+                    borderRadius="lg"
+                    border="2px"
                     borderColor="purple.600"
                     maxW="600px"
                     w="90%"
                     mt="25vh"
                 >
-                    <Text 
-                        fontSize="xl" 
+                    <Text
+                        fontSize="xl"
                         color="purple.200"
                         fontFamily="'Press Start 2P', monospace"
                         textAlign="center"
@@ -73,6 +74,12 @@ function PortfolioPage() {
 
     return (
         <Box flex="1">
+            <EmbedSEO
+                title="Portfolio | Kaden Bilyeu"
+                description="Detailed look at Kaden Bilyeu's education, experience, projects, skills, and accomplishments."
+                image={`${window.location.origin}/kb.webp`}
+                imageAlt="Kaden Bilyeu (Bikatr7) Profile Picture"
+            />
             <PortfolioIntroduction />
             <NamedDivider name="Education" id="education" />
             <Education />

@@ -8,13 +8,12 @@
 import { Button, Flex, Heading, Image, Stack, Text, Box } from '@chakra-ui/react';
 
 // icons and images
-import { IconBrandGithub} from '@tabler/icons-react';
+import { IconBrandGithub } from '@tabler/icons-react';
 
 import face from '../../assets/images/personals/kadenbilyeu.webp';
 import { useTheme } from '../../contexts/ThemeContext';
 
 import { keyframes } from '@emotion/react';
-import GitHubActivity from '../../components/GitHubActivity';
 
 const scrollingTextKeyframes = keyframes`
   0% { transform: translateX(100%); }
@@ -32,16 +31,16 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
 
     return (
         <Stack direction={{ base: 'column', md: 'row' }} bg="black" id="home" paddingTop={5} >
-            <Flex 
-                p={8} 
-                flex={1} 
-                align="center" 
+            <Flex
+                p={8}
+                flex={1}
+                align="center"
                 justify={isRetro ? "flex-start" : "flex-start"}
             >
                 <Stack spacing={6} w="full" maxW="xl">
                     <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
-                        <Text 
-                            as="span" 
+                        <Text
+                            as="span"
                             position="relative"
                             fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                             color={isRetro ? "purple.200" : "white"}
@@ -51,16 +50,16 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                         <br />
                     </Heading>
                     {isRetro ? (
-                        <Box 
-                            overflow="hidden" 
-                            width="100%" 
+                        <Box
+                            overflow="hidden"
+                            width="100%"
                             position="relative"
                             border="2px solid"
                             borderColor="purple.400"
                             p={2}
                         >
-                            <Text 
-                                fontSize={{ base: 'md', lg: 'lg' }} 
+                            <Text
+                                fontSize={{ base: 'md', lg: 'lg' }}
                                 color="purple.400"
                                 fontFamily="'Press Start 2P', monospace"
                                 whiteSpace="nowrap"
@@ -83,59 +82,59 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                     <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
                         {!isRetro && (
                             <>
-                                <Button 
-                                    rounded="full" 
-                                    as="a" 
-                                    href={showContent ? "#aboutme" : undefined} 
+                                <Button
+                                    rounded="full"
+                                    as="a"
+                                    href={showContent ? "#aboutme" : undefined}
                                     onClick={handleClick}
-                                    _hover={{ color: 'yellow', transform: 'scale(1.01)'}}
-                                    _active={{ transform: 'scale(0.99)'}}
+                                    _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
+                                    _active={{ transform: 'scale(0.99)' }}
                                 >
                                     More about me
                                 </Button>
-                                <Button 
-                                    as="a" 
-                                    href="/portfolio" 
-                                    rounded="full" 
-                                    _hover={{ color: 'yellow', transform: 'scale(1.01)'}} 
-                                    _active={{ transform: 'scale(0.99)'}}
+                                <Button
+                                    as="a"
+                                    href="/portfolio"
+                                    rounded="full"
+                                    _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
+                                    _active={{ transform: 'scale(0.99)' }}
                                 >
                                     My Portfolio
                                 </Button>
                             </>
                         )}
-                        <Button 
-                            as="a" 
-                            href="/blog" 
+                        <Button
+                            as="a"
+                            href="/blog"
                             rounded={isRetro ? "none" : "full"}
                             border={isRetro ? "2px solid" : "none"}
                             borderColor={isRetro ? "purple.400" : "transparent"}
                             bg={isRetro ? "black" : undefined}
                             color={isRetro ? "purple.200" : undefined}
                             fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                            _hover={{ 
-                                color: isRetro ? 'purple.400' : 'yellow', 
+                            _hover={{
+                                color: isRetro ? 'purple.400' : 'yellow',
                                 transform: 'scale(1.01)'
                             }}
-                            _active={{ transform: 'scale(0.99)'}}
+                            _active={{ transform: 'scale(0.99)' }}
                         >
-                            My Blog   
+                            My Blog
                         </Button>
-                        <Button 
-                            as="a" 
-                            href="https://github.com/Bikatr7" 
-                            leftIcon={<IconBrandGithub />} 
+                        <Button
+                            as="a"
+                            href="https://github.com/Bikatr7"
+                            leftIcon={<IconBrandGithub />}
                             rounded={isRetro ? "none" : "full"}
                             border={isRetro ? "2px solid" : "none"}
                             borderColor={isRetro ? "purple.400" : "transparent"}
                             bg={isRetro ? "black" : undefined}
                             color={isRetro ? "purple.200" : undefined}
                             fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                            _hover={{ 
-                                color: isRetro ? 'purple.400' : 'yellow', 
+                            _hover={{
+                                color: isRetro ? 'purple.400' : 'yellow',
                                 transform: 'scale(1.01)'
                             }}
-                            _active={{ transform: 'scale(0.99)'}}
+                            _active={{ transform: 'scale(0.99)' }}
                         >
                             My Github
                         </Button>
@@ -148,16 +147,29 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                 </Flex>
             )}
             {isRetro && (
-                <Box 
-                    flex={1} 
-                    display="flex" 
+                <Box
+                    flex={1}
+                    display="flex"
                     justifyContent={{ base: 'center', lg: 'flex-start' }}
                     alignItems="flex-start"
                     pl={{ base: 0, lg: 8 }}
                     mt={24}
                     width={{ base: "100%", lg: "auto" }}
                 >
-                    <GitHubActivity />
+                    <Box
+                        border="2px solid"
+                        borderColor="purple.400"
+                        bg="black"
+                        p={3}
+                        width={{ base: "100%", lg: "450px" }}
+                    >
+                        <Image
+                            src="https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=highcontrast&layout=compact&langs_count=10"
+                            alt="Bikatr7's WakaTime Graph"
+                            width="100%"
+                            height="auto"
+                        />
+                    </Box>
                 </Box>
             )}
         </Stack>

@@ -6,6 +6,7 @@
 
 // react
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 // chakra-ui
 import { Box, Button, SimpleGrid, Text } from "@chakra-ui/react";
@@ -163,6 +164,18 @@ function Skills() {
 
     return (
         <Box p={4}>
+            <Helmet>
+                {/* Preload critical skill images */}
+                <link rel="preload" as="image" href={python_logo} />
+                <link rel="preload" as="image" href={javascript_logo} />
+                <link rel="preload" as="image" href={typescript_logo} />
+                <link rel="preload" as="image" href={react_logo} />
+                <link rel="preload" as="image" href={java_logo} />
+                <link rel="preload" as="image" href={git_logo} />
+                <link rel="preload" as="image" href={docker_logo} />
+                <link rel="preload" as="image" href={html_logo} />
+                <link rel="preload" as="image" href={css_logo} />
+            </Helmet>
             <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
                 {visibleSkills.map((skill, index) => (
                     <Skill key={index} name={skill.name} image={skill.image} />

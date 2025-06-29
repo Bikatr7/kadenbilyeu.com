@@ -14,18 +14,17 @@ import BlogPostPage from './pages/BlogPostPage';
 import BlogDirectoryPage from './pages/BlogDirectoryPage';
 import PortfolioPage from './pages/PortfolioPage';
 
-function Router({ showContent, toggleContent, contentLoaded }: { showContent: any, toggleContent: any, contentLoaded: any }) 
-{
+function Router({ showContent, toggleContent, contentLoaded }: { showContent: any, toggleContent: any, contentLoaded: any }) {
 
 
     const routes = [
-        { 
-            path: '/', 
-            element: <HomePage 
-                showContent={showContent} 
-                toggleContent={toggleContent} 
+        {
+            path: '/',
+            element: <HomePage
+                showContent={showContent}
+                toggleContent={toggleContent}
                 contentLoaded={contentLoaded}
-            /> 
+            />
         },
         { path: '/portfolio', element: <PortfolioPage /> },
         { path: '/blog', element: <BlogPage /> },

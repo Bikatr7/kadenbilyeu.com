@@ -5,7 +5,7 @@
 // maintain allman bracket style for consistency
 
 // react
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 
 // chakra-ui
 import { Box, Spinner } from "@chakra-ui/react";
@@ -13,6 +13,7 @@ import { Box, Spinner } from "@chakra-ui/react";
 // custom components
 import NamedDivider from '../components/NamedDivider';
 import StorageNoticeModal from '../components/StorageNoticeModal';
+import EmbedSEO from '../components/EmbedSEO';
 
 // sections
 import Preface from '../sections/home/Preface';
@@ -28,32 +29,47 @@ const Contact = lazy(() => import('../sections/home/Contact'));
 import { useTheme } from '../contexts/ThemeContext';
 import { isBikatr7URL } from '../utils';
 
-function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean })
-{
+function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: boolean, toggleContent: any, contentLoaded: boolean }) {
     const { isRetro } = useTheme();
     const isBikatr7 = isBikatr7URL();
 
+    useEffect(() => {
+        if (!showContent) {
+            const timer = setTimeout(() => {
+                toggleContent();
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [showContent, toggleContent]);
+
     return (
-        <Box 
+        <Box
             bg="black"
-            color="white" 
+            color="white"
             minHeight="83vh"
             className={isRetro ? 'retro-mode' : ''}
         >
-            <Preface 
-                showContent={showContent} 
-                toggleContent={toggleContent}  
+            <EmbedSEO
+                title="Kaden Bilyeu | Portfolio & Blog"
+                description="Explore projects, blog posts, and contact information for software engineer Kaden Bilyeu (Bikatr7)."
+                image={`${window.location.origin}/kb.webp`}
+                imageAlt="Kaden Bilyeu (Bikatr7) Profile Picture"
+                url={window.location.href}
             />
-            <NamedDivider 
-                name="Introduction" 
+            <Preface
+                showContent={showContent}
+                toggleContent={toggleContent}
+            />
+            <NamedDivider
+                name="Introduction"
                 id="introduction"
             />
             <HomeIntroduction />
-            
+
             {isRetro ? (
                 <>
-                    <NamedDivider 
-                        name="[Projects]" 
+                    <NamedDivider
+                        name="[Projects]"
                         id="projects"
                     />
                     <HomeProjects />
@@ -61,24 +77,21 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
             ) : (
                 <>
                     <NamedDivider
-                        name={showContent ? "Projects" : "Click for More"}
+                        name={showContent ? "Projects" : "Loading..."}
                         id="projects"
-                        isExpandable={true}
-                        isExpanded={showContent}
-                        onToggle={toggleContent}
                     />
                     {contentLoaded && (
                         <Suspense fallback={<Box textAlign="center" py={4}><Spinner color="white" /></Box>}>
                             {showContent && (
                                 <>
-                                    <Projects/>
+                                    <Projects />
                                     <NamedDivider name="Skills" id="skills" />
-                                    <Skills  />
+                                    <Skills />
                                     <NamedDivider name="About Me" id="aboutme" />
                                     <AboutMe />
                                     <NamedDivider name="About The Site" id="aboutsite" />
-                                    <AboutSite  />
-                                    <NamedDivider name="Contact" id="contact"  />
+                                    <AboutSite />
+                                    <NamedDivider name="Contact" id="contact" />
                                     <Contact />
                                 </>
                             )}
