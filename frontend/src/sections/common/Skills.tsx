@@ -11,39 +11,73 @@ import { useState } from 'react';
 import { Box, Button, SimpleGrid, Text } from "@chakra-ui/react";
 
 // logos
+// @ts-ignore
 import agile_logo from '../../assets/images/skills/agile_logo.webp';
+// @ts-ignore
 import c_logo from '../../assets/images/skills/c_logo.webp';
+// @ts-ignore
 import cpp_logo from '../../assets/images/skills/c++_logo.webp';
+// @ts-ignore
 import css_logo from '../../assets/images/skills/css_logo.webp';
+// @ts-ignore
 import deepL_logo from '../../assets/images/skills/deepL_logo.webp';
+// @ts-ignore
 import discordpy_logo from '../../assets/images/skills/discord.py_logo.webp';
+// @ts-ignore
 import docker_logo from '../../assets/images/skills/docker_logo.webp';
+// @ts-ignore
 import fastapi_logo from '../../assets/images/skills/fastapi_logo.webp';
+// @ts-ignore
 import flask_logo from '../../assets/images/skills/flask_logo.webp';
+// @ts-ignore
 import git_logo from '../../assets/images/skills/git_logo.webp';
+// @ts-ignore
 import github_logo from '../../assets/images/skills/github_logo.webp';
+// @ts-ignore
 import gradio_logo from '../../assets/images/skills/gradio_logo.webp';
+// @ts-ignore
 import html_logo from '../../assets/images/skills/html_logo.webp';
+// @ts-ignore
 import java_logo from '../../assets/images/skills/java_logo.webp';
+// @ts-ignore
 import javascript_logo from '../../assets/images/skills/javascript_logo.webp';
+// @ts-ignore
 import linux_logo from '../../assets/images/skills/linux_logo.webp';
+// @ts-ignore
 import mysql_logo from '../../assets/images/skills/mysql_logo.webp';
+// @ts-ignore
 import openai_logo from '../../assets/images/skills/openai_logo.webp';
+// @ts-ignore
 import oracle_sql_logo from '../../assets/images/skills/oracle_sql_logo.webp';
+// @ts-ignore
 import pl_sql_logo from '../../assets/images/skills/pl_sql_logo.webp';
+// @ts-ignore
 import python_logo from '../../assets/images/skills/python_logo.webp';
+// @ts-ignore
 import r_logo from '../../assets/images/skills/r_logo.webp';
+// @ts-ignore
 import react_logo from '../../assets/images/skills/react_logo.webp';
+// @ts-ignore
 import spacy_logo from '../../assets/images/skills/spacy_logo.webp';
+// @ts-ignore
 import typescript_logo from '../../assets/images/skills/typescript_logo.webp';
+// @ts-ignore
 import vite_logo from '../../assets/images/skills/vite_logo.webp';
+// @ts-ignore
 import plotly_logo from '../../assets/images/skills/plotly.webp';
+// @ts-ignore
 import networkx_logo from '../../assets/images/skills/networkx.webp';
+// @ts-ignore
 import numpy_logo from '../../assets/images/skills/numpy.webp';
+// @ts-ignore
 import django_logo from '../../assets/images/skills/django_logo.webp';
+// @ts-ignore
 import go_logo from '../../assets/images/skills/go_logo.webp';
+// @ts-ignore
 import keras_logo from '../../assets/images/skills/keras_logo.webp';
+// @ts-ignore
 import pytorch_logo from '../../assets/images/skills/pytorch_logo.webp';
+// @ts-ignore
 import tensorflow_logo from '../../assets/images/skills/tensorflow_logo.webp';
 
 // custom components
@@ -123,8 +157,7 @@ const developingSkills = [
     "Tailwind CSS"
 ];
 
-function Skills()
-{
+function Skills() {
     const [showMore, setShowMore] = useState(false);
     const visibleSkills = showMore ? skillData : skillData.slice(0, 15);
 
@@ -136,8 +169,8 @@ function Skills()
                 ))}
             </SimpleGrid>
             <Box textAlign="center" mt={4}>
-                <Button 
-                    onClick={() => setShowMore(!showMore)} 
+                <Button
+                    onClick={() => setShowMore(!showMore)}
                     _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                     _active={{ transform: 'scale(0.99)' }}
                     rounded={'full'}
@@ -147,7 +180,7 @@ function Skills()
                     {showMore ? "Show Less" : "Show More"}
                 </Button>
             </Box>
-            
+
             {/* New developing skills section */}
             <Box mt={6} textAlign="center">
                 <Box fontSize="sm" color="gray.500" mb={2}>
