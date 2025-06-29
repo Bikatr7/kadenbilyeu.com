@@ -15,17 +15,15 @@ import NamedDivider from '../components/NamedDivider';
 import StorageNoticeModal from '../components/StorageNoticeModal';
 import EmbedSEO from '../components/EmbedSEO';
 
-// sections
 import Preface from '../sections/home/Preface';
 import HomeIntroduction from '../sections/home/HomeIntroduction';
-import HomeProjects from '../sections/home/HomeProjects';
 
-// Lazy load the other components
-const Projects = lazy(() => import('../sections/home/HomeProjects'));
+const HomeProjects = lazy(() => import('../sections/home/HomeProjects'));
 const Skills = lazy(() => import('../sections/common/Skills'));
 const AboutMe = lazy(() => import('../sections/home/AboutMe'));
 const AboutSite = lazy(() => import('../sections/home/AboutSite'));
 const Contact = lazy(() => import('../sections/home/Contact'));
+
 import { useTheme } from '../contexts/ThemeContext';
 import { isBikatr7URL } from '../utils';
 
@@ -72,7 +70,9 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
                         name="[Projects]"
                         id="projects"
                     />
-                    <HomeProjects />
+                    <Suspense fallback={<Box textAlign="center" py={4}><Spinner color="white" /></Box>}>
+                        <HomeProjects />
+                    </Suspense>
                 </>
             ) : (
                 <>
@@ -84,7 +84,7 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
                         <Suspense fallback={<Box textAlign="center" py={4}><Spinner color="white" /></Box>}>
                             {showContent && (
                                 <>
-                                    <Projects />
+                                    <HomeProjects />
                                     <NamedDivider name="Skills" id="skills" />
                                     <Skills />
                                     <NamedDivider name="About Me" id="aboutme" />
