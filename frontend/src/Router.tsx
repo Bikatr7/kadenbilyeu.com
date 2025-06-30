@@ -5,74 +5,55 @@
 // maintain allman bracket style for consistency
 
 // react
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
-import { Box, Spinner } from '@chakra-ui/react';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 
-const HomePage = lazy(() => import('./pages/HomePage'));
-const BlogPage = lazy(() => import('./pages/BlogPage'));
-const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
-const BlogDirectoryPage = lazy(() => import('./pages/BlogDirectoryPage'));
-const PortfolioPage = lazy(() => import('./pages/PortfolioPage'));
+// chakra-ui
+import { Container } from '@chakra-ui/react';
 
-const PageLoader = () => (
-    <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="50vh"
-    >
-        <Spinner size="xl" color="teal.500" />
-    </Box>
-);
+// components
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+
+// pages
+import HomePage from './pages/HomePage';
+import BlogPage from './pages/BlogPage';
+import BlogPostPage from './pages/BlogPostPage';
+import BlogDirectoryPage from './pages/BlogDirectoryPage';
+import PortfolioPage from './pages/PortfolioPage';
+
+function Layout() {
+    return (
+        <>
+            <Navbar />
+            <Container maxW="6xl" flex="1">
+                <Outlet />
+            </Container>
+            <Footer />
+        </>
+    );
+}
 
 function Router({ showContent, toggleContent, contentLoaded }: { showContent: any, toggleContent: any, contentLoaded: any }) {
 
     const routes = [
         {
             path: '/',
-            element: (
-                <Suspense fallback={<PageLoader />}>
-                    <HomePage
+            element: <Layout />,
+            children: [
+                {
+                    index: true,
+                    element: <HomePage
                         showContent={showContent}
                         toggleContent={toggleContent}
                         contentLoaded={contentLoaded}
                     />
-                </Suspense>
-            )
-        },
-        {
-            path: '/portfolio',
-            element: (
-                <Suspense fallback={<PageLoader />}>
-                    <PortfolioPage />
-                </Suspense>
-            )
-        },
-        {
-            path: '/blog',
-            element: (
-                <Suspense fallback={<PageLoader />}>
-                    <BlogPage />
-                </Suspense>
-            )
-        },
-        {
-            path: '/blog/directory',
-            element: (
-                <Suspense fallback={<PageLoader />}>
-                    <BlogDirectoryPage />
-                </Suspense>
-            )
-        },
-        {
-            path: '/blog/:id',
-            element: (
-                <Suspense fallback={<PageLoader />}>
-                    <BlogPostPage />
-                </Suspense>
-            )
-        },
+                },
+                { path: 'portfolio', element: <PortfolioPage /> },
+                { path: 'blog', element: <BlogPage /> },
+                { path: 'blog/directory', element: <BlogDirectoryPage /> },
+                { path: 'blog/:id', element: <BlogPostPage /> },
+            ]
+        }
     ];
 
     const router = createBrowserRouter(routes);

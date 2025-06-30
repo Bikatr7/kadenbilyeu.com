@@ -4,29 +4,24 @@
 
 // maintain allman bracket style for consistency
 
-import { lazy, Suspense } from 'react';
-
-import { Box, VStack, Text, Button, Spinner } from "@chakra-ui/react";
+// chakra ui
+import { Box, VStack, Text, Button } from "@chakra-ui/react";
 
 // components
 import NamedDivider from "../components/NamedDivider";
 import EmbedSEO from "../components/EmbedSEO";
 
+// sections - import normally for instant loading
 import PortfolioIntroduction from "../sections/portfolio/PortfolioIntroduction";
+import Education from "../sections/portfolio/Education";
+import Experience from "../sections/portfolio/Experience";
+import PortfolioProjects from "../sections/portfolio/PortfolioProjects";
+import Skills from "../sections/common/Skills";
+import Certifications from "../sections/portfolio/Certifications";
+import Accomplishments from "../sections/portfolio/Accomplishments";
 
-const Education = lazy(() => import("../sections/portfolio/Education"));
-const Experience = lazy(() => import("../sections/portfolio/Experience"));
-const PortfolioProjects = lazy(() => import("../sections/portfolio/PortfolioProjects"));
-const Skills = lazy(() => import("../sections/common/Skills"));
-const Certifications = lazy(() => import("../sections/portfolio/Certifications"));
-const Accomplishments = lazy(() => import("../sections/portfolio/Accomplishments"));
-
+// contexts
 import { useTheme } from '../contexts/ThemeContext';
-const SectionLoader = () => (
-    <Box textAlign="center" py={4}>
-        <Spinner color="teal.500" />
-    </Box>
-);
 
 function PortfolioPage() {
     const { isRetro, toggleRetro } = useTheme();
@@ -90,34 +85,22 @@ function PortfolioPage() {
             <PortfolioIntroduction />
 
             <NamedDivider name="Education" id="education" />
-            <Suspense fallback={<SectionLoader />}>
-                <Education />
-            </Suspense>
+            <Education />
 
             <NamedDivider name="Experience" id="experience" />
-            <Suspense fallback={<SectionLoader />}>
-                <Experience />
-            </Suspense>
+            <Experience />
 
             <NamedDivider name="Projects" id="projects" />
-            <Suspense fallback={<SectionLoader />}>
-                <PortfolioProjects />
-            </Suspense>
+            <PortfolioProjects />
 
             <NamedDivider name="Skills" id="skills" />
-            <Suspense fallback={<SectionLoader />}>
-                <Skills />
-            </Suspense>
+            <Skills />
 
             <NamedDivider name="Certifications" id="certifications" />
-            <Suspense fallback={<SectionLoader />}>
-                <Certifications />
-            </Suspense>
+            <Certifications />
 
             <NamedDivider name="Accomplishments" id="accomplishments" />
-            <Suspense fallback={<SectionLoader />}>
-                <Accomplishments />
-            </Suspense>
+            <Accomplishments />
         </Box>
     );
 }

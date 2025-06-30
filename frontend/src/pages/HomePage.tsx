@@ -5,10 +5,10 @@
 // maintain allman bracket style for consistency
 
 // react
-import { lazy, Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 
 // chakra-ui
-import { Box, Spinner } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 
 // custom components
 import NamedDivider from '../components/NamedDivider';
@@ -17,12 +17,11 @@ import EmbedSEO from '../components/EmbedSEO';
 
 import Preface from '../sections/home/Preface';
 import HomeIntroduction from '../sections/home/HomeIntroduction';
-
-const HomeProjects = lazy(() => import('../sections/home/HomeProjects'));
-const Skills = lazy(() => import('../sections/common/Skills'));
-const AboutMe = lazy(() => import('../sections/home/AboutMe'));
-const AboutSite = lazy(() => import('../sections/home/AboutSite'));
-const Contact = lazy(() => import('../sections/home/Contact'));
+import HomeProjects from '../sections/home/HomeProjects';
+import Skills from '../sections/common/Skills';
+import AboutMe from '../sections/home/AboutMe';
+import AboutSite from '../sections/home/AboutSite';
+import Contact from '../sections/home/Contact';
 
 import { useTheme } from '../contexts/ThemeContext';
 import { isBikatr7URL } from '../utils';
@@ -70,9 +69,7 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
                         name="[Projects]"
                         id="projects"
                     />
-                    <Suspense fallback={<Box textAlign="center" py={4}><Spinner color="white" /></Box>}>
-                        <HomeProjects />
-                    </Suspense>
+                    <HomeProjects />
                 </>
             ) : (
                 <>
@@ -80,22 +77,18 @@ function HomePage({ showContent, toggleContent, contentLoaded }: { showContent: 
                         name={showContent ? "Projects" : "Loading..."}
                         id="projects"
                     />
-                    {contentLoaded && (
-                        <Suspense fallback={<Box textAlign="center" py={4}><Spinner color="white" /></Box>}>
-                            {showContent && (
-                                <>
-                                    <HomeProjects />
-                                    <NamedDivider name="Skills" id="skills" />
-                                    <Skills />
-                                    <NamedDivider name="About Me" id="aboutme" />
-                                    <AboutMe />
-                                    <NamedDivider name="About The Site" id="aboutsite" />
-                                    <AboutSite />
-                                    <NamedDivider name="Contact" id="contact" />
-                                    <Contact />
-                                </>
-                            )}
-                        </Suspense>
+                    {contentLoaded && showContent && (
+                        <>
+                            <HomeProjects />
+                            <NamedDivider name="Skills" id="skills" />
+                            <Skills />
+                            <NamedDivider name="About Me" id="aboutme" />
+                            <AboutMe />
+                            <NamedDivider name="About The Site" id="aboutsite" />
+                            <AboutSite />
+                            <NamedDivider name="Contact" id="contact" />
+                            <Contact />
+                        </>
                     )}
                 </>
             )}

@@ -21,13 +21,12 @@ import EditPost from "../components/EditPost";
 import EmbedSEO from "../components/EmbedSEO";
 
 // utils
-import { getURL, formatDate } from '../utils';
+import { getURL, formatDate, createSlug } from '../utils';
 
 // context
 import { useTheme } from '../contexts/ThemeContext';
 
-interface BlogPost 
-{
+interface BlogPost {
     id: string;
     title: string;
     created_at: string;
@@ -35,8 +34,7 @@ interface BlogPost
     content: string;
 }
 
-const BlogDirectoryPage: React.FC = () => 
-{
+const BlogDirectoryPage: React.FC = () => {
     const { isRetro } = useTheme();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -45,44 +43,36 @@ const BlogDirectoryPage: React.FC = () =>
     const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
     const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
-    const fetchBlogPosts = useCallback(async () => 
-    {
+    const fetchBlogPosts = useCallback(async () => {
         setIsLoading(true);
-        try 
-        {
+        try {
             const postsResponse = await fetch(getURL("/all-blogs"));
             const newPosts = await postsResponse.json();
             setBlogPosts(newPosts);
             localStorage.setItem('blogDirectoryPosts', JSON.stringify(newPosts));
             localStorage.setItem('blogDirectoryPostCount', newPosts.length.toString());
-        } 
-        catch (error) 
-        {
+        }
+        catch (error) {
             console.error("Error fetching blog data:", error);
         }
-        finally
-        {
+        finally {
             setIsLoading(false);
         }
     }, []);
 
-    useEffect(() => 
-    {
+    useEffect(() => {
         fetchBlogPosts();
     }, [fetchBlogPosts]);
 
     const handleLogin = () => setIsLoggedIn(true);
-    const handleLogout = () => 
-    {
+    const handleLogout = () => {
         localStorage.removeItem('token');
         document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
         setIsLoggedIn(false);
     };
 
-    const handleRightClick = (e: React.MouseEvent, postId: string) => 
-    {
-        if (isLoggedIn) 
-        {
+    const handleRightClick = (e: React.MouseEvent, postId: string) => {
+        if (isLoggedIn) {
             e.preventDefault();
             const linkElement = e.currentTarget as HTMLElement;
             const rect = linkElement.getBoundingClientRect();
@@ -90,79 +80,67 @@ const BlogDirectoryPage: React.FC = () =>
         }
     };
 
-    const handleClickOutside = (e: MouseEvent) => 
-    {
-        if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) 
-        {
+    const handleClickOutside = (e: MouseEvent) => {
+        if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
             setContextMenu({ x: 0, y: 0, postId: null });
         }
     };
 
-    const handleMouseLeave = () => 
-    {
+    const handleMouseLeave = () => {
         setContextMenu({ x: 0, y: 0, postId: null });
     };
 
-    useEffect(() => 
-    {
+    useEffect(() => {
         document.addEventListener('click', handleClickOutside);
-        return () => 
-        {
+        return () => {
             document.removeEventListener('click', handleClickOutside);
         };
     }, []);
 
-    const handleDelete = async (postId: string) => 
-    {
-        try 
-        {
+    const handleDelete = async (postId: string) => {
+        try {
             const token = localStorage.getItem('token');
-            const response = await fetch(getURL(`/blog/${postId}`), 
-            {
-                method: 'DELETE',
-                headers: 
+            const response = await fetch(getURL(`/blog/${postId}`),
                 {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+                    method: 'DELETE',
+                    headers:
+                    {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
 
-            if (response.ok) 
-            {
+            if (response.ok) {
                 fetchBlogPosts();
-                setContextMenu({ x: 0, y: 0, postId: null }); 
-            } 
-            else 
-            {
+                setContextMenu({ x: 0, y: 0, postId: null });
+            }
+            else {
                 const errorData = await response.json();
                 console.error("Error deleting blog post:", errorData.detail);
             }
-        } 
-        catch (error) 
-        {
+        }
+        catch (error) {
             console.error("An error occurred while deleting the blog post:", error);
         }
     };
 
-    const handleEditPost = () => 
-    {
+    const handleEditPost = () => {
         fetchBlogPosts();
         setEditingPost(null);
-        setContextMenu({ x: 0, y: 0, postId: null }); 
+        setContextMenu({ x: 0, y: 0, postId: null });
     };
 
-    const handleCloseEditPost = () => 
-    {
+    const handleCloseEditPost = () => {
         setEditingPost(null);
-        setContextMenu({ x: 0, y: 0, postId: null }); 
+        setContextMenu({ x: 0, y: 0, postId: null });
     };
 
     return (
-        <Box 
-            bg="black" 
-            color={isRetro ? "purple.400" : "white"} 
-            minHeight="83vh" 
-            display="flex" 
-            flexDirection="column" 
+        <Box
+            bg="black"
+            color={isRetro ? "purple.400" : "white"}
+            minHeight="83vh"
+            display="flex"
+            flexDirection="column"
             position="relative"
             className={isRetro ? 'retro-mode' : ''}
         >
@@ -174,18 +152,18 @@ const BlogDirectoryPage: React.FC = () =>
             />
 
             <Flex justify="space-between" p="1rem" bg="black" flexWrap="wrap" gap="1rem">
-                <Button 
-                    leftIcon={<ArrowBackIcon />} 
-                    as="a" 
-                    href="/blog/" 
+                <Button
+                    leftIcon={<ArrowBackIcon />}
+                    as="a"
+                    href="/blog/"
                     rounded={isRetro ? "none" : "full"}
                     border={isRetro ? "2px solid" : "none"}
                     borderColor="purple.400"
                     bg={isRetro ? "black" : undefined}
                     color={isRetro ? "purple.200" : undefined}
                     fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                    _hover={{ 
-                        color: isRetro ? 'purple.400' : 'yellow', 
+                    _hover={{
+                        color: isRetro ? 'purple.400' : 'yellow',
                         transform: 'scale(1.01)'
                     }}
                 >
@@ -200,13 +178,13 @@ const BlogDirectoryPage: React.FC = () =>
 
             {isLoading ? (
                 <Flex justify="center" align="center" flex="1" flexDirection="column" gap={4}>
-                    <Spinner 
-                        size="xl" 
-                        color={isRetro ? "purple.400" : "yellow"} 
-                        thickness="4px" 
+                    <Spinner
+                        size="xl"
+                        color={isRetro ? "purple.400" : "yellow"}
+                        thickness="4px"
                     />
-                    <Text 
-                        color={isRetro ? "purple.400" : "yellow"} 
+                    <Text
+                        color={isRetro ? "purple.400" : "yellow"}
                         fontSize="lg"
                         fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                     >
@@ -223,10 +201,10 @@ const BlogDirectoryPage: React.FC = () =>
                     overflowY="auto"
                     zIndex="1"
                 >
-                    <VStack 
-                        spacing="1rem" 
-                        align="stretch" 
-                        width="100%" 
+                    <VStack
+                        spacing="1rem"
+                        align="stretch"
+                        width="100%"
                         maxWidth="800px"
                         border={isRetro ? "2px solid" : "none"}
                         borderColor="purple.400"
@@ -235,7 +213,7 @@ const BlogDirectoryPage: React.FC = () =>
                         {blogPosts.length > 0 ? (
                             blogPosts.map(post => (
                                 <Link
-                                    to={`/blog/${post.id}`}
+                                    to={`/blog/${createSlug(post.title)}`}
                                     key={post.id}
                                     style={{ width: '100%' }}
                                     state={{ from: location.pathname }}
@@ -246,25 +224,25 @@ const BlogDirectoryPage: React.FC = () =>
                                         align="center"
                                         width="100%"
                                         p="0.5rem"
-                                        _hover={{ 
-                                            backgroundColor: isRetro ? 'rgba(147, 51, 234, 0.1)' : 'rgba(255, 255, 255, 0.1)', 
-                                            cursor: 'pointer' 
+                                        _hover={{
+                                            backgroundColor: isRetro ? 'rgba(147, 51, 234, 0.1)' : 'rgba(255, 255, 255, 0.1)',
+                                            cursor: 'pointer'
                                         }}
                                         transition="background-color 0.2s"
                                         flexDirection={["column", "row"]}
                                         gap={["0.5rem", "0"]}
                                     >
-                                        <Text 
-                                            fontSize={["lg", "xl"]} 
-                                            color={isRetro ? "purple.400" : "yellow"} 
-                                            isTruncated 
+                                        <Text
+                                            fontSize={["lg", "xl"]}
+                                            color={isRetro ? "purple.400" : "yellow"}
+                                            isTruncated
                                             width={["100%", "auto"]}
                                             fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                                         >
                                             {post.title}
                                         </Text>
-                                        <Text 
-                                            fontSize="sm" 
+                                        <Text
+                                            fontSize="sm"
                                             color={isRetro ? "purple.200" : "gray.300"}
                                             whiteSpace="nowrap"
                                             fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
@@ -276,8 +254,8 @@ const BlogDirectoryPage: React.FC = () =>
                             ))
                         ) : (
                             <Flex justify="center" align="center" width="100%" height="100%">
-                                <Text 
-                                    fontSize="xl" 
+                                <Text
+                                    fontSize="xl"
                                     color={isRetro ? "purple.400" : "yellow"}
                                     fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                                 >
@@ -316,7 +294,7 @@ const BlogDirectoryPage: React.FC = () =>
                             _hover={{ color: 'yellow' }}
                             onClick={() => {
                                 handleDelete(contextMenu.postId!);
-                                setContextMenu({ x: 0, y: 0, postId: null }); 
+                                setContextMenu({ x: 0, y: 0, postId: null });
                             }}
                         >
                             Delete
@@ -329,7 +307,7 @@ const BlogDirectoryPage: React.FC = () =>
                 <EditPost
                     postId={editingPost.id}
                     onEdit={handleEditPost}
-                    onClose={handleCloseEditPost} 
+                    onClose={handleCloseEditPost}
                     initialTitle={editingPost.title}
                     initialContent={editingPost.content}
                     initialAuthor={editingPost.author}
