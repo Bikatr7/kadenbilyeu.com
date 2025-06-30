@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) =>
       rollupOptions: {
         output: {
           manualChunks: (id: string) => {
-            // Vendor chunks
+            // Vendor chunks - keep these separate for caching
             if (id.includes('node_modules')) {
               if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
                 return 'react-vendor';
@@ -33,43 +33,30 @@ export default defineConfig(({ mode }) =>
               if (id.includes('@chakra-ui') || id.includes('@emotion')) {
                 return 'chakra-vendor';
               }
-              if (id.includes('react-helmet-async') || id.includes('framer-motion')) {
-                return 'utility-vendor';
-              }
-              if (id.includes('react-markdown') || id.includes('react-syntax-highlighter') || 
-                  id.includes('rehype') || id.includes('remark')) {
-                return 'markdown-vendor';
-              }
-              if (id.includes('jwt-decode') || id.includes('react-hook-form') || 
+              if (id.includes('react-helmet-async') || id.includes('framer-motion') ||
+                  id.includes('react-markdown') || id.includes('react-syntax-highlighter') || 
+                  id.includes('rehype') || id.includes('remark') ||
+                  id.includes('jwt-decode') || id.includes('react-hook-form') || 
                   id.includes('react-lazy-load-image-component')) {
-                return 'form-vendor';
+                return 'utility-vendor';
               }
               return 'vendor';
             }
             
-            // Page chunks
-            if (id.includes('/pages/HomePage')) {
-              return 'home-page';
-            }
-            if (id.includes('/pages/PortfolioPage')) {
-              return 'portfolio-page';
-            }
+            // Reduce chunk granularity - combine related pages
             if (id.includes('/pages/Blog')) {
               return 'blog-pages';
             }
-            
-            // Section chunks
-            if (id.includes('/sections/home/')) {
-              return 'home-sections';
-            }
-            if (id.includes('/sections/portfolio/')) {
-              return 'portfolio-sections';
-            }
-            if (id.includes('/sections/common/')) {
-              return 'common-sections';
+            if (id.includes('/pages/')) {
+              return 'app-pages';
             }
             
-            // Component chunks
+            // Combine all sections into fewer chunks
+            if (id.includes('/sections/')) {
+              return 'app-sections';
+            }
+            
+            // Keep blog components separate as they're only loaded when needed
             if (id.includes('/components/Blog') || id.includes('/components/Login') || 
                 id.includes('/components/MakePost') || id.includes('/components/EditPost') ||
                 id.includes('/components/PostEditor')) {

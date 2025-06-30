@@ -8,7 +8,7 @@
 import { useState } from 'react';
 
 // chakra-ui
-import { ChakraProvider, Box, Container } from "@chakra-ui/react";
+import { ChakraProvider, Box } from "@chakra-ui/react";
 
 // helmet
 import { HelmetProvider } from 'react-helmet-async';
@@ -17,8 +17,6 @@ import { HelmetProvider } from 'react-helmet-async';
 import theme from "./theme.ts";
 
 // custom components
-import Navbar from "./components/Navbar.tsx";
-import Footer from "./components/Footer.tsx";
 import LoadingAnimation from './components/LoadingAnimation.tsx';
 import GlobalSEO from './components/GlobalSEO.tsx';
 
@@ -51,17 +49,11 @@ function App() {
                     <Box bg="black" minH="100vh" display="flex" flexDirection="column">
                         {!isBikatr7 && isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
                         {(isBikatr7 || !isLoading) && (
-                            <>
-                                <Navbar />
-                                <Container maxW="6xl" flex="1">
-                                    <Router
-                                        showContent={showContent}
-                                        toggleContent={toggleContent}
-                                        contentLoaded={contentLoaded}
-                                    />
-                                </Container>
-                                <Footer />
-                            </>
+                            <Router
+                                showContent={showContent}
+                                toggleContent={toggleContent}
+                                contentLoaded={contentLoaded}
+                            />
                         )}
                     </Box>
                 </ChakraProvider>

@@ -4,354 +4,256 @@
 
 // maintain allman bracket style for consistency
 
-// chakra-ui 
-import { Box, Button, Collapse, Container, Flex, Heading, Icon, IconButton, Image, Link, Popover, PopoverContent, PopoverTrigger, Stack, Text, useDisclosure } from '@chakra-ui/react';
-import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
+// react
+import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+
+// chakra-ui
+import { Box, Flex, Text, Button, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody, VStack, HStack, IconButton } from "@chakra-ui/react";
+import { HamburgerIcon } from '@chakra-ui/icons';
 import { IconDeviceGamepad2 } from '@tabler/icons-react';
+
+// custom components
 import { useTheme } from '../contexts/ThemeContext';
 
 // assets
-import logo from '../assets/images/personals/kb.webp';
 import resume from '../assets/pdfs/Kaden_Truett_Bilyeu_Resume_December_2024.pdf';
 
-export default function Navbar() 
-{
-    const { isOpen, onToggle } = useDisclosure();
+function Navbar() {
     const { isRetro, toggleRetro } = useTheme();
+    const location = useLocation();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [activeHover, setActiveHover] = useState<string | null>(null);
+
+    const isActiveRoute = (path: string) => {
+        if (path === '/') {
+            return location.pathname === '/';
+        }
+        return location.pathname.startsWith(path);
+    };
+
+    const handleNavHover = (path: string) => {
+        setActiveHover(path);
+    };
+
+    const NavLink = ({ to, children, mobile = false }: { to: string, children: React.ReactNode, mobile?: boolean }) => {
+        const isActive = isActiveRoute(to);
+        const isHovered = activeHover === to;
+
+        return (
+            <Text
+                as={Link}
+                to={to}
+                onMouseEnter={() => handleNavHover(to)}
+                onMouseLeave={() => setActiveHover(null)}
+                onClick={mobile ? onClose : undefined}
+                fontSize={mobile ? "lg" : "md"}
+                fontWeight="bold"
+                color={
+                    isRetro
+                        ? (isActive ? "purple.200" : (isHovered ? "purple.300" : "purple.400"))
+                        : (isActive ? "yellow.400" : (isHovered ? "yellow.200" : "white"))
+                }
+                _hover={{
+                    color: isRetro ? "purple.300" : "yellow.200",
+                    transform: 'scale(1.05)',
+                    textShadow: isRetro ? '0 0 10px rgba(147, 51, 234, 0.8)' : '0 0 10px rgba(255, 255, 0, 0.8)',
+                    textDecoration: 'none'
+                }}
+                transition="all 0.2s ease"
+                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                letterSpacing={isRetro ? "0.1em" : "normal"}
+                cursor="pointer"
+                textDecoration="none"
+            >
+                {children}
+            </Text>
+        );
+    };
+
+    const getHomeText = () => {
+        const isHome = location.pathname === '/';
+        if (isRetro) {
+            return isHome ? "BIKATR7" : "HOME";
+        } else {
+            return isHome ? "Kaden Bilyeu" : "HOME";
+        }
+    };
 
     return (
-        <Box>
-            <Flex
-                bg="black"
-                color={isRetro ? "purple.200" : "white"}
-                minH={'60px'}
-                py={{ base: 2 }}
-                px={{ base: 4 }}
-                borderBottom={1}
-                borderStyle={'solid'}
-                borderColor={isRetro ? 'purple.600' : 'gray.800'}
-                className={isRetro ? 'retro-mode' : ''}
-                align={'center'}>
-                <Container maxW={'6xl'}>
-                    <Flex
-                        flex={{ base: 1, md: 'auto' }}
-                        ml={{ base: -2 }}
-                        display={{ base: 'flex', md: 'none' }}
-                        alignItems={'center'}
-                        justifyContent={'space-between'}
-                        width={'100%'}
+        <Box
+            bg={isRetro ? "black" : "black"}
+            px={4}
+            py={3}
+            position="sticky"
+            top="0"
+            zIndex="1000"
+            borderBottom={isRetro ? "2px solid" : "1px solid"}
+            borderColor={isRetro ? "purple.600" : "gray.700"}
+            boxShadow={isRetro ? "none" : "0 2px 4px rgba(0,0,0,0.1)"}
+        >
+            <Flex justify="space-between" align="center" maxW="6xl" mx="auto">
+                {/* Logo/Home - Mobile and Desktop */}
+                <Text
+                    as={Link}
+                    to="/"
+                    fontSize="xl"
+                    fontWeight="bold"
+                    color={isRetro ? "purple.400" : "white"}
+                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                    letterSpacing={isRetro ? "0.1em" : "normal"}
+                    _hover={{
+                        color: isRetro ? "purple.200" : "yellow.200",
+                        textDecoration: 'none'
+                    }}
+                    textDecoration="none"
+                >
+                    {getHomeText()}
+                </Text>
+
+                {/* Desktop Navigation */}
+                <HStack spacing={6} display={{ base: "none", md: "flex" }} flex="1" ml={8}>
+                    <NavLink to="/portfolio">PORTFOLIO</NavLink>
+                    <NavLink to="/blog">BLOG</NavLink>
+                </HStack>
+
+                {/* Desktop Controls */}
+                <HStack spacing={3} display={{ base: "none", md: "flex" }}>
+                    <IconButton
+                        aria-label="Toggle retro theme"
+                        icon={<IconDeviceGamepad2 />}
+                        variant="ghost"
+                        onClick={toggleRetro}
+                        color={isRetro ? "purple.400" : "white"}
+                        _hover={{
+                            color: isRetro ? "purple.200" : "yellow",
+                            transform: 'scale(1.1)'
+                        }}
+                        size="sm"
+                    />
+
+                    <Button
+                        as="a"
+                        href={resume}
+                        download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
+                        size="sm"
+                        bg={isRetro ? "black" : "red.900"}
+                        color={isRetro ? "purple.200" : "white"}
+                        _hover={{
+                            color: isRetro ? 'purple.400' : 'yellow',
+                            bg: isRetro ? 'purple.800' : 'red.900',
+                            transform: 'scale(1.01)'
+                        }}
+                        _active={{
+                            bg: isRetro ? 'purple.700' : 'red.900',
+                            transform: 'scale(0.98)'
+                        }}
+                        borderRadius={isRetro ? "none" : "md"}
+                        border={isRetro ? "2px solid" : "none"}
+                        borderColor={isRetro ? "purple.400" : "transparent"}
+                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                        fontSize={isRetro ? "xs" : "sm"}
                     >
-                        <Flex alignItems={'center'}>
-                            <IconButton
-                                onClick={onToggle}
-                                icon={
-                                    isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
-                                }
-                                variant={'ghost'}
-                                aria-label={'Toggle Navigation'}
-                            />
+                        RESUME
+                    </Button>
+                </HStack>
 
-                            <Image src={logo} boxSize='30px' ml={2} alt = "Bikatr7 (Kaden Bilyeu) Logo" />
-                        </Flex>
-                        
-                        <Flex alignItems="center" gap={2}>
-                            <IconButton
-                                aria-label="Toggle retro theme"
-                                icon={<IconDeviceGamepad2 />}
-                                variant="ghost"
-                                onClick={toggleRetro}
-                                color={isRetro ? "yellow" : "white"}
-                                _hover={{ color: 'yellow', transform: 'scale(1.1)' }}
-                            />
-                            <Button
-                                as="a"
-                                bg={isRetro ? "black" : "red.900"}
-                                href={resume}
-                                download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
-                                rounded={isRetro ? "none" : "full"}
-                                border={isRetro ? "2px solid" : "none"}
-                                borderColor={isRetro ? "purple.400" : "transparent"}
-                                color={isRetro ? "purple.200" : "white"}
-                                _hover={{ 
-                                    color: isRetro ? 'purple.400' : 'yellow', 
-                                    bg: isRetro ? 'purple.800' : 'red.900',
-                                    transform: 'scale(1.01)' 
-                                }}
-                                _active={{ 
-                                    bg: isRetro ? 'purple.700' : 'red.900', 
-                                    transform: 'scale(0.98)' 
-                                }}
-                                ml={5}
-                            >
-                                Resume
-                            </Button>
-                        </Flex>
-                    </Flex>
-                    <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align={'center'}>
-                        <Image src={logo} boxSize='30px' display={{ base: 'none', md: 'block' }} alt = "Bikatr7 (Kaden Bilyeu) Logo" />
+                {/* Mobile Menu Button - Top Right */}
+                <IconButton
+                    display={{ base: "flex", md: "none" }}
+                    onClick={onOpen}
+                    icon={<HamburgerIcon />}
+                    variant="ghost"
+                    color={isRetro ? "purple.400" : "white"}
+                    _hover={{
+                        bg: isRetro ? "purple.900" : "gray.700",
+                        color: isRetro ? "purple.200" : "yellow.200"
+                    }}
+                    size="md"
+                    borderRadius={isRetro ? "none" : "md"}
+                    border={isRetro ? "1px solid" : "none"}
+                    borderColor={isRetro ? "purple.400" : "transparent"}
+                    aria-label="Open menu"
+                />
 
-                        <Flex display={{ base: 'none', md: 'flex' }} ml={10} align={'center'}>
-                            <DesktopNav />
-                        </Flex>
-
-                        <Flex display={{ base: 'none', md: 'flex' }} ml='auto' align={'center'}>
+                {/* Mobile Drawer */}
+                <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+                    <DrawerOverlay />
+                    <DrawerContent
+                        bg={isRetro ? "black" : "black"}
+                        color={isRetro ? "purple.400" : "white"}
+                        border={isRetro ? "2px solid" : "none"}
+                        borderColor={isRetro ? "purple.600" : "transparent"}
+                    >
+                        <DrawerHeader
+                            borderBottomWidth="1px"
+                            borderColor={isRetro ? "purple.600" : "gray.700"}
+                            color={isRetro ? "purple.400" : "white"}
+                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                            display="flex"
+                            justifyContent="space-between"
+                            alignItems="center"
+                        >
+                            <Text fontSize={isRetro ? "sm" : "lg"}>
+                                {isRetro ? "NAVIGATION" : "Navigation"}
+                            </Text>
                             <IconButton
                                 aria-label="Toggle retro theme"
                                 icon={<IconDeviceGamepad2 />}
                                 variant="ghost"
-                                onClick={toggleRetro}
-                                color={isRetro ? "yellow" : "white"}
-                                _hover={{ color: 'yellow', transform: 'scale(1.1)' }}
-                                mr={3}
+                                onClick={() => {
+                                    toggleRetro();
+                                }}
+                                color={isRetro ? "purple.400" : "white"}
+                                _hover={{
+                                    color: isRetro ? "purple.200" : "yellow",
+                                    transform: 'scale(1.1)'
+                                }}
+                                size="sm"
                             />
-                            <Button
-                                as="a"
-                                bg={isRetro ? "black" : "red.900"}
-                                href={resume}
-                                download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
-                                rounded={isRetro ? "none" : "full"}
-                                border={isRetro ? "2px solid" : "none"}
-                                borderColor={isRetro ? "purple.400" : "transparent"}
-                                color={isRetro ? "purple.200" : "white"}
-                                _hover={{ 
-                                    color: isRetro ? 'purple.200' : 'yellow', 
-                                    bg: isRetro ? 'purple.800' : 'red.900',
-                                    transform: 'scale(1.01)' 
-                                }}
-                                _active={{ 
-                                    bg: isRetro ? 'purple.700' : 'red.900', 
-                                    transform: 'scale(0.98)' 
-                                }}
-                                ml={5}>
-                                Resume
-                            </Button>
-                        </Flex>
-                    </Flex>
-                </Container>
+                        </DrawerHeader>
+
+                        <DrawerBody display="flex" flexDirection="column" justifyContent="space-between" p={0}>
+                            {/* Navigation Links */}
+                            <VStack spacing={6} align="start" p={6}>
+                                <NavLink to="/" mobile>HOME</NavLink>
+                                <NavLink to="/portfolio" mobile>PORTFOLIO</NavLink>
+                                <NavLink to="/blog" mobile>BLOG</NavLink>
+                            </VStack>
+
+                            {/* Resume Button at Bottom */}
+                            <Box p={6}>
+                                <Button
+                                    as="a"
+                                    href={resume}
+                                    download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
+                                    w="full"
+                                    bg={isRetro ? "black" : "red.900"}
+                                    color={isRetro ? "purple.200" : "white"}
+                                    _hover={{
+                                        color: isRetro ? 'purple.400' : 'yellow',
+                                        bg: isRetro ? 'purple.800' : 'red.900'
+                                    }}
+                                    _active={{
+                                        bg: isRetro ? 'purple.700' : 'red.900'
+                                    }}
+                                    borderRadius={isRetro ? "none" : "md"}
+                                    border={isRetro ? "2px solid" : "none"}
+                                    borderColor={isRetro ? "purple.400" : "transparent"}
+                                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                    fontSize={isRetro ? "xs" : "sm"}
+                                    size="md"
+                                    onClick={onClose}
+                                >
+                                    RESUME
+                                </Button>
+                            </Box>
+                        </DrawerBody>
+                    </DrawerContent>
+                </Drawer>
             </Flex>
-
-            <Collapse in={isOpen} animateOpacity>
-                <MobileNav />
-            </Collapse>
         </Box>
     );
 }
 
-const DesktopNav = () => 
-{
-    const { isRetro } = useTheme();
-    
-    return (
-        <Stack direction={'row'} spacing={4}>
-            {NAV_ITEMS.filter(item => !item.hideInRetro || !isRetro).map((navItem) => (
-                <Box key={navItem.label}>
-                    <Popover trigger={'hover'} placement={'bottom-start'}>
-                        <PopoverTrigger>
-                            <Link
-                                p={2}
-                                href={navItem.href ?? '#'}
-                                _hover={{
-                                    textDecoration: 'none',
-                                }}
-                                onClick={(e) => navItem.children && e.preventDefault()}>
-                                <Heading
-                                    as="h2"
-                                    fontSize={{ base: 'md', md: 'lg' }}
-                                    fontWeight={500}
-                                    color={isRetro ? "purple.400" : "white"}
-                                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                                    _hover={{
-                                        color: isRetro ? 'purple.200' : 'yellow',
-                                        transform: 'scale(1.1)'
-                                    }}>
-                                    {navItem.label}
-                                </Heading>
-                            </Link>
-                        </PopoverTrigger>
-
-                        {navItem.children && (
-                            <PopoverContent
-                                border={0}
-                                boxShadow={'xl'}
-                                bg="black"
-                                p={4}
-                                rounded={'xl'}
-                                minW={'sm'}>
-                                <Stack>
-                                    {navItem.children.map((child) => (
-                                        <DesktopSubNav key={child.label} {...child} />
-                                    ))}
-                                </Stack>
-                            </PopoverContent>
-                        )}
-                    </Popover>
-                </Box>
-            ))}
-        </Stack>
-    );
-};
-
-const DesktopSubNav = ({ label, href, subLabel }: NavItem) => 
-{
-    const { isRetro } = useTheme();
-    
-    return (
-        <Link
-            href={href}
-            role={'group'}
-            display={'block'}
-            p={2}
-            rounded={isRetro ? 'none' : 'md'}
-            _hover={{ bg: isRetro ? "purple.900" : "gray.700" }}>
-            <Stack direction={'row'} align={'center'}>
-                <Box>
-                    <Text
-                        transition={'all .3s ease'}
-                        _groupHover={{ color: isRetro ? 'purple.200' : 'yellow' }}
-                        fontWeight={500}
-                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                        color={isRetro ? "purple.400" : "white"}>
-                        {label}
-                    </Text>
-                    <Text 
-                        fontSize={'sm'}
-                        color={isRetro ? "purple.200" : undefined}
-                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                    >
-                        {subLabel}
-                    </Text>
-                </Box>
-                <Flex
-                    transition={'all .3s ease'}
-                    transform={'translateX(-10px)'}
-                    opacity={0}
-                    _groupHover={{ opacity: '100%', transform: 'translateX(0)' }}
-                    justify={'flex-end'}
-                    align={'center'}
-                    flex={1}>
-                    <Icon 
-                        color={isRetro ? 'purple.400' : 'yellow'} 
-                        w={5} 
-                        h={5} 
-                        as={ChevronRightIcon} 
-                    />
-                </Flex>
-            </Stack>
-        </Link>
-    );
-};
-
-const MobileNav = () => {
-    const { isRetro } = useTheme();
-    
-    return (
-        <Stack
-            bg="black"
-            p={4}
-            display={{ md: 'none' }}
-            borderTop={isRetro ? "2px solid" : "none"}
-            borderColor="purple.400"
-        >
-            {NAV_ITEMS.filter(item => !item.hideInRetro || !isRetro).map((navItem) => (
-                <MobileNavItem key={navItem.label} {...navItem} />
-            ))}
-        </Stack>
-    );
-};
-
-const MobileNavItem = ({ label, children, href }: NavItem) => {
-    const { isOpen, onToggle } = useDisclosure();
-    const { isRetro } = useTheme();
-
-    return (
-        <Stack spacing={4} onClick={children && onToggle}>
-            <Flex
-                py={2}
-                as={Link}
-                href={href ?? '#'}
-                justify={'space-between'}
-                align={'center'}
-                _hover={{
-                    textDecoration: 'none',
-                }}
-                onClick={(e) => children && e.preventDefault()}>
-                <Heading
-                    as="h2"
-                    fontSize={isRetro ? 'sm' : 'lg'}
-                    fontWeight={600}
-                    color={isRetro ? "purple.400" : "white"}
-                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                    _hover={{ 
-                        color: isRetro ? 'purple.200' : 'yellow',
-                        transform: 'scale(1.1)'
-                    }}>
-                    {label}
-                </Heading>
-                {children && (
-                    <Icon
-                        as={ChevronDownIcon}
-                        transition={'all .25s ease-in-out'}
-                        transform={isOpen ? 'rotate(180deg)' : ''}
-                        w={6}
-                        h={6}
-                        color={isRetro ? "purple.400" : "white"}
-                    />
-                )}
-            </Flex>
-
-            <Collapse in={isOpen} animateOpacity style={{ marginTop: '0!important' }}>
-                <Stack
-                    mt={2}
-                    pl={4}
-                    borderLeft={1}
-                    borderStyle={'solid'}
-                    borderColor={isRetro ? 'purple.400' : 'gray.700'}
-                    align={'start'}>
-                    {children &&
-                        children.map((child) => (
-                            <Link 
-                                key={child.label} 
-                                py={2} 
-                                href={child.href}
-                                color={isRetro ? "purple.400" : "white"}
-                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                                fontSize={isRetro ? "xs" : "md"}
-                                _hover={{
-                                    color: isRetro ? 'purple.200' : 'yellow',
-                                    textDecoration: 'none'
-                                }}
-                            >
-                                {child.label}
-                            </Link>
-                        ))}
-                </Stack>
-            </Collapse>
-        </Stack>
-    );
-};
-
-interface NavItem 
-{
-    label: string;
-    subLabel?: string;
-    children?: Array<NavItem>;
-    href?: string;
-    hideInRetro?: boolean;
-}
-
-const NAV_ITEMS: Array<NavItem> = 
-[
-    {
-        label: 'Home',
-        href: '/',
-    },
-    {
-        label: 'Portfolio',
-        href: '/portfolio',
-        hideInRetro: true,
-    },
-    {
-        label: 'Blog',
-        href: '/blog',
-    }
-];
+export default Navbar;
