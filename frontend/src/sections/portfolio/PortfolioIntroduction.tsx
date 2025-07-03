@@ -18,28 +18,28 @@ import { isBikatr7URL } from "../../utils";
 function PortfolioIntroduction() {
     return (
         <Box padding="5">
-        <Stack direction={{ base: 'column', md: 'row' }} bg="black" id="home" paddingTop={5} >
-            <Flex flex={1} justifyContent={{ base: 'center', md: 'flex-start' }} alignItems="center">
-                <Image boxSize={400} alt="Kaden Bilyeu's Profile Picture" objectFit="cover" src={face} borderRadius={"full"} />
-            </Flex>
-            <Flex p={8} flex={1} align="center">
-                <Stack spacing={6} w="full" maxW="xl">
-                    <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
-                        <Text as="span" position="relative">
-                            {isBikatr7URL() ? "Kaden Bilyeu (Bikatr7)" : "Kaden Bilyeu"}
+            <Stack direction={{ base: 'column', md: 'row' }} bg="black" id="home" paddingTop={5} >
+                <Flex flex={1} justifyContent={{ base: 'center', md: 'flex-start' }} alignItems="center">
+                    <Image boxSize={400} alt="Kaden Bilyeu's Profile Picture" objectFit="cover" src={face} borderRadius={"full"} />
+                </Flex>
+                <Flex p={8} flex={1} align="center">
+                    <Stack spacing={6} w="full" maxW="xl">
+                        <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
+                            <Text as="span" position="relative">
+                                {isBikatr7URL() ? "Kaden Bilyeu (Bikatr7)" : "Kaden Bilyeu"}
+                            </Text>
+                            <br />
+                        </Heading>
+                        <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
+                            Computer science senior at the University of Colorado Colorado Springs looking to utilize my skills on AI/ML, LLMs, data science, full stack and NER/NLP into software for real-world applications.
                         </Text>
-                        <br />
-                    </Heading>
-                    <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                        Computer science junior at the University of Colorado Colorado Springs passionate in applying my skills on AI/ML, LLMs, data science, and NER/NLP into software for real-world applications.
-                    </Text>
-                    <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                        Eligible for security clearance. Proud U.S. Citizen.
-                    </Text>
-                </Stack>
-            </Flex>
-        </Stack>
-        <NamedDivider id="portfolio_page_separator"/>
+                        <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
+                            Eligible for security clearance. U.S. Citizen.
+                        </Text>
+                    </Stack>
+                </Flex>
+            </Stack>
+            <NamedDivider id="portfolio_page_separator" />
             <Text fontSize="md" marginBottom="4" color="gray.500">
                 This is my portfolio page. It's a bit more detailed than my main page and has more information about my projects and education, and new things like my professional experience and accomplishments.
             </Text>

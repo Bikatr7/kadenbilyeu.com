@@ -72,7 +72,8 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                     ) : (
                         <>
                             <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                                Computer science junior at the University of Colorado Colorado Springs passionate in applying my skills on AI/ML, LLMs, data science, and NER/NLP into software for real-world applications.
+                                Computer science senior at the University of Colorado Colorado Springs looking to utilize my skills on AI/ML, LLMs, data science, full stack and NER/NLP into software for real-world applications.
+
                             </Text>
                             <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
                                 Eligible for security clearance. Proud U.S. Citizen.

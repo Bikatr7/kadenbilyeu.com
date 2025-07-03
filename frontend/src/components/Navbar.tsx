@@ -17,7 +17,7 @@ import { IconDeviceGamepad2 } from '@tabler/icons-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 // assets
-import resume from '../assets/pdfs/Kaden_Truett_Bilyeu_Resume_December_2024.pdf';
+import resume from '../assets/pdfs/Kaden_Truett_Bilyeu_Resume_July_2025.pdf';
 
 function Navbar() {
     const { isRetro, toggleRetro } = useTheme();
@@ -135,7 +135,7 @@ function Navbar() {
                     <Button
                         as="a"
                         href={resume}
-                        download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
+                        download="Kaden_Truett_Bilyeu_Resume_July_2025.pdf"
                         size="sm"
                         bg={isRetro ? "black" : "red.900"}
                         color={isRetro ? "purple.200" : "white"}
