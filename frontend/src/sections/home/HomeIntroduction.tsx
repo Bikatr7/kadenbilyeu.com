@@ -100,7 +100,7 @@ function HomeIntroduction() {
                             textAlign="left"
                             pl={8}
                         >
-                            Welcome to my personal website! Below are my personal projects, skills, some info about me and the site, and my contact info. Just click the the divider! If you want something more detailed, check out my portfolio page.
+                            Welcome to my personal website! Below are my personal projects, skills, some info about me and the site, and my contact info. If you want something more detailed, check out my portfolio page.
                         </Text>
                         <Text
                             fontSize="md"
@@ -118,7 +118,7 @@ function HomeIntroduction() {
                             textAlign="left"
                             pl={8}
                         >
-                            I've been lucky enough to already secure internship opportunities for Spring and Summer 2025. However, if you wish to talk about other opportunities, please reach out to me via any of the methods below.
+                            I'm currently looking for New Graduate oppurtunites and a possible Fall 2025/Spring 2026 Internship. Please contact me if I interest you. Would be especially excited for any opportunities in the defense sector, startups, or anything cool involving AI.
                         </Text>
                     </>
                     <Stack

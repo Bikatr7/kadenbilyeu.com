@@ -15,10 +15,21 @@ function Experience() {
         <Box>
             <Card title="Experience">
                 <Item
-                    title="Software Engineering Intern at Network Goods Institute"
+                    title="Junior Full Stack Engineer at Network Goods Institute"
                     dateRange="November 2024 - Present"
                     description={[
-                        "Not much to say yet."
+                        "Well, to start. I could yap on and on about this one. But I'll *try* to keep it short.",
+                        "I've been working with Network Goods Institute for sometime, for this stint I've been mainly working on a little thing called Negation Game.",
+                        "As I mentioned earlier, I'm not sure how much I can say about it without getting into too much detail, but I will say that it's a really interesting project.",
+                        "It's taught me a lot, things move very quickly in the startup world and I've basically taken over developer ownership of the project."
+                    ]}
+                    useBulletPoints={false}
+                />
+                <Item
+                    title="Undergraduate Researcher at University of Colorado Colorado Springs (UCCS)"
+                    dateRange="June 2025 - Present"
+                    description={[
+                        "I'm currently doing undergraduate research with the Cybersecurity Dynamics Lab at UCCS. I don't have much to say about it yet though. Hopefully I will soon!"
                     ]}
                     useBulletPoints={false}
                 />
