@@ -41,7 +41,7 @@ function HomeIntroduction() {
                         >
                             Yo, my name's Bikatr7. Welcome to my personal website. Feel free to click the controller icon in the top right for something more professional.
                             <br /><br />
-                            I'm a programmer, I mostly work on translation tech, and my current internship. I also go to school full time.
+                            I'm a programmer, I mostly work on various open source projects, and my current position. I also go to school full time.
                             <br /><br />
                             Feel free to email me or contact me on twitter for any queries, also pretty much everything I do is open source so check out my github.
                         </Text>
@@ -100,7 +100,7 @@ function HomeIntroduction() {
                             textAlign="left"
                             pl={8}
                         >
-                            Welcome to my personal website! Below are my personal projects, skills, some info about me and the site, and my contact info. If you want something more detailed, check out my portfolio page.
+                            Welcome to my personal website! Below are my personal projects, skills, some info about me and the site, and my contact info. If you want something more detailed and related to my work, check out my portfolio page.
                         </Text>
                         <Text
                             fontSize="md"

@@ -11,6 +11,7 @@ import { Button, Flex, Heading, Image, Stack, Text, Box } from '@chakra-ui/react
 import { IconBrandGithub } from '@tabler/icons-react';
 
 import face from '../../assets/images/personals/kadenbilyeu.webp';
+import bikatr7Logo from '../../assets/images/personals/bikatr7_logo.webp';
 import { useTheme } from '../../contexts/ThemeContext';
 
 import { keyframes } from '@emotion/react';
@@ -143,20 +144,45 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                 </Stack>
             </Flex>
             {!isRetro && (
-                <Flex flex={1} justifyContent={{ base: 'center', md: 'flex-start' }} alignItems="center">
-                    <Image boxSize={400} alt="Kaden Bilyeu's Profile Picture" objectFit="cover" src={face} borderRadius={"full"} />
+                <Flex flex={1} direction="column" alignItems="center">
+                    <Image boxSize={400} alt="Kaden Bilyeu's Profile Picture" objectFit="cover" src={face} borderRadius="full" mb={8} />
+                    <Box
+                        border="2px solid"
+                        borderColor="gray.600"
+                        bg="gray.900"
+                        p={3}
+                        borderRadius="md"
+                        width={{ base: "100%", md: "450px" }}
+                    >
+                        <Image
+                            src="https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=dark&layout=compact&langs_count=10"
+                            alt="Bikatr7's WakaTime Graph"
+                            width="100%"
+                            height="auto"
+                        />
+                    </Box>
                 </Flex>
             )}
             {isRetro && (
-                <Box
+                <Flex
                     flex={1}
-                    display="flex"
+                    direction="column"
                     justifyContent={{ base: 'center', lg: 'flex-start' }}
-                    alignItems="flex-start"
+                    alignItems={{ base: 'center', lg: 'flex-start' }}
                     pl={{ base: 0, lg: 8 }}
                     mt={24}
                     width={{ base: "100%", lg: "auto" }}
                 >
+                    <Box mb={6}>
+                        <Image
+                            boxSize={300}
+                            alt="Bikatr7 Logo"
+                            objectFit="cover"
+                            src={bikatr7Logo}
+                            border="2px solid"
+                            borderColor="purple.400"
+                        />
+                    </Box>
                     <Box
                         border="2px solid"
                         borderColor="purple.400"
@@ -171,7 +197,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                             height="auto"
                         />
                     </Box>
-                </Box>
+                </Flex>
             )}
         </Stack>
     );

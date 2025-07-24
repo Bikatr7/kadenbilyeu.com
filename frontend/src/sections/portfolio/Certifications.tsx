@@ -18,7 +18,7 @@ function Certifications()
     return (
         <Box>
             <Text fontSize="md" marginBottom="4" color="gray.500">
-                I'm working on getting some certifications, currently aiming for Cybersecurity ones. However, progress is slow as I'm working part time and going to school full time.
+                I'm working on getting some certifications, currently aiming for Cybersecurity ones. However, progress is slow as I'm working part time and going to school full time. In the middle of getting my Security+ certification.
             </Text>
             <Card title="Certifications">
                 <Item
