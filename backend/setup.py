@@ -42,12 +42,12 @@ def setup_local_environment() -> None:
         "REFRESH_TOKEN_SECRET": "secret",
         "NODE_ENV": "development",
         "ENCRYPTION_KEY": "password",
-        "SMTP_SERVER": "none",
-        "SMTP_PORT": 8000,
-        "SMTP_USER": "none",
-        "SMTP_PASSWORD": "none",
-        "FROM_EMAIL": "none",
-        "TO_EMAIL": "none"
+        "SMTP_SERVER": "test",
+        "SMTP_PORT": "8000",
+        "SMTP_USER": "test",
+        "SMTP_PASSWORD": "test",
+        "FROM_EMAIL": "test",
+        "TO_EMAIL": "test"
     }
 
 
@@ -57,15 +57,21 @@ def setup_local_environment() -> None:
 
             print("Setting up local environment...")
 
-            to_write_frontend = env_to_key_local["NODE_ENV"] + "\n"
+            to_write_frontend = "NODE_ENV=" + env_to_key_local["NODE_ENV"] + "\n"
             to_write_backend = (
                 "ADMIN_USER=" + env_to_key_local["ADMIN_USER"] + "\n" +
                 "ADMIN_PASS_HASH=" + env_to_key_local["ADMIN_PASS_HASH"] + "\n" +
                 "TOTP_SECRET=" + env_to_key_local["TOTP_SECRET"] + "\n" +
                 "ENVIRONMENT=development" + "\n" +
-                "ACCESS_TOKEN_SECRET=" + env_to_key_local["ACCESS_TOKEN_SECRET"] + "\n"
-                "REFRESH_TOKEN_SECRET=" + env_to_key_local["REFRESH_TOKEN_SECRET"] + "\n"
-                "ENCRYPTION_KEY=" + env_to_key_local["ENCRYPTION_KEY"] + "\n"
+                "ACCESS_TOKEN_SECRET=" + env_to_key_local["ACCESS_TOKEN_SECRET"] + "\n" +
+                "REFRESH_TOKEN_SECRET=" + env_to_key_local["REFRESH_TOKEN_SECRET"] + "\n" +
+                "ENCRYPTION_KEY=" + env_to_key_local["ENCRYPTION_KEY"] + "\n" +
+                "SMTP_SERVER=" + env_to_key_local["SMTP_SERVER"] + "\n" +
+                "SMTP_PORT=" + env_to_key_local["SMTP_PORT"] + "\n" +
+                "SMTP_USER=" + env_to_key_local["SMTP_USER"] + "\n" +
+                "SMTP_PASSWORD=" + env_to_key_local["SMTP_PASSWORD"] + "\n" +
+                "FROM_EMAIL=" + env_to_key_local["FROM_EMAIL"] + "\n" +
+                "TO_EMAIL=" + env_to_key_local["TO_EMAIL"] + "\n"
             )
           
         else:
@@ -73,6 +79,7 @@ def setup_local_environment() -> None:
             print("Setting up production environment...")
 
             to_write_frontend = 'NODE_ENV=production\n'
+            to_write_backend = ""
         
         os.makedirs(os.path.dirname(FRONTEND_ENV), exist_ok=True)
 
