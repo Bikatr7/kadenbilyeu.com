@@ -26,14 +26,6 @@ function Experience() {
                     useBulletPoints={false}
                 />
                 <Item
-                    title="Undergraduate Researcher at University of Colorado Colorado Springs (UCCS)"
-                    dateRange="June 2025 - Present"
-                    description={[
-                        "I'm currently doing undergraduate research with the Cybersecurity Dynamics Lab at UCCS. I don't have much to say about it yet though. Hopefully I will soon!"
-                    ]}
-                    useBulletPoints={false}
-                />
-                <Item
                     title="AI/ML Intern at OSCorp"
                     dateRange="September 2024 - November 2024"
                     description={[
