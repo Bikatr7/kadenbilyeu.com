@@ -21,12 +21,18 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+## Create database directory and logs directory
+RUN mkdir -p /app/database/logs
+
 ## Copy entrypoint script and make it executable
 COPY entrypoint.sh .
 RUN chmod +x /app/entrypoint.sh
 
 ## Expose port 8000
 EXPOSE 8000
+
+## Mount the database volume
+VOLUME /app/database
 
 ## Start the app
 CMD ["/app/entrypoint.sh"]

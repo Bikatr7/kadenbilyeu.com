@@ -7,7 +7,6 @@
   - [Frontend](#frontend)
   - [Backend](#backend)
     - [To test the dockerfile locally](#to-test-the-dockerfile-locally)
-    - [To deploy to fly.io](#to-deploy-to-flyio)
 - [**Contributions**](#contributions)
 - [**License**](#license)
 
@@ -50,15 +49,11 @@ Frontend is hosted on cloudflare pages. To deploy, push to the `production` bran
 
 ### Backend
 
-For production, the backend is hosted on fly.io via a dockerfile.
+For production, the backend is hosted via a dockerfile.
 
 #### To test the dockerfile locally
 1. docker build -t kadenbilyeu.com -f build.dockerfile .
 2. docker run -p 8000:8000 kadenbilyeu.com
-
-#### To deploy to fly.io
-1. Make sure you have the fly cli installed and are logged in.
-2. Run `fly deploy` in the root directory. This will build the dockerfile and deploy it to fly.io.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
