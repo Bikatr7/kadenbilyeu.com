@@ -1061,7 +1061,7 @@ def refresh_token(refresh_token: str = Cookie(None)) -> JSONResponse:
         value=new_refresh_token,
         httponly=True,
         secure=True,
-        samesite="none",
+        samesite="Lax",
         max_age=TOKEN_EXPIRE_MINUTES
     )
     return response
