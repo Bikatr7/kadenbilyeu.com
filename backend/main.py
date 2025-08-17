@@ -22,7 +22,7 @@ from email import encoders
 
 ## third-party libraries
 from fastapi import FastAPI, HTTPException, status, Cookie, Depends, File, UploadFile, Request, Header
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.security import  HTTPBasicCredentials, HTTPBasic, OAuth2PasswordBearer
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -300,7 +300,7 @@ def encrypt_file(file_path:str, passphrase:str) -> str:
         )
         
     if(not status.ok):
-        raise ValueError('Failed to encrypt the file:', status.stderr)
+        raise ValueError(f'Failed to encrypt the file: {status.stderr}')
 
     return encrypted_path
 
@@ -329,7 +329,7 @@ def decrypt_file(file_path:str, passphrase:str) -> str:
         )
         
     if(not status.ok):
-        raise ValueError('Failed to decrypt the file:', status.stderr)
+        raise ValueError(f'Failed to decrypt the file: {status.stderr}')
 
     return decrypted_path
 
@@ -726,7 +726,7 @@ def replace_sqlite_db(extracted_db_path:str, current_db_path:str) -> None:
     
     engine.dispose()
     
-    os.replace(extracted_db_path, current_db_path)
+    shutil.move(extracted_db_path, current_db_path)
 
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -985,9 +985,10 @@ origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"^https://([a-z0-9-]\.)?(kadenbilyeu-com\.pages\.dev|bikatr7\.pages\.dev)$",
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["Authorization", "Content-Type", "X-Requested-With"],
 )
 
 ##-----------------------------------------start-of-endpoints----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1060,7 +1061,7 @@ def refresh_token(refresh_token: str = Cookie(None)) -> JSONResponse:
         value=new_refresh_token,
         httponly=True,
         secure=True,
-        samesite="strict",
+        samesite="none",
         max_age=TOKEN_EXPIRE_MINUTES
     )
     return response
@@ -1277,6 +1278,9 @@ def read_all_blog_posts(db:Session = Depends(get_db)):
     return func_get_all_blog_posts(db)
 
 @app.post("/replace-database")
+@app.post("/replace-database/")
+@app.post("/replace-database/")
+@app.post("/replace-database/")
 async def upload_backup(file: UploadFile = File(...),current_user:str = Depends(get_current_active_user)) -> typing.Dict[str, str]:
 
     """
@@ -1307,7 +1311,7 @@ async def upload_backup(file: UploadFile = File(...),current_user:str = Depends(
         with open(decrypted_file, "rb") as f:
             decompressed_file = decompress_file(decrypted_file, "backup.db")
 
-        replace_sqlite_db(decompressed_file, "blog.db")
+        replace_sqlite_db(decompressed_file, DATABASE_PATH)
 
         os.remove("backup.zip.pgp")
         os.remove(decrypted_file)
@@ -1339,3 +1343,25 @@ def force_backup(current_user:str = Depends(get_current_active_user), db:Session
     perform_backup()
 
     return {"message": "Backup started"}
+
+@app.options("/{rest_of_path:path}")
+async def any_options(rest_of_path: str):
+    return Response(status_code=204)
+
+
+@app.options("/replace-database")
+async def _opts_rb():
+    from fastapi.responses import Response
+    return Response(status_code=204)
+
+
+@app.options("/replace-database/")
+async def _opts_rb_slash():
+    from fastapi.responses import Response
+    return Response(status_code=204)
+
+
+@app.on_event("startup")
+async def _disable_redirect_slashes():
+    app.router.redirect_slashes = False
+
