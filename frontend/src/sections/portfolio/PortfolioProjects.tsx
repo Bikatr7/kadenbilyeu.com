@@ -260,6 +260,52 @@ function PortfolioProjects() {
                     employmentProject={true}
                 />
                 <Item
+                    title="Homelab Management Portal"
+                    dateRange="Future Project"
+                    sections={[
+                        {
+                            title: "Infrastructure Vision",
+                            icon: <IconChartBar size={16} />,
+                            bgColor: "gray.700",
+                            textColor: "cyan.200",
+                            content: [
+                                { text: "Transform kadenbilyeu.com into a comprehensive homelab management portal", useBullet: true },
+                                { text: "Monitor all self-hosted services and infrastructure", useBullet: true },
+                                { text: "Centralized control panel for Docker containers and services", useBullet: true },
+                                { text: "Network monitoring and diagnostics tools", useBullet: true },
+                                { text: "Git mirror management for git.kadenbilyeu.com and git.bikatr.7.com", useBullet: true }
+                            ]
+                        },
+                        {
+                            title: "Planned Features",
+                            icon: <IconTarget size={16} />,
+                            bgColor: "gray.750",
+                            textColor: "green.200",
+                            content: [
+                                { text: "System status monitoring and resource usage tracking", useBullet: true },
+                                { text: "Automated backup monitoring and management", useBullet: true },
+                                { text: "Log aggregation and centralized logging dashboard", useBullet: true },
+                                { text: "Service orchestration and container management", useBullet: true },
+                                { text: "Network tools and internal diagnostics", useBullet: true }
+                            ]
+                        },
+                        {
+                            title: "Open Source Commitment",
+                            icon: <IconInfoCircle size={16} />,
+                            content: [
+                                "When I have the time to develop this, I plan to open source the entire homelab management system. This follows my philosophy of making infrastructure tools freely available to the community.",
+                                "The portal will be built using the existing kadenbilyeu.com tech stack (React, TypeScript, FastAPI, Docker) and will serve as both a personal management tool and a template for others to deploy their own homelab monitoring solutions.",
+                                "This project represents the natural evolution of my self-hosted ecosystem - taking all the individual services and providing a unified interface to manage them all."
+                            ]
+                        }
+                    ]}
+                    imageUrl={kb_logo}
+                    imageAlt="Homelab Management Portal Logo"
+                    websiteUrl="https://kadenbilyeu.com"
+                    githubUrl="https://github.com/Bikatr7/kadenbilyeu.com"
+                    tags={["Future Project", "Homelab", "Infrastructure", "Monitoring", "Self-Hosting", "Open Source", "React", "FastAPI", "Docker"]}
+                />
+                <Item
                     title="Kudasai"
                     dateRange="January 2023 - Present"
                     sections={[
@@ -316,9 +362,23 @@ function PortfolioProjects() {
                             textColor: "cyan.200",
                             content: [
                                 { text: "Frontend: React, TypeScript, Vite, Chakra UI", useBullet: true },
-                                { text: "Backend: Python, FastAPI, SQLite", useBullet: true },
+                                { text: "Backend: Python, FastAPI, SQLite with automated backups", useBullet: true },
                                 { text: "Deployment: Docker containers, automated CI/CD", useBullet: true },
+                                { text: "Security: JWT auth, TOTP 2FA, GPG encrypted backups", useBullet: true },
                                 { text: "Features: Blog system, portfolio, responsive design", useBullet: true }
+                            ]
+                        },
+                        {
+                            title: "Self-Hosting & Infrastructure",
+                            icon: <IconChartBar size={16} />,
+                            bgColor: "gray.750",
+                            textColor: "green.200",
+                            content: [
+                                { text: "Fully self-hosted backend with Docker containerization", useBullet: true },
+                                { text: "Automated encrypted database backups (every 6 hours via SMTP)", useBullet: true },
+                                { text: "Production API endpoint: https://api.kadenbilyeu.com", useBullet: true },
+                                { text: "Git mirrors hosted on git.kadenbilyeu.com and git.bikatr.7.com", useBullet: true },
+                                { text: "Infrastructure designed for high availability and redundancy", useBullet: true }
                             ]
                         },
                         {
@@ -350,7 +410,21 @@ function PortfolioProjects() {
                                 { text: "LLC website hosting translation tools and services", useBullet: true },
                                 { text: "BYOK (Bring Your Own Key) methods for EasyTL, Kairyou, Elucidate", useBullet: true },
                                 { text: "Free hosting for open source translation tools", useBullet: true },
+                                { text: "Self-hosted infrastructure with Docker containers", useBullet: true },
                                 { text: "Future plans: SaaS features, custom translation models", useBullet: true }
+                            ]
+                        },
+                        {
+                            title: "Self-Hosting & Infrastructure",
+                            icon: <IconTarget size={16} />,
+                            bgColor: "gray.750",
+                            textColor: "green.200",
+                            content: [
+                                { text: "Fully self-hosted backend using FastAPI and Docker", useBullet: true },
+                                { text: "Automated deployment and container orchestration", useBullet: true },
+                                { text: "Supports multiple translation APIs with BYOK architecture", useBullet: true },
+                                { text: "Infrastructure designed to handle translation workloads efficiently", useBullet: true },
+                                { text: "Negligible hosting costs for BYOK free tier services", useBullet: true }
                             ]
                         },
                         {
