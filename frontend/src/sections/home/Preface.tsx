@@ -27,6 +27,7 @@ const scrollingTextKeyframes = keyframes`
 function Preface({ showContent, toggleContent }: { showContent: boolean, toggleContent: () => void }) {
     const { isRetro } = useTheme();
     const [wakatimeLoaded, setWakatimeLoaded] = useState(false);
+    const [retroWakatimeLoaded, setRetroWakatimeLoaded] = useState(false);
 
     const handleClick = () => {
         if (!showContent) {
@@ -40,6 +41,15 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
             const img: HTMLImageElement = document.createElement('img');
             img.src = "https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=dark&layout=compact&langs_count=10";
             img.onload = () => setWakatimeLoaded(true);
+        }
+    }, [isRetro]);
+
+    // Preload retro Wakatime image
+    useEffect(() => {
+        if (isRetro) {
+            const img: HTMLImageElement = document.createElement('img');
+            img.src = "https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=highcontrast&layout=compact&langs_count=10";
+            img.onload = () => setRetroWakatimeLoaded(true);
         }
     }, [isRetro]);
 
@@ -86,7 +96,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                     ) : (
                         <>
                             <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500" lineHeight="tall">
-                                Computer science senior at the University of Colorado Colorado Springs looking to utilize my skills on AI/ML, LLMs, data science, full stack and NER/NLP into software for real-world applications.
+                                Computer science senior at the University of Colorado Colorado Springs looking to utilize my skills on cyber, AI/ML, LLMs, data science, full stack and NER/NLP into software for real-world applications.
                             </Text>
                             <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500" mb={4}>
                                 Eligible for security clearance. Proud U.S. Citizen.
@@ -234,13 +244,32 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                         bg="black"
                         p={3}
                         width={{ base: "100%", lg: "450px" }}
+                        minHeight="280px"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
                     >
-                        <Image
-                            src="https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=highcontrast&layout=compact&langs_count=10"
-                            alt="Bikatr7's WakaTime Graph"
-                            width="100%"
-                            height="auto"
-                        />
+                        {!retroWakatimeLoaded ? (
+                            <VStack spacing={3} py={8}>
+                                <Spinner
+                                    size="lg"
+                                    color="purple.400"
+                                    thickness="3px"
+                                    speed="0.8s"
+                                />
+                                <Text color="purple.300" fontSize="sm" fontWeight="medium" fontFamily="'Press Start 2P', monospace">
+                                    LOADING WAKATIME...
+                                </Text>
+                            </VStack>
+                        ) : (
+                            <Image
+                                src="https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=highcontrast&layout=compact&langs_count=10"
+                                alt="Bikatr7's WakaTime Graph"
+                                width="100%"
+                                height="auto"
+                                maxWidth="400px"
+                            />
+                        )}
                     </Box>
                 </Flex>
             )}

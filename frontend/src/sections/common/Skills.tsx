@@ -80,6 +80,12 @@ import keras_logo from '../../assets/images/skills/keras_logo.webp';
 import pytorch_logo from '../../assets/images/skills/pytorch_logo.webp';
 // @ts-ignore
 import tensorflow_logo from '../../assets/images/skills/tensorflow_logo.webp';
+// @ts-ignore
+import nextjs_logo from '../../assets/images/skills/nextjs_logo.svg';
+// @ts-ignore
+import tailwind_logo from '../../assets/images/skills/tailwind_logo.svg';
+// @ts-ignore
+import supabase_logo from '../../assets/images/skills/supabase_logo.svg';
 
 // custom components
 import Skill from '../../components/Skill';
@@ -119,6 +125,7 @@ const skillData = [
     { name: "FastAPI", image: fastapi_logo },
     { name: "Flask", image: flask_logo },
     { name: "Django", image: django_logo },
+    { name: "Next.js", image: nextjs_logo },
     { name: "Vite", image: vite_logo },
     { name: "Dash", image: plotly_logo },
     { name: "Plotly", image: plotly_logo },
@@ -129,6 +136,8 @@ const skillData = [
     { name: "Keras", image: keras_logo },
     { name: "PyTorch", image: pytorch_logo },
     { name: "TensorFlow", image: tensorflow_logo },
+    { name: "Tailwind CSS", image: tailwind_logo },
+    { name: "Supabase", image: supabase_logo },
 
     // AI & NLP
     { name: "OpenAI API", image: openai_logo },
@@ -152,11 +161,7 @@ const skillData = [
     { name: "Problem Solving" }
 ];
 
-const developingSkills = [
-    "Supabase",
-    "Next.js",
-    "Tailwind CSS"
-];
+const developingSkills: string[] = [];
 
 function Skills() {
     const [showMore, setShowMore] = useState(false);
@@ -194,18 +199,20 @@ function Skills() {
                 </Button>
             </Box>
 
-            {/* New developing skills section */}
-            <Box mt={6} textAlign="center">
-                <Box fontSize="sm" color="gray.500" mb={2}>
-                    Currently developing skills in the following
+            {/* Developing skills section - only show if there are skills */}
+            {developingSkills.length > 0 && (
+                <Box mt={6} textAlign="center">
+                    <Box fontSize="sm" color="gray.500" mb={2}>
+                        Currently developing skills in the following
+                    </Box>
+                    <Box fontSize="md" color="gray.400">
+                        {developingSkills.join(" • ")}
+                    </Box>
+                    <Text fontSize="sm" color="gray.500" mt={2}>
+                        This is due to my current internship and personal interests.
+                    </Text>
                 </Box>
-                <Box fontSize="md" color="gray.400">
-                    {developingSkills.join(" • ")}
-                </Box>
-                <Text fontSize="sm" color="gray.500" mt={2}>
-                    This is due to my current internship and personal interests.
-                </Text>
-            </Box>
+            )}
         </Box>
     );
 }
