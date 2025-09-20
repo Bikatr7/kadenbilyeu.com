@@ -12,6 +12,7 @@ import kakusui_logo from '../../assets/images/logos/projects/kakusui_logo.webp';
 import kudasai_logo from '../../assets/images/logos/projects/kudasai_logo.webp';
 import seisen_logo from '../../assets/images/logos/projects/seisen_logo.webp';
 import tltmi_logo from '../../assets/images/logos/projects/tltmi_logo.webp';
+import kai_logo from '../../assets/images/logos/projects/kai_logo.svg';
 import kb_logo from '../../assets/images/personals/kb.webp';
 
 // custom components
@@ -27,6 +28,15 @@ function Projects() {
             {isRetro ? (
                 <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} px={4} mb={10}>
                     <Project
+                        title="Kai Language"
+                        subtitle="A minimal, statically typed expression language implemented in Haskell"
+                        imageUrl={kai_logo}
+                        imageAlt="Kai Language Logo"
+                        linkUrl="https://bikatr7.github.io/Kai/"
+                        githubUrl="https://github.com/Bikatr7/kai"
+                        tags={["Open Source", "Haskell", "Programming Language", "Type System", "Parser", "Compiler", "Functional Programming"]}
+                    />
+                    <Project
                         title="Kudasai"
                         subtitle="Streamlining Japanese-English Translation with Advanced Preprocessing"
                         imageUrl={kudasai_logo}
@@ -43,7 +53,6 @@ function Projects() {
                         linkUrl="https://kadenbilyeu.com"
                         githubUrl="https://github.com/Bikatr7/kadenbilyeu.com"
                         tags={["Open Source", "React", "TypeScript", "Vite", "Python", "FastAPI", "Docker", "sqlite"]}
-                        reverse={true}
                     />
                     <Project
                         title="kakusui.org"
@@ -63,7 +72,6 @@ function Projects() {
                         githubUrl="https://github.com/Bikatr7/EasyTL"
                         documentationUrl="https://easytl.readthedocs.io/en/latest/index.html"
                         tags={["Open Source", "Python", "Package", "OpenAI", "DeepL", "Google Translate", "Gemini", "Azure", "Anthropic", "React", "TypeScript", "Vite", "FastAPI"]}
-                        reverse={true}
                     />
                     <Project
                         title="TLTMI"
@@ -81,7 +89,6 @@ function Projects() {
                         linkUrl="https://kakusui.org/kairyou"
                         githubUrl="https://github.com/bikatr7/kairyou"
                         tags={["Open Source", "Python", "NLP", "sPacy", "NER"]}
-                        reverse={true}
                     />
                     <Project
                         title="Seisen"
@@ -99,12 +106,20 @@ function Projects() {
                         linkUrl="https://kakusui.org/elucidate"
                         githubUrl="https://github.com/Kakusui/Elucidate"
                         tags={["Open Source", "Python", "OpenAI", "Gemini", "Anthropic"]}
-                        reverse={true}
                     />
                 </SimpleGrid>
             ) : (
                 <>
                     <Project
+                        title="Kai Language"
+                        subtitle="A minimal, statically typed expression language implemented in Haskell"
+                        imageUrl={kai_logo}
+                        imageAlt="Kai Language Logo"
+                        linkUrl="https://bikatr7.github.io/Kai/"
+                        githubUrl="https://github.com/Bikatr7/kai"
+                        tags={["Open Source", "Haskell", "Programming Language", "Type System", "Parser", "Compiler", "Functional Programming"]}
+                    />
+                    <Project
                         title="Kudasai"
                         subtitle="Streamlining Japanese-English Translation with Advanced Preprocessing"
                         imageUrl={kudasai_logo}
@@ -112,6 +127,7 @@ function Projects() {
                         linkUrl="https://huggingface.co/spaces/Bikatr7/Kudasai"
                         githubUrl="https://github.com/Bikatr7/kudasai"
                         tags={["Open Source", "Python", "Hugging Face", "sPacy", "Google Translate", "DeepL", "OpenAI", "Gemini", "Gradio"]}
+                        reverse={true}
                     />
                     <Project
                         title="kadenbilyeu.com"
@@ -121,7 +137,6 @@ function Projects() {
                         linkUrl="https://kadenbilyeu.com"
                         githubUrl="https://github.com/Bikatr7/kadenbilyeu.com"
                         tags={["Open Source", "React", "TypeScript", "Vite", "Python", "FastAPI", "Docker", "sqlite"]}
-                        reverse={true}
                     />
                     <Project
                         title="kakusui.org"
@@ -131,6 +146,7 @@ function Projects() {
                         linkUrl="https://kakusui.org"
                         githubUrl="https://github.com/Kakusui/kakusui.org"
                         tags={["Open Source", "React", "TypeScript", "Vite", "Python", "FastAPI", "Docker"]}
+                        reverse={true}
                     />
                     <Project
                         title="EasyTL"
@@ -141,7 +157,6 @@ function Projects() {
                         githubUrl="https://github.com/Bikatr7/EasyTL"
                         documentationUrl="https://easytl.readthedocs.io/en/latest/index.html"
                         tags={["Open Source", "Python", "Package", "OpenAI", "DeepL", "Google Translate", "Gemini", "Azure", "Anthropic", "React", "TypeScript", "Vite", "FastAPI"]}
-                        reverse={true}
                     />
                     <Project
                         title="TLTMI"
@@ -150,6 +165,7 @@ function Projects() {
                         imageAlt="TLTMI Logo"
                         githubUrl="https://github.com/Kakusui/TLTMI"
                         tags={["Open Source", "Python", "Hugging Face", "FastAPI", "Docker"]}
+                        reverse={true}
                     />
                     <Project
                         title="Kairyou"
@@ -159,7 +175,6 @@ function Projects() {
                         linkUrl="https://kakusui.org/kairyou"
                         githubUrl="https://github.com/bikatr7/kairyou"
                         tags={["Open Source", "Python", "NLP", "sPacy", "NER"]}
-                        reverse={true}
                     />
                     <Project
                         title="Seisen"
@@ -168,6 +183,7 @@ function Projects() {
                         imageAlt="Seisen Logo"
                         githubUrl="https://github.com/Bikatr7/seisen"
                         tags={["Open Source", "Python", "MySQL", "mysql-connector-python"]}
+                        reverse={true}
                     />
                     <Project
                         title="Elucidate"
@@ -177,7 +193,6 @@ function Projects() {
                         linkUrl="https://kakusui.org/elucidate"
                         githubUrl="https://github.com/Kakusui/Elucidate"
                         tags={["Open Source", "Python", "OpenAI", "Gemini", "Anthropic"]}
-                        reverse={true}
                     />
                 </>
             )}

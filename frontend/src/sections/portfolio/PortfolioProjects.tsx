@@ -24,6 +24,7 @@ import kakusui_logo from '../../assets/images/logos/projects/kakusui_logo.webp';
 import kudasai_logo from '../../assets/images/logos/projects/kudasai_logo.webp';
 import seisen_logo from '../../assets/images/logos/projects/seisen_logo.webp';
 import tltmi_logo from '../../assets/images/logos/projects/tltmi_logo.webp';
+import kai_logo from '../../assets/images/logos/projects/kai_logo.svg';
 import kb_logo from '../../assets/images/personals/kb.webp';
 
 function PortfolioProjects() {
@@ -33,6 +34,19 @@ function PortfolioProjects() {
         name: 'Software Development Projects',
         description: 'Portfolio of software development projects by Kaden Bilyeu',
         itemListElement: [
+            {
+                '@type': 'SoftwareApplication',
+                name: 'Kai Language',
+                description: 'Minimal, statically typed expression language implemented in Haskell',
+                url: 'https://github.com/Bikatr7/kai',
+                applicationCategory: 'Programming Language',
+                operatingSystem: 'Cross-platform',
+                programmingLanguage: ['Haskell'],
+                author: {
+                    '@type': 'Person',
+                    name: 'Kaden Bilyeu'
+                }
+            },
             {
                 '@type': 'SoftwareApplication',
                 name: 'Kudasai',
@@ -138,6 +152,52 @@ function PortfolioProjects() {
                 </script>
             </Helmet>
             <Card title="Projects">
+                <Item
+                    title="Kai Language"
+                    dateRange="December 2024 - Present"
+                    sections={[
+                        {
+                            title: "Language Stats",
+                            icon: <IconChartBar size={16} />,
+                            bgColor: "gray.700",
+                            textColor: "cyan.200",
+                            content: [
+                                { text: "Minimal, statically typed expression language implemented in Haskell", useBullet: true },
+                                { text: "v0.0.3 with full type inference, lambdas, and static type checking", useBullet: true },
+                                { text: "221 test examples (Hspec + QuickCheck) - all passing", useBullet: true },
+                                { text: "Complete CLI, website demo, and CI/CD with automated releases", useBullet: true }
+                            ]
+                        },
+                        {
+                            title: "What It Does",
+                            icon: <IconTarget size={16} />,
+                            bgColor: "gray.750",
+                            textColor: "green.200",
+                            content: [
+                                { text: "Expression-only language with arithmetic, booleans, strings, conditionals", useBullet: true },
+                                { text: "Lambda functions with closures and function application", useBullet: true },
+                                { text: "Hindley-Milner style type inference with unification", useBullet: true },
+                                { text: "Megaparsec parser with precedence and error handling", useBullet: true }
+                            ]
+                        },
+                        {
+                            title: "The Vision",
+                            icon: <IconInfoCircle size={16} />,
+                            content: [
+                                "Kai is my attempt at building a clean, statically typed scripting language from scratch. It started as a way to learn Haskell and language implementation, but evolved into something I'm genuinely proud of.",
+                                "The goal is to combine the safety of static typing with the ease of scripting. Think of it as what you'd get if you took the best parts of Haskell's type system and made it accessible for everyday scripting tasks.",
+                                "Right now it's just expressions - no variables, no modules, no standard library. But it has solid foundations: a proper parser, complete type inference, comprehensive tests, and a clean architecture.",
+                                "The roadmap includes let-bindings, algebraic data types, pattern matching, a standard library, and eventually a full module system. I want it to feel like writing Python but with the confidence that comes from strong static typing.",
+                                "It's been a fantastic learning project for understanding parsers, type systems, and functional language design. Plus it's got me deep into Haskell, which has been incredibly rewarding."
+                            ]
+                        }
+                    ]}
+                    imageUrl={kai_logo}
+                    imageAlt="Kai Language Logo"
+                    websiteUrl="https://bikatr7.github.io/Kai/"
+                    githubUrl="https://github.com/Bikatr7/kai"
+                    tags={["Open Source", "Haskell", "Programming Language", "Type System", "Parser", "Compiler", "Functional Programming", "Static Typing"]}
+                />
                 <Item
                     title="Kudasai"
                     dateRange="January 2023 - Present"
