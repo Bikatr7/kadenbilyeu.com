@@ -41,13 +41,16 @@ function PortfolioIntroduction() {
             </Stack>
             <NamedDivider id="portfolio_page_separator" />
             <Text fontSize="md" marginBottom="4" color="gray.500">
-                This is my portfolio page. It's a bit more detailed than my main page and has more information about my projects and education, and new things like my professional experience and accomplishments.
+                This is my portfolio page - my chance to tell the full story behind my work and what I'm passionate about. It's deliberately more detailed and conversational than traditional professional documents.
             </Text>
             <Text fontSize="md" marginBottom="4" color="gray.500">
-                I like to think of it as an expanded, digital version of my resume. Resume's are great, but they're stuffy, not reactive, and don't leave room for creativity. This allows me to say and show what I want.
+                <Text as="span" fontWeight="bold" color="yellow.400">Need something to scan quickly?</Text> Check out my resume using the button in the top right. It's clean, concise, and hits all the professional highlights you'd expect.
             </Text>
             <Text fontSize="md" marginBottom="4" color="gray.500">
-                If you're looking for something strictly professional, you can download my resume with that button in the top right. This isn't going to be really strictly professional or formal at all, and it may come across as yapping a bit, but that is my goal here for this page at least.
+                <Text as="span" fontWeight="bold" color="yellow.400">Have time to hear me talk about what I actually enjoy working on?</Text> You're in the right place. This portfolio includes the context, challenges, learnings, and honest thoughts behind each project and experience. It's not formal - it's me genuinely yapping about what I'm passionate about.
+            </Text>
+            <Text fontSize="md" marginBottom="4" color="gray.500">
+                Each section now includes both detailed narratives and quick-scan summaries, so you can choose your own adventure through my work lol.
             </Text>
         </Box>
     );

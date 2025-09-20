@@ -8,7 +8,7 @@
 import React from 'react';
 
 // chakra-ui
-import { Box, Flex, Image, Heading, Text, Link, Tag, Wrap, WrapItem } from '@chakra-ui/react';
+import { Box, Flex, Image, Heading, Text, Link, Tag, Wrap, WrapItem, VStack, HStack } from '@chakra-ui/react';
 
 // icons
 import { IconBrandGithub, IconExternalLink } from "@tabler/icons-react";
@@ -16,10 +16,24 @@ import { IconBrandGithub, IconExternalLink } from "@tabler/icons-react";
 // animations
 import { iconAnimation, tagAnimation, imageAnimation } from '../animations/common';
 
-interface ProjectItemProps 
-{
+interface ContentLine {
+  text: string;
+  useBullet?: boolean;
+}
+
+interface ItemSection {
+  title?: string;
+  content: (string | ContentLine)[];
+  icon?: React.ReactNode;
+  bgColor?: string;
+  textColor?: string;
+}
+
+interface ProjectItemProps {
   title: string;
   dateRange: string;
+  sections?: ItemSection[];
+  // Legacy support
   description?: string[];
   imageUrl?: string;
   imageAlt?: string;
@@ -29,34 +43,86 @@ interface ProjectItemProps
   useBulletPoints?: boolean;
 }
 
+const renderSectionContent = (content: (string | ContentLine)[], defaultUseBullet: boolean = false) => {
+  return content.map((item, index) => {
+    if (typeof item === 'string') {
+      return (
+        <Text key={index} fontSize="xs" mb={1}>
+          {defaultUseBullet ? `• ${item}` : item}
+        </Text>
+      );
+    } else {
+      return (
+        <Text key={index} fontSize="xs" mb={1}>
+          {item.useBullet ? `• ${item.text}` : item.text}
+        </Text>
+      );
+    }
+  });
+};
+
 const Item: React.FC<ProjectItemProps> = (
-{
-  title,
-  dateRange,
-  description,
-  imageUrl,
-  imageAlt,
-  websiteUrl,
-  githubUrl,
-  tags,
-  useBulletPoints = true
-}) => 
-{
+  {
+    title,
+    dateRange,
+    sections,
+    // Legacy props
+    description,
+    imageUrl,
+    imageAlt,
+    websiteUrl,
+    githubUrl,
+    tags,
+    useBulletPoints = true
+  }) => {
+  // Convert legacy description to sections if needed
+  const finalSections = sections || (description ? [{
+    content: description.map(desc => desc),
+  }] : []);
+
   return (
     <Box bg="gray.800" color="white" borderRadius="md" overflow="hidden" mb={4} position="relative">
       <Flex alignItems="flex-start" p={4}>
-        <Box flex="1">
-          <Heading as="h3" size="sm" color="yellow.400" mb={1}>
-            {title}
-          </Heading>
-          <Text fontSize="xs" color="blue.300" mb={2}>
-            {dateRange}
-          </Text>
-          {description && description.map((item, index) => (
-            <Text key={index} fontSize="xs" mb={1}>
-              {useBulletPoints ? `• ${item}` : item}
+        <VStack flex="1" align="stretch" spacing={3}>
+          {/* Header */}
+          <Box>
+            <Heading as="h3" size="sm" color="yellow.400" mb={1}>
+              {title}
+            </Heading>
+            <Text fontSize="xs" color="blue.300" mb={2}>
+              {dateRange}
             </Text>
+          </Box>
+
+          {/* Sections */}
+          {finalSections.map((section, sectionIndex) => (
+            <Box
+              key={sectionIndex}
+              bg={section.bgColor || "transparent"}
+              p={section.bgColor ? 3 : 0}
+              borderRadius={section.bgColor ? "md" : "none"}
+              border={section.bgColor ? "1px solid" : "none"}
+              borderColor={section.bgColor ? "gray.600" : "transparent"}
+            >
+              {section.title && (
+                <HStack mb={2} align="center">
+                  {section.icon}
+                  <Text
+                    fontSize="sm"
+                    fontWeight="bold"
+                    color={section.textColor || "cyan.300"}
+                  >
+                    {section.title}
+                  </Text>
+                </HStack>
+              )}
+              <Box color={section.textColor || "white"}>
+                {renderSectionContent(section.content, useBulletPoints)}
+              </Box>
+            </Box>
           ))}
+
+          {/* Tags */}
           {tags && (
             <Wrap mt={2} mb={2}>
               {tags.map(tag => (
@@ -68,6 +134,8 @@ const Item: React.FC<ProjectItemProps> = (
               ))}
             </Wrap>
           )}
+
+          {/* Links */}
           <Flex mt={2}>
             {websiteUrl && (
               <Link href={websiteUrl} isExternal mr={2} _hover={{ color: "yellow.400" }} css={iconAnimation}>
@@ -80,7 +148,9 @@ const Item: React.FC<ProjectItemProps> = (
               </Link>
             )}
           </Flex>
-        </Box>
+        </VStack>
+
+        {/* Image */}
         {imageUrl && (
           <Box ml={4}>
             <Image
@@ -100,14 +170,12 @@ const Item: React.FC<ProjectItemProps> = (
   );
 };
 
-interface CardProps 
-{
+interface CardProps {
   title: string;
   children: React.ReactNode;
 }
 
-const Card: React.FC<CardProps> = ({ title, children }) => 
-{
+const Card: React.FC<CardProps> = ({ title, children }) => {
   return (
     <Box bg="gray.900" p={6} borderRadius="lg" marginBottom={10}>
       <Heading as="h2" size="xl" color="yellow.400" mb={6}>
