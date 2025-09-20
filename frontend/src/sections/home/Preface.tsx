@@ -4,8 +4,11 @@
 
 // maintain allman bracket style for consistency
 
+// react
+import { useEffect, useState } from 'react';
+
 // chakra-ui
-import { Button, Flex, Heading, Image, Stack, Text, Box } from '@chakra-ui/react';
+import { Button, Flex, Heading, Image, Stack, Text, Box, Spinner, VStack } from '@chakra-ui/react';
 
 // icons and images
 import { IconBrandGithub } from '@tabler/icons-react';
@@ -23,6 +26,7 @@ const scrollingTextKeyframes = keyframes`
 
 function Preface({ showContent, toggleContent }: { showContent: boolean, toggleContent: () => void }) {
     const { isRetro } = useTheme();
+    const [wakatimeLoaded, setWakatimeLoaded] = useState(false);
 
     const handleClick = () => {
         if (!showContent) {
@@ -30,13 +34,22 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
         }
     };
 
+    // Preload Wakatime image to prevent layout shift
+    useEffect(() => {
+        if (!isRetro) {
+            const img: HTMLImageElement = document.createElement('img');
+            img.src = "https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=dark&layout=compact&langs_count=10";
+            img.onload = () => setWakatimeLoaded(true);
+        }
+    }, [isRetro]);
+
     return (
         <Stack direction={{ base: 'column', md: 'row' }} bg="black" id="home" paddingTop={5} >
             <Flex
                 p={8}
                 flex={1}
                 align="center"
-                justify={isRetro ? "flex-start" : "flex-start"}
+                justify={isRetro ? "flex-start" : "center"}
             >
                 <Stack spacing={6} w="full" maxW="xl">
                     <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
@@ -72,16 +85,15 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                         </Box>
                     ) : (
                         <>
-                            <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
+                            <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500" lineHeight="tall">
                                 Computer science senior at the University of Colorado Colorado Springs looking to utilize my skills on AI/ML, LLMs, data science, full stack and NER/NLP into software for real-world applications.
-
                             </Text>
-                            <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
+                            <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500" mb={4}>
                                 Eligible for security clearance. Proud U.S. Citizen.
                             </Text>
                         </>
                     )}
-                    <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
+                    <Stack direction={{ base: 'column', md: 'row' }} spacing={3} wrap="wrap" justifyContent={{ base: 'center', md: 'flex-start' }}>
                         {!isRetro && (
                             <>
                                 <Button
@@ -89,6 +101,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                                     as="a"
                                     href={showContent ? "#aboutme" : undefined}
                                     onClick={handleClick}
+                                    size="md"
                                     _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                                     _active={{ transform: 'scale(0.99)' }}
                                 >
@@ -98,6 +111,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                                     as="a"
                                     href="/portfolio"
                                     rounded="full"
+                                    size="md"
                                     _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                                     _active={{ transform: 'scale(0.99)' }}
                                 >
@@ -114,6 +128,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                             bg={isRetro ? "black" : undefined}
                             color={isRetro ? "purple.200" : undefined}
                             fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                            size="md"
                             _hover={{
                                 color: isRetro ? 'purple.400' : 'yellow',
                                 transform: 'scale(1.01)'
@@ -132,6 +147,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                             bg={isRetro ? "black" : undefined}
                             color={isRetro ? "purple.200" : undefined}
                             fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                            size="md"
                             _hover={{
                                 color: isRetro ? 'purple.400' : 'yellow',
                                 transform: 'scale(1.01)'
@@ -144,23 +160,52 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                 </Stack>
             </Flex>
             {!isRetro && (
-                <Flex flex={1} direction="column" alignItems="center">
-                    <Image boxSize={400} alt="Kaden Bilyeu's Profile Picture" objectFit="cover" src={face} borderRadius="full" mb={8} />
-                    <Box
-                        border="2px solid"
-                        borderColor="gray.600"
-                        bg="gray.900"
-                        p={3}
-                        borderRadius="md"
-                        width={{ base: "100%", md: "450px" }}
-                    >
+                <Flex flex={1} direction="column" alignItems="center" justifyContent="center" p={8}>
+                    <Stack spacing={6} align="center" maxW="500px">
                         <Image
-                            src="https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=dark&layout=compact&langs_count=10"
-                            alt="Bikatr7's WakaTime Graph"
-                            width="100%"
-                            height="auto"
+                            boxSize={400}
+                            alt="Kaden Bilyeu's Profile Picture"
+                            objectFit="cover"
+                            src={face}
+                            borderRadius="full"
+                            border="3px solid"
+                            borderColor="gray.600"
                         />
-                    </Box>
+                        <Box
+                            border="2px solid"
+                            borderColor="gray.600"
+                            bg="gray.900"
+                            p={4}
+                            borderRadius="lg"
+                            width="100%"
+                            minHeight="280px"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                        >
+                            {!wakatimeLoaded ? (
+                                <VStack spacing={3} py={8}>
+                                    <Spinner
+                                        size="lg"
+                                        color="yellow.400"
+                                        thickness="3px"
+                                        speed="0.8s"
+                                    />
+                                    <Text color="gray.400" fontSize="sm" fontWeight="medium">
+                                        Loading WakaTime stats...
+                                    </Text>
+                                </VStack>
+                            ) : (
+                                <Image
+                                    src="https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=dark&layout=compact&langs_count=10"
+                                    alt="Bikatr7's WakaTime Graph"
+                                    width="100%"
+                                    height="auto"
+                                    maxWidth="400px"
+                                />
+                            )}
+                        </Box>
+                    </Stack>
                 </Flex>
             )}
             {isRetro && (
