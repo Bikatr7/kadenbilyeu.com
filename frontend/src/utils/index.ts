@@ -12,9 +12,9 @@ const getURL = (path: string) =>
     {
         url = "https://api.kadenbilyeu.com";
     } 
-    else if (process.env.NODE_ENV === "development") 
+    else if (process.env.NODE_ENV === "development")
     {
-        url = "http://api.localhost:5000";
+        url = "http://localhost:5000";
     } 
     
     return url + path;
@@ -78,4 +78,36 @@ const parseSlugOrId = (param: string): { isSlug: boolean; value: string } =>
     return { isSlug, value: param };
 }
 
-export {getURL, formatDate, isBikatr7URL, createSlug, parseSlugOrId}
+const authenticatedFetch = async (url: string, options: RequestInit = {}): Promise<Response> => {
+    const authOptions: RequestInit = {
+        ...options,
+        credentials: 'include',
+    };
+
+    let response = await fetch(url, authOptions);
+
+    // If we get a 401, try to refresh the token and retry the request
+    if (response.status === 401) {
+        try {
+            const refreshResponse = await fetch(getURL('/refresh'), {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            if (refreshResponse.ok) {
+                response = await fetch(url, authOptions);
+            } else {
+                // Token refresh failed, user needs to login again
+                // Trigger logout by calling the logout function if available
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Token refresh failed:', error);
+            window.location.reload();
+        }
+    }
+
+    return response;
+};
+
+export {getURL, formatDate, isBikatr7URL, createSlug, parseSlugOrId, authenticatedFetch}

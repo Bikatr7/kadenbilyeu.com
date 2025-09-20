@@ -21,7 +21,7 @@ import EmbedSEO from "../components/EmbedSEO";
 import LoadingSpinner from '../components/LoadingSpinner';
 
 // utils
-import { getURL, formatDate, createSlug } from '../utils';
+import { getURL, formatDate, createSlug, authenticatedFetch } from '../utils';
 
 // context
 import { useTheme } from '../contexts/ThemeContext';
@@ -80,9 +80,17 @@ const BlogDirectoryPage: React.FC = () => {
     }, [fetchBlogPosts]);
 
     const handleLogin = () => setIsLoggedIn(true);
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+    const handleLogout = async () => {
+        try {
+            await fetch(getURL('/logout'), {
+                method: 'POST',
+                credentials: 'include'
+            });
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+
+        // Update local state
         setIsLoggedIn(false);
     };
 
@@ -114,14 +122,9 @@ const BlogDirectoryPage: React.FC = () => {
 
     const handleDelete = async (postId: string) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(getURL(`/blog/${postId}`),
+            const response = await authenticatedFetch(getURL(`/blog/${postId}`),
                 {
-                    method: 'DELETE',
-                    headers:
-                    {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    method: 'DELETE'
                 });
 
             if (response.ok) {

@@ -19,7 +19,7 @@ import EmbedSEO from '../components/EmbedSEO';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 // utils
-import { getURL, formatDate, createSlug } from '../utils';
+import { getURL, formatDate, createSlug, authenticatedFetch } from '../utils';
 
 // contexts
 import { useTheme } from '../contexts/ThemeContext';
@@ -78,9 +78,16 @@ const BlogPage: React.FC = () => {
     }, [fetchBlogPosts]);
 
     const handleLogin = () => setIsLoggedIn(true);
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+    const handleLogout = async () => {
+        try {
+            await fetch(getURL('/logout'), {
+                method: 'POST',
+                credentials: 'include'
+            });
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+
         setIsLoggedIn(false);
     };
     const handleNewPost = () => {
@@ -122,14 +129,9 @@ const BlogPage: React.FC = () => {
 
     const handleDelete = async (postId: string) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(getURL(`/blog/${postId}`),
+            const response = await authenticatedFetch(getURL(`/blog/${postId}`),
                 {
-                    method: 'DELETE',
-                    headers:
-                    {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    method: 'DELETE'
                 });
 
             if (response.ok) {
@@ -160,16 +162,11 @@ const BlogPage: React.FC = () => {
     const handleFileUpload = async (file: File) => {
         const formData = new FormData();
         formData.append('file', file);
-        const token = localStorage.getItem('token');
 
         try {
-            const response = await fetch(getURL('/replace-database/'),
+            const response = await authenticatedFetch(getURL('/replace-database/'),
                 {
                     method: 'POST',
-                    headers:
-                    {
-                        'Authorization': `Bearer ${token}`
-                    },
                     body: formData
                 });
 
@@ -215,16 +212,10 @@ const BlogPage: React.FC = () => {
     };
 
     const handleForceBackup = async () => {
-        const token = localStorage.getItem('token');
-
         try {
-            const response = await fetch(getURL('/force-backup'),
+            const response = await authenticatedFetch(getURL('/force-backup'),
                 {
-                    method: 'POST',
-                    headers:
-                    {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    method: 'POST'
                 });
 
             if (response.ok) {

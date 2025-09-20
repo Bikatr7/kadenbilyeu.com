@@ -13,17 +13,13 @@ import { Box, Button, Input, Modal, ModalOverlay, ModalContent, ModalHeader, Mod
 // util
 import { getURL } from '../utils';
 
-// jwt-decode
-import { jwtDecode } from 'jwt-decode';
 
-interface LoginProps 
-{
+interface LoginProps {
     onLogin: () => void;
     onLogout: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) => 
-{
+const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -32,51 +28,43 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) =>
     const [step, setStep] = useState(1); // 1: login, 2: TOTP verification
     const [isLoading, setIsLoading] = useState(true);
 
-    const isTokenExpired = (token: string) => 
-    {
-        try 
-        {
-            const decoded = jwtDecode(token);
-            const currentTime = Date.now() / 1000;
-            return decoded.exp ? decoded.exp < currentTime : true;
-        } 
-        catch (error) 
-        {
-            return true;
-        }
-    };
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            try {
+                // Check if we have a valid session by making a test API call
+                // Use simple fetch for auth check, not authenticatedFetch
+                const response = await fetch(getURL('/auth/check'), {
+                    credentials: 'include'
+                });
 
-    useEffect(() => 
-    {
-        const checkLoginStatus = async () => 
-        {
-            const token = localStorage.getItem('token');
-            if (token && !isTokenExpired(token)) 
-            {
-                onLogin();
-            } 
-            else 
-            {
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.authenticated) {
+                        onLogin();
+                    } else {
+                        onLogout();
+                    }
+                } else {
+                    onLogout();
+                }
+            } catch (error) {
                 onLogout();
             }
             setIsLoading(false);
         };
 
         checkLoginStatus();
-    }, [onLogin, onLogout]);
+    }, []);
 
-    const handleNext = () => 
-    {
+    const handleNext = () => {
         setStep(2);
     };
 
-    const handleBack = () => 
-    {
+    const handleBack = () => {
         setStep(1);
     };
 
-    const handleClose = () => 
-    {
+    const handleClose = () => {
         setUsername('');
         setPassword('');
         setTotp('');
@@ -85,57 +73,39 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) =>
         onClose();
     };
 
-    const handleLogin = async () => 
-    {
-        try 
-        {
-            const response = await fetch(getURL('/login'), 
-            {
-                method: 'POST',
-                headers: 
+    const handleLogin = async () => {
+        try {
+            const response = await fetch(getURL('/login'),
                 {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, password, totp })
-            });
+                    method: 'POST',
+                    headers:
+                    {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ username, password, totp })
+                });
 
-            if (response.ok) 
-            {
-                const data = await response.json();
-                if (data.access_token) 
-                {
-                    localStorage.setItem('token', data.access_token);
-                    document.cookie = `refresh_token=${data.refresh_token}; path=/; secure; HttpOnly`;
-                    onLogin();
-                    handleClose();
-                } 
-                else 
-                {
-                    setError('Invalid credentials or TOTP code');
-                }
-            } 
-            else
-            {
+            if (response.ok) {
+                onLogin();
+                handleClose();
+            }
+            else {
                 const errorData = await response.json();
                 setError(`Error: ${errorData.detail || 'Invalid credentials or TOTP code'}`);
             }
-        } 
-        catch (error) 
-        {
+        }
+        catch (error) {
             setError('An error occurred. Please try again.');
         }
     };
 
-    const handleKeyPress = (event: React.KeyboardEvent) => 
-    {
-        if (event.key === 'Enter') 
-        {
-            if (step === 1) 
-            {
+    const handleKeyPress = (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter') {
+            if (step === 1) {
                 handleNext();
-            } 
-            else 
-            {
+            }
+            else {
                 handleLogin();
             }
         }
@@ -143,16 +113,16 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) =>
 
     return (
         <>
-            <Button 
-                position="absolute" 
-                top="1rem" 
-                right="1rem" 
-                onClick={onOpen} 
-                zIndex="2" 
-                _hover={{ color: 'yellow', transform: 'scale(1.01)'}} 
-                _active={{ transform: 'scale(0.99)'}}
-                minWidth="70px" 
-                height="40px"    
+            <Button
+                position="absolute"
+                top="1rem"
+                right="1rem"
+                onClick={onOpen}
+                zIndex="2"
+                _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
+                _active={{ transform: 'scale(0.99)' }}
+                minWidth="70px"
+                height="40px"
             >
                 {isLoading ? <Spinner size="sm" /> : 'Login'}
             </Button>

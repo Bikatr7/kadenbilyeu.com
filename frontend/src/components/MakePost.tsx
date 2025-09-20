@@ -14,44 +14,31 @@ import { Box, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFoote
 import PostEditor from './PostEditor';
 
 // utils
-import { getURL } from '../utils';
+import { getURL, authenticatedFetch } from '../utils';
 
-interface MakePostProps 
-{
+interface MakePostProps {
     onPost: () => void;
 }
 
-const MakePost: React.FC<MakePostProps> = ({ onPost }) => 
-{
+const MakePost: React.FC<MakePostProps> = ({ onPost }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [error, setError] = useState('');
 
-    const handleClose = () => 
-    {
+    const handleClose = () => {
         setTitle('');
         setContent('');
         setError('');
         onClose();
     };
 
-    const handleSubmit = async () => 
-    {
-        const token = localStorage.getItem('token');
-        if (!token) 
-        {
-            setError('You must be logged in to make a post.');
-            return;
-        }
-
-        try 
-        {
-            const response = await fetch(getURL('/blog'), {
+    const handleSubmit = async () => {
+        try {
+            const response = await authenticatedFetch(getURL('/blog'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({ title, content, author: 'Kaden Bilyeu (Bikatr7)' }),
             });

@@ -14,7 +14,7 @@ import { ArrowBackIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 
 // components
 import EditPost from "../components/EditPost";
-import { getURL, parseSlugOrId, createSlug } from '../utils';
+import { getURL, parseSlugOrId, createSlug, authenticatedFetch } from '../utils';
 import EmbedSEO from '../components/EmbedSEO';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -66,18 +66,10 @@ const BlogPostPage: React.FC = () => {
             }
             setIsLoading(true);
 
-            const token = localStorage.getItem('token');
-            const headers: HeadersInit = {};
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
-
             const { isSlug, value } = parseSlugOrId(id);
             const endpoint = isSlug ? `/blog/slug/${encodeURIComponent(value)}` : `/blog/${value}`;
 
-            const response = await fetch(getURL(endpoint), {
-                headers: headers
-            });
+            const response = await authenticatedFetch(getURL(endpoint));
 
             if (!response.ok) {
                 if (response.status === 404) {
@@ -129,13 +121,9 @@ const BlogPostPage: React.FC = () => {
 
     const handleDelete = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(getURL(`/blog/${id}`),
+            const response = await authenticatedFetch(getURL(`/blog/${id}`),
                 {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    method: 'DELETE'
                 });
 
             if (response.ok) {
