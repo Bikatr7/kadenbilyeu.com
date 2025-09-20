@@ -55,11 +55,12 @@ interface ProjectProps {
     githubUrl?: string;
     reverse?: boolean;
     tags?: string[];
+    employmentProject?: boolean;
 }
 
 const MotionBox = motion(Box);
 
-const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, linkUrl, githubUrl, documentationUrl, reverse, tags }) => {
+const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, linkUrl, githubUrl, documentationUrl, reverse, tags, employmentProject = false }) => {
     const { isRetro } = useTheme();
 
     if (isRetro) {
@@ -84,23 +85,38 @@ const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, 
                         animate="animate"
                         variants={imageVariants}
                     >
-                        <Image 
+                        <Image
                             boxSize="100px"
-                            alt={imageAlt} 
-                            objectFit="cover" 
-                            src={imageUrl} 
+                            alt={imageAlt}
+                            objectFit="contain"
+                            src={imageUrl}
                             mb={4}
                         />
                     </MotionBox>
-                    <Heading 
+                    <Heading
                         fontSize="md"
                         color="purple.400"
                         fontFamily="'Press Start 2P', monospace"
                         textAlign="center"
-                        mb={3}
+                        mb={employmentProject ? 2 : 3}
                     >
                         {title}
                     </Heading>
+                    {employmentProject && (
+                        <Box
+                            bg="orange.600"
+                            color="white"
+                            px={2}
+                            py={1}
+                            borderRadius="md"
+                            fontSize="xs"
+                            fontWeight="bold"
+                            textAlign="center"
+                            mb={3}
+                        >
+                            Employment Project
+                        </Box>
+                    )}
                     <Text 
                         fontSize="xs"
                         color="purple.200"
@@ -171,7 +187,7 @@ const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, 
         <Box mb={20}>
             <Stack direction={{ base: 'column', md: reverse ? 'row-reverse' : 'row' }} marginBottom={25}>
                 <Flex flex={1} justifyContent="center">
-                    <Image boxSize={{ base: '300px', md: '400px' }} alt={imageAlt} objectFit="cover" src={imageUrl} css={imageAnimation} />
+                    <Image boxSize={{ base: '300px', md: '400px' }} alt={imageAlt} objectFit="contain" src={imageUrl} css={imageAnimation} />
                 </Flex>
                 <Flex p={8} flex={1} align="center">
                     <Stack spacing={6} w="full" maxW="xl">
@@ -181,6 +197,24 @@ const Project: React.FC<ProjectProps> = ({ title, subtitle, imageUrl, imageAlt, 
                             </Text>
                             <br />
                         </Heading>
+                        {employmentProject && (
+                            <Flex align="center" gap={3}>
+                                <Box
+                                    bg="orange.600"
+                                    color="white"
+                                    px={3}
+                                    py={1}
+                                    borderRadius="md"
+                                    fontSize="sm"
+                                    fontWeight="bold"
+                                >
+                                    Employment Project
+                                </Box>
+                                <Text fontSize="sm" color="gray.400">
+                                    Built during my time at Network Goods Institute
+                                </Text>
+                            </Flex>
+                        )}
                         <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
                             {subtitle}
                         </Text>

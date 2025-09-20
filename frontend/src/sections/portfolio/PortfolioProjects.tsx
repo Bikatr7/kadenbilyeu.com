@@ -25,6 +25,7 @@ import kudasai_logo from '../../assets/images/logos/projects/kudasai_logo.webp';
 import seisen_logo from '../../assets/images/logos/projects/seisen_logo.webp';
 import tltmi_logo from '../../assets/images/logos/projects/tltmi_logo.webp';
 import kai_logo from '../../assets/images/logos/projects/kai_logo.svg';
+import negation_game_logo from '../../assets/images/logos/projects/negation_game_logo.png';
 import kb_logo from '../../assets/images/personals/kb.webp';
 
 function PortfolioProjects() {
@@ -42,6 +43,18 @@ function PortfolioProjects() {
                 applicationCategory: 'Programming Language',
                 operatingSystem: 'Cross-platform',
                 programmingLanguage: ['Haskell'],
+                author: {
+                    '@type': 'Person',
+                    name: 'Kaden Bilyeu'
+                }
+            },
+            {
+                '@type': 'WebApplication',
+                name: 'Negation Game',
+                description: 'Discussion platform with economic incentives for intellectual honesty and epistemic accountability',
+                url: 'https://negationgame.com',
+                applicationCategory: 'Discussion Platform',
+                programmingLanguage: ['TypeScript', 'JavaScript'],
                 author: {
                     '@type': 'Person',
                     name: 'Kaden Bilyeu'
@@ -197,6 +210,54 @@ function PortfolioProjects() {
                     websiteUrl="https://bikatr7.github.io/Kai/"
                     githubUrl="https://github.com/Bikatr7/kai"
                     tags={["Open Source", "Haskell", "Programming Language", "Type System", "Parser", "Compiler", "Functional Programming", "Static Typing"]}
+                />
+                <Item
+                    title="Negation Game"
+                    dateRange="November 2024 - Present"
+                    sections={[
+                        {
+                            title: "Platform Overview",
+                            icon: <IconChartBar size={16} />,
+                            bgColor: "gray.700",
+                            textColor: "cyan.200",
+                            content: [
+                                { text: "Discussion platform with economic incentives for intellectual honesty", useBullet: true },
+                                { text: "Implements epistemic accountability through Cred, Favor, and commitment mechanisms", useBullet: true },
+                                { text: "Features: Points/Negations, Rationales, Spaces, AI Assistant, Collaborative editing", useBullet: true },
+                                { text: "Tech: Next.js, TypeScript, PostgreSQL, Yjs, Privy, Gemini AI, OpenAI", useBullet: true }
+                            ]
+                        },
+                        {
+                            title: "What It Does",
+                            icon: <IconTarget size={16} />,
+                            bgColor: "gray.750",
+                            textColor: "green.200",
+                            content: [
+                                { text: "Creates economic incentives for changing your mind when presented with evidence", useBullet: true },
+                                { text: "Rewards intellectual integrity through Restaking, Slashing, and Doubting mechanisms", useBullet: true },
+                                { text: "Enables structured reasoning through Rationales and organized argument trees", useBullet: true },
+                                { text: "Provides topic-focused discussion Spaces for communities and DAOs", useBullet: true }
+                            ]
+                        },
+                        {
+                            title: "My Contributions",
+                            icon: <IconInfoCircle size={16} />,
+                            content: [
+                                "I've been the lead full-stack developer on Negation Game since taking ownership in February 2024. This has been one of the most intellectually challenging and rewarding projects I've worked on.",
+                                "The core concept is fascinating: what if we could create a discussion platform where being wrong isn't embarrassing, but profitable? Where admitting you changed your mind based on evidence actually earns you resources?",
+                                "I've implemented the entire economic incentive system, the collaborative editing features using Yjs, the AI assistant integration, and the complex relationship system between Points and Negations.",
+                                "The technical challenges have been substantial - building a real-time collaborative platform with complex economic mechanics, while keeping the UX intuitive enough that people actually want to use it.",
+                                "We're constantly iterating on the game theory aspects, trying to find the right balance of incentives that promote genuine truth-seeking behavior rather than gaming the system.",
+                                "It's been an incredible learning experience in game theory, mechanism design, real-time systems, and building products that try to improve how humans reason together."
+                            ]
+                        }
+                    ]}
+                    imageUrl={negation_game_logo}
+                    imageAlt="Negation Game Logo"
+                    websiteUrl="https://negationgame.com"
+                    githubUrl="https://github.com/network-goods-institute/negation-game"
+                    tags={["Employment Project", "Next.js", "TypeScript", "PostgreSQL", "Yjs", "Game Theory", "Epistocracy", "Real-time", "AI Integration"]}
+                    employmentProject={true}
                 />
                 <Item
                     title="Kudasai"

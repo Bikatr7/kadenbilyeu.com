@@ -41,6 +41,7 @@ interface ProjectItemProps {
   githubUrl?: string;
   tags?: string[];
   useBulletPoints?: boolean;
+  employmentProject?: boolean;
 }
 
 const renderSectionContent = (content: (string | ContentLine)[], defaultUseBullet: boolean = false) => {
@@ -73,7 +74,8 @@ const Item: React.FC<ProjectItemProps> = (
     websiteUrl,
     githubUrl,
     tags,
-    useBulletPoints = true
+    useBulletPoints = true,
+    employmentProject = false
   }) => {
   // Convert legacy description to sections if needed
   const finalSections = sections || (description ? [{
@@ -92,6 +94,24 @@ const Item: React.FC<ProjectItemProps> = (
             <Text fontSize="xs" color="blue.300" mb={2}>
               {dateRange}
             </Text>
+            {employmentProject && (
+              <HStack spacing={2} mb={2}>
+                <Box
+                  bg="orange.600"
+                  color="white"
+                  px={2}
+                  py={1}
+                  borderRadius="md"
+                  fontSize="xs"
+                  fontWeight="bold"
+                >
+                  Employment Project
+                </Box>
+                <Text fontSize="xs" color="gray.400">
+                  Built during my time at Network Goods Institute
+                </Text>
+              </HStack>
+            )}
           </Box>
 
           {/* Sections */}
@@ -157,7 +177,7 @@ const Item: React.FC<ProjectItemProps> = (
               src={imageUrl}
               alt={imageAlt || title}
               boxSize="90px"
-              objectFit="cover"
+              objectFit="contain"
               borderRadius="full"
               border="3px solid"
               borderColor="gray.700"
