@@ -57,48 +57,42 @@ const BlogBackground: React.FC = () => {
             const width = parentElement.clientWidth;
             const height = parentElement.clientHeight;
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             const baseDotSpacing = 35;
             const time = animationTime;
-            const waveMultiplier = 0.005;
-            const waveAmplitude = 0.3;
 
-            // Batch path operations
-            ctx.beginPath();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             for (let x = 0; x < width; x += baseDotSpacing) {
                 for (let y = 0; y < height; y += baseDotSpacing) {
-                    const waveOffset = Math.sin(time + x * waveMultiplier + y * waveMultiplier) * waveAmplitude;
-                    const offsetX = x + waveOffset * 1.5;
-                    const offsetY = y + waveOffset * 1.5;
-                    const radius = 1 + waveOffset * 0.3;
+                    // Multi-layered wave patterns
+                    const primaryWave = Math.sin(time + x * 0.008 + y * 0.006) * 0.4;
+                    const secondaryWave = Math.cos(time * 0.7 + x * 0.004 + y * 0.003) * 0.3;
+                    const rippleEffect = Math.sin(time * 1.5 + Math.sqrt(x * x + y * y) * 0.01) * 0.2;
 
-                    // Use arc for each dot but batch the drawing
-                    ctx.moveTo(offsetX + Math.max(0.3, radius), offsetY);
-                    ctx.arc(offsetX, offsetY, Math.max(0.3, radius), 0, 6.283185307179586);
-                }
-            }
+                    // Combine wave effects
+                    const combinedWave = primaryWave + secondaryWave * 0.5 + rippleEffect * 0.3;
 
-            // Single fill operation for all dots
-            ctx.fillStyle = `rgba(128,128,128,0.5)`;
-            ctx.fill();
+                    // Floating motion
+                    const floatX = Math.sin(time * 0.5 + x * 0.002) * 2;
+                    const floatY = Math.cos(time * 0.3 + y * 0.003) * 1.5;
 
-            // Second pass for variable opacity dots
-            for (let x = 0; x < width; x += baseDotSpacing) {
-                for (let y = 0; y < height; y += baseDotSpacing) {
-                    const waveOffset = Math.sin(time + x * waveMultiplier + y * waveMultiplier) * waveAmplitude;
-                    const opacity = 0.5 + waveOffset * 0.3;
-                    const offsetX = x + waveOffset * 1.5;
-                    const offsetY = y + waveOffset * 1.5;
-                    const radius = 1 + waveOffset * 0.3;
+                    // Dynamic properties
+                    const opacity = 0.4 + combinedWave * 0.4 + Math.sin(time + x * 0.01) * 0.2;
+                    const size = 1 + combinedWave * 0.8 + Math.cos(time * 1.2 + y * 0.01) * 0.4;
+                    const finalX = x + combinedWave * 3 + floatX;
+                    const finalY = y + combinedWave * 2.5 + floatY;
 
-                    if (Math.abs(opacity - 0.5) > 0.1) {
-                        ctx.fillStyle = `rgba(128,128,128,${Math.max(0.3, opacity)})`;
-                        ctx.beginPath();
-                        ctx.arc(offsetX, offsetY, Math.max(0.3, radius), 0, 6.283185307179586);
-                        ctx.fill();
-                    }
+                    // Pulsing brightness
+                    const brightness = 128 + Math.sin(time * 2 + x * 0.02 + y * 0.015) * 30;
+
+                    // Gradient effect based on position
+                    const distanceFromCenter = Math.sqrt(Math.pow(x - width/2, 2) + Math.pow(y - height/2, 2));
+                    const gradientFactor = 1 - Math.min(distanceFromCenter / Math.max(width, height), 0.5);
+
+                    ctx.fillStyle = `rgba(${Math.floor(brightness)},${Math.floor(brightness)},${Math.floor(brightness)},${Math.max(0.1, Math.min(0.8, opacity * gradientFactor))})`;
+                    ctx.beginPath();
+                    ctx.arc(finalX, finalY, Math.max(0.3, size), 0, 6.283185307179586);
+                    ctx.fill();
                 }
             }
 
