@@ -209,10 +209,10 @@ migrate_database(engine)
 
 ##----------------------------------/----------------------------------##
 
-def get_envs() -> typing.Tuple[str, str, int, str, str, str, str]:
+def get_envs() -> typing.Tuple[str, str, int, str, str, str, str, bool]:
 
     """
-    
+
     Get the environment variables from the .env file
 
     Returns:
@@ -223,6 +223,7 @@ def get_envs() -> typing.Tuple[str, str, int, str, str, str, str]:
     SMTP_PASSWORD (str): The SMTP password to send the email
     FROM_EMAIL (str): The email address to send the email from
     TO_EMAIL (str): The email address to send the email to
+    ENABLE_BACKUP_EMAILS (bool): Whether to enable backup emails (default: True)
 
     """
 
@@ -240,6 +241,9 @@ def get_envs() -> typing.Tuple[str, str, int, str, str, str, str]:
     FROM_EMAIL = os.getenv('FROM_EMAIL') or ""
     TO_EMAIL = os.getenv('TO_EMAIL') or ""
 
+    ENABLE_BACKUP_EMAILS:str = os.getenv('ENABLE_BACKUP_EMAILS', 'true').lower()
+    enable_emails:bool = ENABLE_BACKUP_EMAILS not in ('false', '0', 'no', 'off', 'disabled')
+
     assert(ENCRYPTION_KEY != ""), "ENCRYPTION_KEY is required"
     assert(SMTP_SERVER != ""), "SMTP_SERVER is required"
     assert(SMTP_PORT != 0), "SMTP_PORT is required"
@@ -248,7 +252,7 @@ def get_envs() -> typing.Tuple[str, str, int, str, str, str, str]:
     assert(FROM_EMAIL != ""), "FROM_EMAIL is required"
     assert(TO_EMAIL != ""), "TO_EMAIL is required"
 
-    return ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL
+    return ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL, enable_emails
 
 ##-----------------------------------------start-of-backup----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -448,7 +452,7 @@ def perform_backup() -> None:
 
     """
 
-    ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL = get_envs()
+    ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL, enable_emails = get_envs()
 
     timestamp = datetime.now().strftime("%Y-%m-%d %H_%M_%S")
 
@@ -466,17 +470,20 @@ def perform_backup() -> None:
     encrypted_path = encrypt_file(compressed_path, ENCRYPTION_KEY)
     os.remove(compressed_path)
 
-    send_email(
-        subject=f'SQLite Database Backup ({timestamp})',
-        body='Please find the attached encrypted and compressed SQLite database backup. This email was sent automatically. Do not reply.\n\nNumber of blog posts: ' + str(number_of_blog_posts),
-        to_email=TO_EMAIL,
-        attachment_path=encrypted_path,
-        from_email=FROM_EMAIL,
-        smtp_server=SMTP_SERVER,
-        smtp_port=SMTP_PORT,
-        smtp_user=SMTP_USER,
-        smtp_password=SMTP_PASSWORD
-    )
+    if enable_emails:
+        send_email(
+            subject=f'SQLite Database Backup ({timestamp})',
+            body='Please find the attached encrypted and compressed SQLite database backup. This email was sent automatically. Do not reply.\n\nNumber of blog posts: ' + str(number_of_blog_posts),
+            to_email=TO_EMAIL,
+            attachment_path=encrypted_path,
+            from_email=FROM_EMAIL,
+            smtp_server=SMTP_SERVER,
+            smtp_port=SMTP_PORT,
+            smtp_user=SMTP_USER,
+            smtp_password=SMTP_PASSWORD
+        )
+    else:
+        print(f"Backup created but email not sent (ENABLE_BACKUP_EMAILS is disabled): {encrypted_path}")
 
     os.remove(encrypted_path)
 
@@ -515,6 +522,15 @@ def perform_backup_scheduled() -> None:
 ##----------------------------------/----------------------------------##
 
 def start_scheduler():
+    try:
+        ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL, enable_emails = get_envs()
+        if not enable_emails:
+            print("Backup scheduler disabled (ENABLE_BACKUP_EMAILS is set to false)")
+            return
+    except Exception as e:
+        print(f"Failed to get environment variables: {e}")
+        return
+
     max_retries = 5
     retry_delay = 3
 

@@ -47,7 +47,8 @@ def setup_local_environment() -> None:
         "SMTP_USER": "test",
         "SMTP_PASSWORD": "test",
         "FROM_EMAIL": "test",
-        "TO_EMAIL": "test"
+        "TO_EMAIL": "test",
+        "ENABLE_BACKUP_EMAILS": "true"
     }
 
 
@@ -71,7 +72,8 @@ def setup_local_environment() -> None:
                 "SMTP_USER=" + env_to_key_local["SMTP_USER"] + "\n" +
                 "SMTP_PASSWORD=" + env_to_key_local["SMTP_PASSWORD"] + "\n" +
                 "FROM_EMAIL=" + env_to_key_local["FROM_EMAIL"] + "\n" +
-                "TO_EMAIL=" + env_to_key_local["TO_EMAIL"] + "\n"
+                "TO_EMAIL=" + env_to_key_local["TO_EMAIL"] + "\n" +
+                "ENABLE_BACKUP_EMAILS=" + env_to_key_local["ENABLE_BACKUP_EMAILS"] + "\n"
             )
           
         else:
