@@ -9,14 +9,14 @@ import { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Text, Button, Flex, useToast, Spinner } from "@chakra-ui/react";
+import { Box, Text, Button, Flex, useToast } from "@chakra-ui/react";
 import { ArrowBackIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 
 // components
-import BlogBackground from "../components/BlogBackground";
 import EditPost from "../components/EditPost";
 import { getURL, parseSlugOrId, createSlug } from '../utils';
 import EmbedSEO from '../components/EmbedSEO';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 // markdown
 import ReactMarkdown from 'react-markdown';
@@ -27,6 +27,7 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 // context
 import { useTheme } from '../contexts/ThemeContext';
+import { useCache } from '../contexts/CacheContext';
 
 interface BlogPost {
     id: string;
@@ -47,11 +48,23 @@ const BlogPostPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [_, setIsLoading] = useState(false);
     const { isRetro } = useTheme();
+    const { getCache, setCache } = useCache();
 
     useEffect(() => {
         const fetchBlogPost = async () => {
             if (!id) return;
+
+            const cacheKey = `blogPost_${id}`;
+            const cachedData = getCache(cacheKey);
+
+            if (cachedData) {
+                setBlogPost(cachedData);
+                setError(null);
+                return;
+            }
+            setIsLoading(true);
 
             const token = localStorage.getItem('token');
             const headers: HeadersInit = {};
@@ -80,6 +93,9 @@ const BlogPostPage: React.FC = () => {
             const data = await response.json();
             setError(null);
             setBlogPost(data);
+
+            setCache(cacheKey, data, 5 * 60 * 1000); // 5 minutes
+            setIsLoading(false);
         };
         fetchBlogPost();
 
@@ -156,7 +172,7 @@ const BlogPostPage: React.FC = () => {
 
     return (
         <Box
-            bg="black"
+            bg="transparent"
             color={isRetro ? "purple.400" : "white"}
             minHeight="83vh"
             display="flex"
@@ -164,8 +180,6 @@ const BlogPostPage: React.FC = () => {
             position="relative"
             className={isRetro ? 'retro-mode' : ''}
         >
-            {!isRetro && <BlogBackground />}
-
             {blogPost && (
                 <EmbedSEO
                     title={`${blogPost.title} | Kaden Bilyeu's Blog`}
@@ -181,11 +195,18 @@ const BlogPostPage: React.FC = () => {
                 />
             )}
 
-            <Flex justify="space-between" p="1rem" bg="black">
+            <Box
+                position="sticky"
+                top="80px"
+                bg="transparent"
+                zIndex="99"
+                py="0.5rem"
+                ml={{ base: "0", md: "-2rem" }}
+                display={{ base: "none", md: "block" }}
+            >
                 <Button
                     leftIcon={<ArrowBackIcon />}
-                    as="a"
-                    href={getBackLink()}
+                    onClick={() => navigate(getBackLink())}
                     rounded={isRetro ? "none" : "full"}
                     border={isRetro ? "2px solid" : "none"}
                     borderColor="purple.400"
@@ -196,6 +217,26 @@ const BlogPostPage: React.FC = () => {
                         color: isRetro ? 'purple.400' : 'yellow',
                         transform: 'scale(1.01)'
                     }}
+                >
+                    Go Back
+                </Button>
+            </Box>
+
+            <Flex justify="space-between" p="1rem" bg="black">
+                <Button
+                    leftIcon={<ArrowBackIcon />}
+                    onClick={() => navigate(getBackLink())}
+                    rounded={isRetro ? "none" : "full"}
+                    border={isRetro ? "2px solid" : "none"}
+                    borderColor="purple.400"
+                    bg={isRetro ? "black" : undefined}
+                    color={isRetro ? "purple.200" : undefined}
+                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                    _hover={{
+                        color: isRetro ? 'purple.400' : 'yellow',
+                        transform: 'scale(1.01)'
+                    }}
+                    display={{ base: "flex", md: "none" }}
                 >
                     Go Back
                 </Button>
@@ -423,8 +464,7 @@ const BlogPostPage: React.FC = () => {
                                     {error}
                                 </Text>
                                 <Button
-                                    as="a"
-                                    href="/blog"
+                                    onClick={() => navigate('/blog')}
                                     rounded={isRetro ? "none" : "full"}
                                     border={isRetro ? "2px solid" : "none"}
                                     borderColor={isRetro ? "purple.400" : "transparent"}
@@ -440,20 +480,7 @@ const BlogPostPage: React.FC = () => {
                                 </Button>
                             </>
                         ) : (
-                            <>
-                                <Spinner
-                                    size="xl"
-                                    color={isRetro ? "purple.400" : "yellow"}
-                                    thickness="4px"
-                                />
-                                <Text
-                                    color={isRetro ? "purple.400" : "yellow"}
-                                    fontSize="lg"
-                                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                                >
-                                    Sorry for the wait, I don't pay for 100% uptime.
-                                </Text>
-                            </>
+                            <LoadingSpinner />
                         )}
                     </Flex>
                 )}

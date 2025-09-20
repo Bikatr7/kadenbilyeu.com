@@ -4,21 +4,21 @@
 
 // maintain allman bracket style for consistency
 
-// react 
+// react
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 // react
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Button, VStack, Text, Flex, Spinner } from "@chakra-ui/react";
+import { Box, Button, VStack, Text, Flex } from "@chakra-ui/react";
 import { ArrowBackIcon } from '@chakra-ui/icons';
 
 // components
 import Login from "../components/Login";
-import BlogBackground from "../components/BlogBackground";
 import EditPost from "../components/EditPost";
 import EmbedSEO from "../components/EmbedSEO";
+import LoadingSpinner from '../components/LoadingSpinner';
 
 // utils
 import { getURL, formatDate, createSlug } from '../utils';
@@ -36,6 +36,7 @@ interface BlogPost {
 
 const BlogDirectoryPage: React.FC = () => {
     const { isRetro } = useTheme();
+    const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -46,10 +47,24 @@ const BlogDirectoryPage: React.FC = () => {
     const fetchBlogPosts = useCallback(async () => {
         setIsLoading(true);
         try {
+            const cacheKey = 'blogDirectoryPosts';
+            const timestampKey = 'blogDirectoryPosts_timestamp';
+            const cachedData = localStorage.getItem(cacheKey);
+            const cacheTimestamp = localStorage.getItem(timestampKey);
+            const cacheExpiry = 3 * 60 * 1000; // 3 minutes for directory
+
+            if (cachedData && cacheTimestamp && Date.now() - parseInt(cacheTimestamp) < cacheExpiry) {
+                setBlogPosts(JSON.parse(cachedData));
+                setIsLoading(false);
+                return;
+            }
+
+
             const postsResponse = await fetch(getURL("/all-blogs"));
             const newPosts = await postsResponse.json();
             setBlogPosts(newPosts);
-            localStorage.setItem('blogDirectoryPosts', JSON.stringify(newPosts));
+            localStorage.setItem(cacheKey, JSON.stringify(newPosts));
+            localStorage.setItem(timestampKey, Date.now().toString());
             localStorage.setItem('blogDirectoryPostCount', newPosts.length.toString());
         }
         catch (error) {
@@ -136,7 +151,7 @@ const BlogDirectoryPage: React.FC = () => {
 
     return (
         <Box
-            bg="black"
+            bg="transparent"
             color={isRetro ? "purple.400" : "white"}
             minHeight="83vh"
             display="flex"
@@ -144,18 +159,23 @@ const BlogDirectoryPage: React.FC = () => {
             position="relative"
             className={isRetro ? 'retro-mode' : ''}
         >
-            {!isRetro && <BlogBackground />}
-
             <EmbedSEO
                 title={isRetro ? "Bikatr7's Blog Directory" : "Kaden Bilyeu's Blog Directory"}
                 description="View all blog posts in one place."
             />
 
-            <Flex justify="space-between" p="1rem" bg="black" flexWrap="wrap" gap="1rem">
+            <Box
+                position="sticky"
+                top="80px"
+                bg="transparent"
+                zIndex="99"
+                py="0.5rem"
+                ml={{ base: "0", md: "-2rem" }}
+                display={{ base: "none", md: "block" }}
+            >
                 <Button
                     leftIcon={<ArrowBackIcon />}
-                    as="a"
-                    href="/blog/"
+                    onClick={() => navigate('/blog')}
                     rounded={isRetro ? "none" : "full"}
                     border={isRetro ? "2px solid" : "none"}
                     borderColor="purple.400"
@@ -169,28 +189,37 @@ const BlogDirectoryPage: React.FC = () => {
                 >
                     Go Back
                 </Button>
-                {isLoggedIn ? (
-                    <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>Logout</Button>
-                ) : (
-                    <Login onLogin={handleLogin} onLogout={handleLogout} />
-                )}
+            </Box>
+
+            <Flex justify="space-between" p="1rem" bg="black" flexWrap="wrap" gap="1rem">
+                <Button
+                    leftIcon={<ArrowBackIcon />}
+                    onClick={() => navigate('/blog')}
+                    rounded={isRetro ? "none" : "full"}
+                    border={isRetro ? "2px solid" : "none"}
+                    borderColor="purple.400"
+                    bg={isRetro ? "black" : undefined}
+                    color={isRetro ? "purple.200" : undefined}
+                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                    _hover={{
+                        color: isRetro ? 'purple.400' : 'yellow',
+                        transform: 'scale(1.01)'
+                    }}
+                    display={{ base: "flex", md: "none" }}
+                >
+                    Go Back
+                </Button>
+                <Flex gap="1rem">
+                    {isLoggedIn ? (
+                        <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>Logout</Button>
+                    ) : (
+                        <Login onLogin={handleLogin} onLogout={handleLogout} />
+                    )}
+                </Flex>
             </Flex>
 
             {isLoading ? (
-                <Flex justify="center" align="center" flex="1" flexDirection="column" gap={4}>
-                    <Spinner
-                        size="xl"
-                        color={isRetro ? "purple.400" : "yellow"}
-                        thickness="4px"
-                    />
-                    <Text
-                        color={isRetro ? "purple.400" : "yellow"}
-                        fontSize="lg"
-                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                    >
-                        Sorry for the wait, I don't pay for 100% uptime.
-                    </Text>
-                </Flex>
+                <LoadingSpinner height="flex-1" />
             ) : (
                 <Box
                     flex="1"

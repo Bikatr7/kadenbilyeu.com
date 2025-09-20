@@ -6,17 +6,17 @@
 
 // react
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Button, VStack, Text, Flex, Spinner, useToast } from "@chakra-ui/react";
+import { Box, Button, VStack, Text, Flex, useToast } from "@chakra-ui/react";
 
 // components
-import BlogBackground from "../components/BlogBackground";
 import Login from "../components/Login";
 import MakePost from "../components/MakePost";
 import EditPost from "../components/EditPost";
 import EmbedSEO from '../components/EmbedSEO';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 // utils
 import { getURL, formatDate, createSlug } from '../utils';
@@ -24,8 +24,7 @@ import { getURL, formatDate, createSlug } from '../utils';
 // contexts
 import { useTheme } from '../contexts/ThemeContext';
 
-interface BlogPost 
-{
+interface BlogPost {
     id: string;
     title: string;
     created_at: string;
@@ -33,9 +32,9 @@ interface BlogPost
     content: string;
 }
 
-const BlogPage: React.FC = () => 
-{
+const BlogPage: React.FC = () => {
     const { isRetro } = useTheme();
+    const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -44,41 +43,47 @@ const BlogPage: React.FC = () =>
     const contextMenuRef = useRef<HTMLDivElement | null>(null);
     const toast = useToast();
 
-    const fetchBlogPosts = useCallback(async () => 
-    {
+    const fetchBlogPosts = useCallback(async () => {
         setIsLoading(true);
-        try 
-        {
+        try {
+            const cacheKey = 'blogPageBlogPosts';
+            const timestampKey = 'blogPageBlogPosts_timestamp';
+            const cachedData = localStorage.getItem(cacheKey);
+            const cacheTimestamp = localStorage.getItem(timestampKey);
+            const cacheExpiry = 2 * 60 * 1000; // 2 minutes for blog list
+
+            if (cachedData && cacheTimestamp && Date.now() - parseInt(cacheTimestamp) < cacheExpiry) {
+                setBlogPosts(JSON.parse(cachedData));
+                setIsLoading(false);
+                return;
+            }
+
             const postsResponse = await fetch(getURL("/latest-blogs?limit=5"));
             const newPosts = await postsResponse.json();
             setBlogPosts(newPosts);
-            localStorage.setItem('blogPageBlogPosts', JSON.stringify(newPosts));
+            localStorage.setItem(cacheKey, JSON.stringify(newPosts));
+            localStorage.setItem(timestampKey, Date.now().toString());
             localStorage.setItem('blogPagePostCount', newPosts.length.toString());
-        } 
-        catch (error) 
-        {
+        }
+        catch (error) {
             console.error("Error fetching blog data:", error);
-        } 
-        finally 
-        {
+        }
+        finally {
             setIsLoading(false);
         }
     }, []);
 
-    useEffect(() => 
-    {
+    useEffect(() => {
         fetchBlogPosts();
     }, [fetchBlogPosts]);
 
     const handleLogin = () => setIsLoggedIn(true);
-    const handleLogout = () => 
-    {
+    const handleLogout = () => {
         localStorage.removeItem('token');
         document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
         setIsLoggedIn(false);
     };
-    const handleNewPost = () => 
-    {
+    const handleNewPost = () => {
         fetchBlogPosts();
         toast({
             title: "New post created.",
@@ -89,10 +94,8 @@ const BlogPage: React.FC = () =>
         });
     };
 
-    const handleRightClick = (e: React.MouseEvent, postId: string) => 
-    {
-        if (isLoggedIn) 
-        {
+    const handleRightClick = (e: React.MouseEvent, postId: string) => {
+        if (isLoggedIn) {
             e.preventDefault();
             const linkElement = e.currentTarget as HTMLElement;
             const rect = linkElement.getBoundingClientRect();
@@ -100,92 +103,77 @@ const BlogPage: React.FC = () =>
         }
     };
 
-    const handleClickOutside = (e: MouseEvent) => 
-    {
-        if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) 
-        {
+    const handleClickOutside = (e: MouseEvent) => {
+        if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
             setContextMenu({ x: 0, y: 0, postId: null });
         }
     };
 
-    const handleMouseLeave = () => 
-    {
+    const handleMouseLeave = () => {
         setContextMenu({ x: 0, y: 0, postId: null });
     };
 
-    useEffect(() => 
-    {
+    useEffect(() => {
         document.addEventListener('click', handleClickOutside);
-        return () => 
-        {
+        return () => {
             document.removeEventListener('click', handleClickOutside);
         };
     }, []);
 
-    const handleDelete = async (postId: string) => 
-    {
-        try 
-        {
+    const handleDelete = async (postId: string) => {
+        try {
             const token = localStorage.getItem('token');
-            const response = await fetch(getURL(`/blog/${postId}`), 
-            {
-                method: 'DELETE',
-                headers: 
+            const response = await fetch(getURL(`/blog/${postId}`),
                 {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+                    method: 'DELETE',
+                    headers:
+                    {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
 
-            if (response.ok) 
-            {
+            if (response.ok) {
                 fetchBlogPosts();
-                setContextMenu({ x: 0, y: 0, postId: null }); 
-            } 
-            else 
-            {
+                setContextMenu({ x: 0, y: 0, postId: null });
+            }
+            else {
                 const errorData = await response.json();
                 console.error("Error deleting blog post:", errorData.detail);
             }
-        } 
-        catch (error) 
-        {
+        }
+        catch (error) {
             console.error("An error occurred while deleting the blog post:", error);
         }
     };
 
-    const handleEditPost = () => 
-    {
+    const handleEditPost = () => {
         fetchBlogPosts();
         setEditingPost(null);
-        setContextMenu({ x: 0, y: 0, postId: null }); 
+        setContextMenu({ x: 0, y: 0, postId: null });
     };
 
-    const handleCloseEditPost = () => 
-    {
+    const handleCloseEditPost = () => {
         setEditingPost(null);
-        setContextMenu({ x: 0, y: 0, postId: null }); 
+        setContextMenu({ x: 0, y: 0, postId: null });
     };
 
-    const handleFileUpload = async (file: File) => 
-    {
+    const handleFileUpload = async (file: File) => {
         const formData = new FormData();
         formData.append('file', file);
         const token = localStorage.getItem('token');
 
-        try 
-        {
-            const response = await fetch(getURL('/replace-database/'), 
-            {
-                method: 'POST',
-                headers: 
+        try {
+            const response = await fetch(getURL('/replace-database/'),
                 {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
+                    method: 'POST',
+                    headers:
+                    {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
 
-            if (response.ok) 
-            {
+            if (response.ok) {
                 console.log('Database replaced successfully');
                 toast({
                     title: "Database replaced.",
@@ -194,9 +182,8 @@ const BlogPage: React.FC = () =>
                     duration: 5000,
                     isClosable: true,
                 });
-            } 
-            else 
-            {
+            }
+            else {
                 const errorData = await response.json();
                 console.error('Error replacing database:', errorData.detail);
                 toast({
@@ -207,9 +194,8 @@ const BlogPage: React.FC = () =>
                     isClosable: true,
                 });
             }
-        } 
-        catch (error) 
-        {
+        }
+        catch (error) {
             console.error('An error occurred while uploading the file:', error);
             toast({
                 title: "Error replacing database.",
@@ -221,32 +207,27 @@ const BlogPage: React.FC = () =>
         }
     };
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => 
-    {
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if (file) 
-        {
+        if (file) {
             handleFileUpload(file);
         }
     };
 
-    const handleForceBackup = async () => 
-    {
+    const handleForceBackup = async () => {
         const token = localStorage.getItem('token');
 
-        try 
-        {
-            const response = await fetch(getURL('/force-backup'), 
-            {
-                method: 'POST',
-                headers: 
+        try {
+            const response = await fetch(getURL('/force-backup'),
                 {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+                    method: 'POST',
+                    headers:
+                    {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
 
-            if (response.ok) 
-            {
+            if (response.ok) {
                 console.log('Backup forced successfully');
                 toast({
                     title: "Backup forced.",
@@ -255,9 +236,8 @@ const BlogPage: React.FC = () =>
                     duration: 5000,
                     isClosable: true,
                 });
-            } 
-            else 
-            {
+            }
+            else {
                 const errorData = await response.json();
                 console.error('Error forcing backup:', errorData.detail);
                 toast({
@@ -268,9 +248,8 @@ const BlogPage: React.FC = () =>
                     isClosable: true,
                 });
             }
-        } 
-        catch (error) 
-        {
+        }
+        catch (error) {
             console.error('An error occurred while forcing the backup:', error);
             toast({
                 title: "Error forcing backup.",
@@ -283,19 +262,17 @@ const BlogPage: React.FC = () =>
     };
 
     return (
-        <Box 
-            bg="black" 
-            color={isRetro ? "purple.400" : "white"} 
-            minHeight="83vh" 
-            display="flex" 
-            flexDirection="column" 
-            alignItems="center" 
-            position="relative" 
+        <Box
+            bg="transparent"
+            color={isRetro ? "purple.400" : "white"}
+            minHeight="83vh"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            position="relative"
             overflow="hidden"
             className={isRetro ? 'retro-mode' : ''}
         >
-            {!isRetro && <BlogBackground />}
-
             <EmbedSEO
                 title={isRetro ? "Bikatr7's Blog" : "Kaden Bilyeu's Blog"}
                 description="Explore Kaden Bilyeu's latest blog posts on various topics including technology, programming, personal projects, and more."
@@ -307,14 +284,14 @@ const BlogPage: React.FC = () =>
                 {isLoggedIn ? (
                     <>
                         <MakePost onPost={handleNewPost} />
-                        <Button 
-                            onClick={handleForceBackup} 
+                        <Button
+                            onClick={handleForceBackup}
                             rounded={isRetro ? "none" : "full"}
                             border={isRetro ? "2px solid" : "none"}
                             borderColor="purple.400"
                             bg={isRetro ? "black" : undefined}
-                            _hover={{ 
-                                color: isRetro ? 'purple.400' : 'yellow', 
+                            _hover={{
+                                color: isRetro ? 'purple.400' : 'yellow',
                                 transform: 'scale(1.01)'
                             }}
                         >
@@ -334,20 +311,7 @@ const BlogPage: React.FC = () =>
             </Flex>
 
             {isLoading ? (
-                <Flex justifyContent="center" alignItems="center" height="60vh" flexDirection="column" gap={4}>
-                    <Spinner 
-                        size="xl" 
-                        color={isRetro ? "purple.400" : "yellow"} 
-                        thickness="4px" 
-                    />
-                    <Text 
-                        color={isRetro ? "purple.400" : "yellow"} 
-                        fontSize="lg"
-                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                    >
-                        Sorry for the wait, I don't pay for 100% uptime.
-                    </Text>
-                </Flex>
+                <LoadingSpinner />
             ) : (
                 <>
                     <Box
@@ -375,25 +339,25 @@ const BlogPage: React.FC = () =>
                                             align="center"
                                             width="100%"
                                             p="0.5rem"
-                                            _hover={{ 
-                                                backgroundColor: isRetro ? 'rgba(147, 51, 234, 0.1)' : 'rgba(255, 255, 255, 0.1)', 
-                                                cursor: 'pointer' 
+                                            _hover={{
+                                                backgroundColor: isRetro ? 'rgba(147, 51, 234, 0.1)' : 'rgba(255, 255, 255, 0.1)',
+                                                cursor: 'pointer'
                                             }}
                                             transition="background-color 0.2s"
                                             flexDirection={["column", "row"]}
                                             gap={["0.5rem", "0"]}
                                         >
-                                            <Text 
-                                                fontSize={["lg", "xl"]} 
-                                                color={isRetro ? "purple.400" : "yellow"} 
-                                                isTruncated 
+                                            <Text
+                                                fontSize={["lg", "xl"]}
+                                                color={isRetro ? "purple.400" : "yellow"}
+                                                isTruncated
                                                 width={["100%", "auto"]}
                                                 fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                                             >
                                                 {post.title}
                                             </Text>
-                                            <Text 
-                                                fontSize="sm" 
+                                            <Text
+                                                fontSize="sm"
                                                 color={isRetro ? "purple.200" : "gray.300"}
                                                 whiteSpace="nowrap"
                                                 fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
@@ -405,8 +369,8 @@ const BlogPage: React.FC = () =>
                                 ))
                             ) : (
                                 <Flex justify="center" align="center" height="100%">
-                                    <Text 
-                                        fontSize="xl" 
+                                    <Text
+                                        fontSize="xl"
                                         color={isRetro ? "purple.400" : "yellow"}
                                         fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                                     >
@@ -418,16 +382,15 @@ const BlogPage: React.FC = () =>
                     </Box>
 
                     <Button
-                        as="a"
-                        href="/blog/directory"
+                        onClick={() => navigate('/blog/directory')}
                         rounded={isRetro ? "none" : "full"}
                         border={isRetro ? "2px solid" : "none"}
                         borderColor="purple.400"
                         bg={isRetro ? "black" : undefined}
                         color={isRetro ? "purple.200" : undefined}
                         fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                        _hover={{ 
-                            color: isRetro ? 'purple.400' : 'yellow', 
+                        _hover={{
+                            color: isRetro ? 'purple.400' : 'yellow',
                             transform: 'scale(1.01)'
                         }}
                         mt="2rem"
@@ -464,10 +427,9 @@ const BlogPage: React.FC = () =>
                         <Text
                             cursor="pointer"
                             _hover={{ color: 'yellow' }}
-                            onClick={() => 
-                            {
+                            onClick={() => {
                                 handleDelete(contextMenu.postId!);
-                                setContextMenu({ x: 0, y: 0, postId: null }); 
+                                setContextMenu({ x: 0, y: 0, postId: null });
                             }}
                         >
                             Delete
@@ -480,7 +442,7 @@ const BlogPage: React.FC = () =>
                 <EditPost
                     postId={editingPost.id}
                     onEdit={handleEditPost}
-                    onClose={handleCloseEditPost} 
+                    onClose={handleCloseEditPost}
                     initialTitle={editingPost.title}
                     initialContent={editingPost.content}
                     initialAuthor={editingPost.author}

@@ -5,14 +5,15 @@
 // maintain allman bracket style for consistency
 
 // react
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Outlet, useLocation } from 'react-router-dom';
 
 // chakra-ui
-import { Container } from '@chakra-ui/react';
+import { Container, Box } from '@chakra-ui/react';
 
 // components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import BlogBackground from './components/BlogBackground';
 
 // pages
 import HomePage from './pages/HomePage';
@@ -22,12 +23,18 @@ import BlogDirectoryPage from './pages/BlogDirectoryPage';
 import PortfolioPage from './pages/PortfolioPage';
 
 function Layout() {
+    const location = useLocation();
+    const isBlogPage = location.pathname.startsWith('/blog');
+
     return (
         <>
             <Navbar />
-            <Container maxW="6xl" flex="1">
-                <Outlet />
-            </Container>
+            <Box position="relative" flex="1" zIndex="1" overflow="hidden">
+                {isBlogPage && <BlogBackground />}
+                <Container maxW="6xl" flex="1" position="relative" zIndex="2">
+                    <Outlet />
+                </Container>
+            </Box>
             <Footer />
         </>
     );

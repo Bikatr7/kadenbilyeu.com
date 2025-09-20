@@ -22,6 +22,7 @@ import GlobalSEO from './components/GlobalSEO.tsx';
 
 import Router from './Router.tsx';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { CacheProvider } from './contexts/CacheContext';
 import { isBikatr7URL } from './utils';
 
 function App() {
@@ -42,23 +43,25 @@ function App() {
     };
 
     return (
-        <ThemeProvider>
-            <HelmetProvider>
-                <ChakraProvider theme={theme}>
-                    <GlobalSEO />
-                    <Box bg="black" minH="100vh" display="flex" flexDirection="column">
-                        {!isBikatr7 && isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
-                        {(isBikatr7 || !isLoading) && (
-                            <Router
-                                showContent={showContent}
-                                toggleContent={toggleContent}
-                                contentLoaded={contentLoaded}
-                            />
-                        )}
-                    </Box>
-                </ChakraProvider>
-            </HelmetProvider>
-        </ThemeProvider>
+        <CacheProvider>
+            <ThemeProvider>
+                <HelmetProvider>
+                    <ChakraProvider theme={theme}>
+                        <GlobalSEO />
+                        <Box bg="black" minH="100vh" display="flex" flexDirection="column">
+                            {!isBikatr7 && isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
+                            {(isBikatr7 || !isLoading) && (
+                                <Router
+                                    showContent={showContent}
+                                    toggleContent={toggleContent}
+                                    contentLoaded={contentLoaded}
+                                />
+                            )}
+                        </Box>
+                    </ChakraProvider>
+                </HelmetProvider>
+            </ThemeProvider>
+        </CacheProvider>
     );
 }
 
