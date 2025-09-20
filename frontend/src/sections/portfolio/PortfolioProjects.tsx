@@ -55,6 +55,17 @@ function PortfolioProjects() {
                 programmingLanguage: ['TypeScript', 'Python']
             },
             {
+                '@type': 'WebSite',
+                name: 'kakusui.org',
+                description: 'LLC website hosting translation tools and services',
+                url: 'https://kakusui.org',
+                author: {
+                    '@type': 'Person',
+                    name: 'Kaden Bilyeu'
+                },
+                programmingLanguage: ['TypeScript', 'Python']
+            },
+            {
                 '@type': 'SoftwareApplication',
                 name: 'EasyTL',
                 description: 'Translation API wrapper library',
@@ -65,10 +76,57 @@ function PortfolioProjects() {
                     '@type': 'Person',
                     name: 'Kaden Bilyeu'
                 }
+            },
+            {
+                '@type': 'SoftwareApplication',
+                name: 'TLTMI',
+                description: 'Local translation pipeline using Hugging Face models',
+                url: 'https://github.com/Kakusui/TLTMI',
+                applicationCategory: 'Translation Software',
+                programmingLanguage: ['Python'],
+                author: {
+                    '@type': 'Person',
+                    name: 'Kaden Bilyeu'
+                }
+            },
+            {
+                '@type': 'SoftwareApplication',
+                name: 'Kairyou',
+                description: 'Japanese text preprocessor for translation and NLP tasks',
+                url: 'https://github.com/bikatr7/kairyou',
+                applicationCategory: 'Software Library',
+                programmingLanguage: ['Python'],
+                author: {
+                    '@type': 'Person',
+                    name: 'Kaden Bilyeu'
+                }
+            },
+            {
+                '@type': 'SoftwareApplication',
+                name: 'Seisen',
+                description: 'Japanese language learning application with spaced repetition',
+                url: 'https://github.com/Bikatr7/seisen',
+                applicationCategory: 'Educational Software',
+                programmingLanguage: ['Python'],
+                author: {
+                    '@type': 'Person',
+                    name: 'Kaden Bilyeu'
+                }
+            },
+            {
+                '@type': 'SoftwareApplication',
+                name: 'Elucidate',
+                description: 'LLM-based translation evaluation and revision tool',
+                url: 'https://github.com/Kakusui/Elucidate',
+                applicationCategory: 'Software Library',
+                programmingLanguage: ['Python'],
+                author: {
+                    '@type': 'Person',
+                    name: 'Kaden Bilyeu'
+                }
             }
         ]
     };
-
     return (
         <Box>
             <Helmet>
@@ -88,7 +146,7 @@ function PortfolioProjects() {
                         "A lot of my projects connect back to Translation and Japanese in some way which you'll see.",
                         "Datelines are also subjective, as I consider maintaining being something I still work on. I don't really abandon projects that often.",
                         "If you need translate Japanese and want to JE check (term for people checking the accuracy of a machine translation output) it well. Use Kudasai.",
-                        "I'll come back to this soon, currently working on a way to translate locally (no other people's apis) and will soon add Anthropic's Claude."
+                        "I really wish I had the need to completely redesign it from the ground up, but it's just not there. It works well for what it is, and eventually Kudasai will become something that just isn't needed anymore."
                     ]}
                     imageUrl={kudasai_logo}
                     imageAlt="Kudasai Logo"
@@ -102,7 +160,8 @@ function PortfolioProjects() {
                     dateRange="June 2024 - Present"
                     description={[
                         "This is my personal website, the one you're on right now. I'm very proud of this as well. It's funny because I made it solely out of spite because my friends said my old GitHub pages site was ugly (to be fair it was).",
-                        "It's fairly simple, blog backend, static frontend. Not much to say."
+                        "It's fairly simple, blog backend, static frontend. Not much to say.",
+                        "I did it with React, TypeScript, Vite, Python, FastAPI, Docker, and sqlite. It's a pretty simple stack and it's a cute website."
                     ]}
                     imageUrl={kb_logo}
                     imageAlt="Kaden Bilyeu Logo"
@@ -117,8 +176,9 @@ function PortfolioProjects() {
                     description={[
                         "This is the website for my LLC, Kakusui LLC. It was created for the sole purpose for me to well, have an LLC and structure my projects around Translation.",
                         "Currently, it mostly just hosts BYOK methods for my other creations, those being EasyTL, Kairyou, and Elucidate.",
-                        "At some point, I want to expand upon it further, maybe turn it into something of a SaaS Lite, where it looks nicer and offers paid translation features.",
-                        "BYOK will always be free of course, and hosting costs are completely negligible for me. But having a way to provide paid translation features is something I'd like to do.",
+                        "At some point, I want to expand upon it further, maybe turn it into something of a SaaS Lite, where it looks nicer and offers paid translation features. I sort of did it but like, there's no real market or use for it.",
+                        "BYOK will always be free of course, and hosting costs are completely negligible for me. But having a way to provide paid translation features is something cool even if it's not really used.",
+                        "If i ever have the time I'll train my own translation model and do some cool things under the Kakusui umbrella, but again, I don't have the time."
                     ]}
                     imageUrl={kakusui_logo}
                     imageAlt="Kakusui Logo"
@@ -135,7 +195,9 @@ function PortfolioProjects() {
                         "That project was Kudasai, and at a certain point EasyTL was realized.",
                         "Basically, it's like 6 different API's (3 strictly translation, and 3 LLM ones) wrapped together and made consistent with each other by streamlining the logic and adding more features.",
                         "So in the end, it was a customizable translation tool, you wouldn't be limited to strictly one API, and with the LLM ones translation becomes truly unique I feel.",
-                        "You can't really tell something like google translate or deepl to translate something in a certain way, but with LLM's you can. I feel that is a big part of the future of translation."
+                        "You can't really tell something like google translate or deepl to translate something in a certain way, but with LLM's you can. I feel that is a big part of the future of translation.",
+                        "At a certain point Kudasai became so messy and I realized I wanted the translation logic for other projects so I stole it from myself, and put it in EasyTL.",
+                        "I won't pretend it's anything totally special or unique but it's pretty cool and I'm proud of it."
                     ]}
                     imageUrl={easytl_logo}
                     imageAlt="EasyTL Logo"
@@ -146,12 +208,14 @@ function PortfolioProjects() {
                 />
                 <Item
                     title="TLTMI"
-                    dateRange="August 2024 - Present"
+                    dateRange="August 2024 - January 2025"
                     description={[
                         "This is that local translation thing I was talking about earlier, it's still a work in progress and I don't really know how it will turn out yet.",
                         "But basically, we set up a lightweight FastAPI Docker container that uses models from the Huggingface Transformers python library, and we can translate using those.",
                         "Think of it as a mini translation pipeline, currently it uses Helsinki-NLP's opus-mt batch of models.",
-                        "That's all I really want to target, I don't really have much time right now so I'm trying to allocate it everywhere which leads to slow progress on my own."
+                        "That's all I really want to target, I don't really have much time right now so I'm trying to allocate it everywhere which leads to slow progress on my own.",
+                        "I paused it as of January 2025, as frankly by the time I was able to put work on it, Translation by LLMs doesn't really need custom tools like this anymore.",
+                        "I hoped on this boat fairly early in 2023, but I think it's safe to say translation by humans is going to be near dead soon."
                     ]}
                     imageUrl={tltmi_logo}
                     imageAlt="TLTMI Logo"
@@ -163,10 +227,14 @@ function PortfolioProjects() {
                     title="Kairyou"
                     dateRange="December 2023 - Present"
                     description={[
-                        "Oh Kairyou, it'll always have a special place in my heart. It was originally just the Kudasai script.",
+                        "Oh Kairyou, it'll always have a special place in my heart. It was originally just the original Kudasai script I inherited.",
                         "I can't take full credit with most of my things, but the originally Kudasai script was actually called Onegai, and was made by a very smart person named Void.",
                         "Back then I didn't really understand git, so I kinda just took it, and made it my own repository instead of forking it properly. I regret that, but thankfully I refactored and changed it enough that I can call it my own.",
-                        "Just like EasyTL, it's a library that originated from Kudasai, but it's also a standalone library that can be used to preprocess Japanese text for translation or other NLP tasks."
+                        "Just like EasyTL, it's a library that originated from Kudasai, but it's also a standalone thing that can be used to preprocess Japanese text for translation or other NLP tasks.",
+                        "Back when I first got it, it was basically just a fancy string.replace() iterator that ingested a json, but nowadays it's a lot more powerful and can do a lot more things.",
+                        "I built the NER/NLP stuff myself on top of it, I talked with a few friends as we were troubleshooting on how to deal with katakana, since if you're not familiar with Japanese it's pretty commonly used with names but it's not something that's easily to programmatically analyze",
+                        "Like sure, a human can look at it and be like 'oh that's a name', but it's not something that a computer can easily do. If you try to bulk replace things you'll end up replacing a lot of things you don't want to replace.",
+                        "NER/NLP fixes most of that with normal Japanese, but Katakana is like, well for lack of a better word, bullshit. So you can only do so much with it."
                     ]}
                     imageUrl={kairyou_logo}
                     imageAlt="Kairyou Logo"
@@ -181,7 +249,10 @@ function PortfolioProjects() {
                     description={[
                         "Seisen was my first true project. Sadly most of it's history is not on GitHub as I was a dumb kid iterating on IDLE of all things.",
                         "This was what I used to train myself on Japanese. It's basically a worse Anki. I don't really work on it anymore, and nobody else really uses it. So I have shelved it.",
-                        "But hey, it taught me a lot about Python and I'll always be grateful for that."
+                        "But hey, it taught me a lot about Python and I'll always be grateful for that.",
+                        "In short it was basically just a really fancy loop around a sort of interface to MySQL. It had it's own scheduler and used something similar to spaced repetition to schedule reviews, with a scoring system on the side to poke things in a different way.",
+                        "The bulk majority of my initial programming knowledge was from Seisen, and I'll always be grateful for that.",
+                        "Still fun to use as it does work, but... at this point I just use Anki."
                     ]}
                     imageUrl={seisen_logo}
                     imageAlt="Seisen Logo"
@@ -193,12 +264,13 @@ function PortfolioProjects() {
                     title="Elucidate"
                     dateRange="June 2024 - July 2024"
                     description={[
-                        "Elucidate is.. complicated. I wanted it to be something that could support EasyTL and maybe Kudasai, but I don't think my programming skills are good enough to build what I envisioned.",
+                        "Elucidate is.. complicated. I wanted it to be something that could support EasyTL and maybe Kudasai, but I don't think my programming skills are good enough to build what I envisioned, at least at the time since I have revisited it in over a year at the time of updating this (September 2025). I probably could but I don't have the time or interest anymore.",
                         "I wanted it to be a way for LLMs to self-evaluate their translations. Basically you have something like EasyTL translate some text, and then send it to Elucidate to see how accurate it is and revise it.",
                         "But at a certain point I decided to reuse EasyTL application code by utilizing Protocols. This would work by bootstrapping new functions onto the EasyTL package at runtime, and then ELucidate would use the modified EasyTL under the hood.",
                         "But then it occurred to me that this was pointless, I could just modify EasyTL at this point. So I dropped it.",
-                        "It's technically a functioning product, but it's not what I wanted. Currently I feel like it would do better with a new codebase and agentic code. But I am still new to that world and do not have the time outside of school and work to research it.", 
-                        "One day, I will come back to it."
+                        "I also wanted it to be agentic and function sort of like a code interpreter, in the end it just wasn't worth the time or effort.",
+                        "It's technically a functioning product, but it's not what I wanted. Currently I feel like it would do better with a new codebase and agentic code. But I am still new to that world and do not have the time outside of school and work to research it.",
+                        "One day, I will come back to it. (TM)"
                     ]}
                     imageUrl={elucidate_logo}
                     imageAlt="Elucidate Logo"

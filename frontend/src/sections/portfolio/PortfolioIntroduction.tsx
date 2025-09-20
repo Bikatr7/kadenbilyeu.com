@@ -31,10 +31,10 @@ function PortfolioIntroduction() {
                             <br />
                         </Heading>
                         <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                            Computer science senior at the University of Colorado Colorado Springs looking to utilize my skills on AI/ML, LLMs, data science, full stack and NER/NLP into software for real-world applications.
+                            Computer science senior at the University of Colorado Colorado Springs looking to utilize my skills in Cyber, AI/ML, LLMs, data science, full stack and NER/NLP into software for real-world applications.
                         </Text>
                         <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                            Eligible for security clearance. U.S. Citizen.
+                            Eligible for security clearance. Proud U.S. Citizen.
                         </Text>
                     </Stack>
                 </Flex>
@@ -47,7 +47,7 @@ function PortfolioIntroduction() {
                 I like to think of it as an expanded, digital version of my resume. Resume's are great, but they're stuffy, not reactive, and don't leave room for creativity. This allows me to say and show what I want.
             </Text>
             <Text fontSize="md" marginBottom="4" color="gray.500">
-                If you're looking for something strictly professional, you can download my resume with that button in the top right.
+                If you're looking for something strictly professional, you can download my resume with that button in the top right. This isn't going to be really strictly professional or formal at all, and it may come across as yapping a bit, but that is my goal here for this page at least.
             </Text>
         </Box>
     );

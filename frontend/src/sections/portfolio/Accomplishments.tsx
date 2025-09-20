@@ -10,8 +10,7 @@ import { Box, Text } from "@chakra-ui/react";
 // components
 import { Card, Item } from "../../components/Card";
 
-function Accomplishments()
-{
+function Accomplishments() {
     return (
         <Box>
             <Text fontSize="md" marginBottom="4" color="gray.500">
@@ -33,7 +32,8 @@ function Accomplishments()
                     description={[
                         "I entered Kudasai into the Backdrop Build v3 contest and made it to the finalists.",
                         "It was a fun experience and It gave me a lot of motivation to keep working on Kudasai.",
-                        "I got to meet a lot of cool people and got some connections in the industry which was pretty cool."
+                        "I got to meet a lot of cool people and got some connections in the industry which was pretty cool.",
+                        "It was basically my first hackathon experience and while I can't say too much came out about it, it was a lot of fun."
                     ]}
                     websiteUrl="https://backdropbuild.com/builds/kudasai"
                     useBulletPoints={false}

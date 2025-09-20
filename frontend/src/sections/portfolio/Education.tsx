@@ -25,8 +25,7 @@ function Education() {
                         "I've attended UCCS for a bit over 3 years now and have been working towards my degree in Computer Science. I'm expected to graduate in May 2026.",
                         "Also I am working towards a minor in Japanese.",
                         "I'm currently a member of the Association for Computing Machinery (ACM), I became an officer in the fall of 2024.",
-                        "Along with my minor, I am focusing in a cybersecurity track. Although a lot of my relevant experience is more in AI/ML or general software engineering which is self-taught.",
-                        "I started doing undergraduate research in June of 2025, frankly I don't have much to say about it yet."
+                        "Along with my minor, I am focusing in a cybersecurity track. Although a lot of my relevant experience is more in AI/ML or general software engineering which is self-taught."
                     ]}
                     imageUrl={uccs_logo}
                     imageAlt="UCCS Logo"
@@ -39,6 +38,7 @@ function Education() {
                         "I graduated from Pine Creek High School in May 2022.",
                         "I took a few AP classes here, mostly related to computer science. I did manage to score a 5 on the AP Computer Science Principles exam.",
                         "I was a member of DECA for two years, and I was in the speech and debate club for one year.",
+                        "No one particularly cares about high school really, so i won't pretend it was anything special. I was frankly a mid student as I did the bare minimum to get by and spent my time doing stuff I enjoyed like programming, playing games, and being a nerd."
                     ]}
                     imageUrl={pchs_logo}
                     imageAlt="Pine Creek High School Logo"
