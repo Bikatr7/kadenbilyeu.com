@@ -18,6 +18,7 @@ from utils import start_scheduler, get_url
 from routes.auth import router as auth_router
 from routes.blog import router as blog_router
 from routes.admin import router as admin_router
+from routes.webauthn import router as webauthn_router
 
 app = FastAPI()
 
@@ -71,6 +72,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(blog_router)
 app.include_router(admin_router)
+app.include_router(webauthn_router)
 
 ## Root endpoint
 @app.get("/")

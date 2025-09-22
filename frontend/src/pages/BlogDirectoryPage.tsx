@@ -167,59 +167,47 @@ const BlogDirectoryPage: React.FC = () => {
                 description="View all blog posts in one place."
             />
 
-            <Box
-                position="sticky"
-                top="80px"
-                bg="transparent"
-                zIndex="99"
-                py="0.5rem"
-                ml={{ base: "0", md: "-2rem" }}
-                display={{ base: "none", md: "block" }}
-            >
-                <Button
-                    leftIcon={<ArrowBackIcon />}
-                    onClick={() => navigate('/blog')}
-                    rounded={isRetro ? "none" : "full"}
-                    border={isRetro ? "2px solid" : "none"}
-                    borderColor="purple.400"
-                    bg={isRetro ? "black" : undefined}
-                    color={isRetro ? "purple.200" : undefined}
-                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                    _hover={{
-                        color: isRetro ? 'purple.400' : 'yellow',
-                        transform: 'scale(1.01)'
-                    }}
-                >
-                    Go Back
-                </Button>
-            </Box>
+            {/* Header Bar */}
+            <Box bg="black" p="1rem" borderBottom="1px solid" borderColor={isRetro ? "purple.400" : "darkgrey"}>
+                <Flex justify="space-between" align="center" flexWrap="wrap" gap="1rem">
+                    {/* Left side - Back button and title */}
+                    <Flex align="center" gap="1rem" flexWrap="wrap">
+                        <Button
+                            leftIcon={<ArrowBackIcon />}
+                            onClick={() => navigate('/blog')}
+                            rounded={isRetro ? "none" : "full"}
+                            border={isRetro ? "2px solid" : "none"}
+                            borderColor="purple.400"
+                            bg={isRetro ? "black" : undefined}
+                            color={isRetro ? "purple.200" : undefined}
+                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                            _hover={{
+                                color: isRetro ? 'purple.400' : 'yellow',
+                                transform: 'scale(1.01)'
+                            }}
+                        >
+                            Go Back
+                        </Button>
+                        <Text
+                            fontSize="lg"
+                            color={isRetro ? "purple.400" : "white"}
+                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                            fontWeight="bold"
+                        >
+                            Blog Directory
+                        </Text>
+                    </Flex>
 
-            <Flex justify="space-between" p="1rem" bg="black" flexWrap="wrap" gap="1rem">
-                <Button
-                    leftIcon={<ArrowBackIcon />}
-                    onClick={() => navigate('/blog')}
-                    rounded={isRetro ? "none" : "full"}
-                    border={isRetro ? "2px solid" : "none"}
-                    borderColor="purple.400"
-                    bg={isRetro ? "black" : undefined}
-                    color={isRetro ? "purple.200" : undefined}
-                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                    _hover={{
-                        color: isRetro ? 'purple.400' : 'yellow',
-                        transform: 'scale(1.01)'
-                    }}
-                    display={{ base: "flex", md: "none" }}
-                >
-                    Go Back
-                </Button>
-                <Flex gap="1rem">
-                    {isLoggedIn ? (
-                        <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>Logout</Button>
-                    ) : (
-                        <Login onLogin={handleLogin} onLogout={handleLogout} />
-                    )}
+                    {/* Right side - Auth controls */}
+                    <Flex gap="1rem" align="center" flexWrap="wrap">
+                        {isLoggedIn ? (
+                            <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>Logout</Button>
+                        ) : (
+                            <Login onLogin={handleLogin} onLogout={handleLogout} />
+                        )}
+                    </Flex>
                 </Flex>
-            </Flex>
+            </Box>
 
             {isLoading ? (
                 <LoadingSpinner height="flex-1" />

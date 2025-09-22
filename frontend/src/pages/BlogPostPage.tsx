@@ -89,10 +89,22 @@ const BlogPostPage: React.FC = () => {
             setCache(cacheKey, data, 5 * 60 * 1000); // 5 minutes
             setIsLoading(false);
         };
-        fetchBlogPost();
 
-        const token = localStorage.getItem('token');
-        setIsLoggedIn(!!token);
+        const checkLoginStatus = async () => {
+            try {
+                const response = await fetch(getURL('/auth/check'), {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                setIsLoggedIn(data.authenticated);
+            } catch (error) {
+                setIsLoggedIn(false);
+            }
+        };
+
+        fetchBlogPost();
+        checkLoginStatus();
     }, [id]);
 
     const getBackLink = () => {
@@ -183,100 +195,90 @@ const BlogPostPage: React.FC = () => {
                 />
             )}
 
-            <Box
-                position="sticky"
-                top="80px"
-                bg="transparent"
-                zIndex="99"
-                py="0.5rem"
-                ml={{ base: "0", md: "-2rem" }}
-                display={{ base: "none", md: "block" }}
-            >
-                <Button
-                    leftIcon={<ArrowBackIcon />}
-                    onClick={() => navigate(getBackLink())}
-                    rounded={isRetro ? "none" : "full"}
-                    border={isRetro ? "2px solid" : "none"}
-                    borderColor="purple.400"
-                    bg={isRetro ? "black" : undefined}
-                    color={isRetro ? "purple.200" : undefined}
-                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                    _hover={{
-                        color: isRetro ? 'purple.400' : 'yellow',
-                        transform: 'scale(1.01)'
-                    }}
-                >
-                    Go Back
-                </Button>
-            </Box>
+            {/* Header Bar */}
+            <Box bg="black" p="1rem" borderBottom="1px solid" borderColor={isRetro ? "purple.400" : "darkgrey"}>
+                <Flex justify="space-between" align="center" flexWrap="wrap" gap="1rem">
+                    {/* Left side - Back button and title */}
+                    <Flex align="center" gap="1rem" flexWrap="wrap">
+                        <Button
+                            leftIcon={<ArrowBackIcon />}
+                            onClick={() => navigate(getBackLink())}
+                            rounded={isRetro ? "none" : "full"}
+                            border={isRetro ? "2px solid" : "none"}
+                            borderColor="purple.400"
+                            bg={isRetro ? "black" : undefined}
+                            color={isRetro ? "purple.200" : undefined}
+                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                            _hover={{
+                                color: isRetro ? 'purple.400' : 'yellow',
+                                transform: 'scale(1.01)'
+                            }}
+                        >
+                            Go Back
+                        </Button>
+                        {blogPost && (
+                            <Text
+                                fontSize="lg"
+                                color={isRetro ? "purple.400" : "white"}
+                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                fontWeight="bold"
+                            >
+                                {blogPost.title}
+                            </Text>
+                        )}
+                    </Flex>
 
-            <Flex justify="space-between" p="1rem" bg="black">
-                <Button
-                    leftIcon={<ArrowBackIcon />}
-                    onClick={() => navigate(getBackLink())}
-                    rounded={isRetro ? "none" : "full"}
-                    border={isRetro ? "2px solid" : "none"}
-                    borderColor="purple.400"
-                    bg={isRetro ? "black" : undefined}
-                    color={isRetro ? "purple.200" : undefined}
-                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                    _hover={{
-                        color: isRetro ? 'purple.400' : 'yellow',
-                        transform: 'scale(1.01)'
-                    }}
-                    display={{ base: "flex", md: "none" }}
-                >
-                    Go Back
-                </Button>
-                <Flex align="center">
-                    {isLoggedIn && (
-                        <>
-                            {blogPost && (
-                                <Text
-                                    mr={4}
-                                    fontSize="sm"
-                                    color={isRetro ? "purple.200" : "gray.300"}
+                    {/* Right side - Admin controls */}
+                    <Flex gap="1rem" align="center" flexWrap="wrap">
+                        {isLoggedIn && blogPost && (
+                            <Text
+                                fontSize="sm"
+                                color={isRetro ? "purple.200" : "gray.300"}
+                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                whiteSpace="nowrap"
+                            >
+                                Views: {blogPost.view_count}
+                            </Text>
+                        )}
+                        {isLoggedIn && (
+                            <>
+                                <Button
+                                    leftIcon={<EditIcon />}
+                                    onClick={handleEdit}
+                                    rounded={isRetro ? "none" : "full"}
+                                    border={isRetro ? "2px solid" : "none"}
+                                    borderColor="purple.400"
+                                    bg={isRetro ? "black" : undefined}
+                                    color={isRetro ? "purple.200" : undefined}
                                     fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                    _hover={{
+                                        color: isRetro ? 'purple.400' : 'yellow',
+                                        transform: 'scale(1.01)'
+                                    }}
                                 >
-                                    Views: {blogPost.view_count}
-                                </Text>
-                            )}
-                            <Button
-                                leftIcon={<EditIcon />}
-                                onClick={handleEdit}
-                                rounded={isRetro ? "none" : "full"}
-                                border={isRetro ? "2px solid" : "none"}
-                                borderColor="purple.400"
-                                bg={isRetro ? "black" : undefined}
-                                color={isRetro ? "purple.200" : undefined}
-                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                                _hover={{
-                                    color: isRetro ? 'purple.400' : 'yellow',
-                                    transform: 'scale(1.01)'
-                                }}
-                            >
-                                Edit
-                            </Button>
-                            <Button
-                                leftIcon={<DeleteIcon />}
-                                onClick={handleDelete}
-                                rounded={isRetro ? "none" : "full"}
-                                border={isRetro ? "2px solid" : "none"}
-                                borderColor="purple.400"
-                                bg={isRetro ? "black" : undefined}
-                                color={isRetro ? "purple.200" : undefined}
-                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                                _hover={{
-                                    color: isRetro ? 'purple.400' : 'yellow',
-                                    transform: 'scale(1.01)'
-                                }}
-                            >
-                                Delete
-                            </Button>
-                        </>
-                    )}
+                                    Edit
+                                </Button>
+                                <Button
+                                    leftIcon={<DeleteIcon />}
+                                    onClick={handleDelete}
+                                    rounded={isRetro ? "none" : "full"}
+                                    border={isRetro ? "2px solid" : "none"}
+                                    borderColor="purple.400"
+                                    bg={isRetro ? "black" : undefined}
+                                    color={isRetro ? "purple.200" : undefined}
+                                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                    _hover={{
+                                        color: isRetro ? 'purple.400' : 'yellow',
+                                        transform: 'scale(1.01)'
+                                    }}
+                                >
+                                    Delete
+                                </Button>
+                            </>
+                        )}
+                    </Flex>
                 </Flex>
-            </Flex>
+            </Box>
 
             <Box
                 flex="1"
