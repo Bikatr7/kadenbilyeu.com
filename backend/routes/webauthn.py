@@ -48,6 +48,7 @@ async def start_webauthn_authentication():
     Returns:
         JSONResponse: Authentication options
     """
+
     try:
         print("Starting WebAuthn authentication...")
         challenge_id = str(uuid.uuid4())

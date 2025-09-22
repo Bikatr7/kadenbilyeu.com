@@ -14,16 +14,24 @@ from database import LoginModel
 router = APIRouter()
 
 @router.get("/auth/check")
-async def check_auth(access_token: str = Cookie(None, alias="access_token")):
+async def check_auth(request: Request, access_token: str = Cookie(None, alias="access_token")):
     """
     Check if the current user is authenticated
 
     Args:
+    request (Request): The request object
     access_token (str): The access token from cookie
 
     Returns:
     dict: Authentication status
     """
+    try:
+        from fastapi_csrf_protect import CsrfProtect
+        csrf_protect = CsrfProtect()
+        await csrf_protect.validate_csrf(request)
+    except:
+        pass
+
     if not access_token:
         return {"authenticated": False}
 
@@ -104,7 +112,7 @@ async def login(data:LoginModel, request: Request, csrf_protect: CsrfProtect = D
     return response
 
 @router.post("/logout")
-async def logout(request: Request, access_token: str = Cookie(None, alias="access_token"), refresh_token: str = Cookie(None, alias="refresh_token"), csrf_protect: CsrfProtect = Depends()) -> JSONResponse:
+async def logout(request: Request, access_token: str = Cookie(None, alias="access_token"), refresh_token: str = Cookie(None, alias="refresh_token")) -> JSONResponse:
     """
     Logout endpoint - clears authentication cookies and blacklists tokens
 
@@ -112,12 +120,13 @@ async def logout(request: Request, access_token: str = Cookie(None, alias="acces
     request (Request): The request object
     access_token (str): The access token to blacklist
     refresh_token (str): The refresh token to blacklist
-    csrf_protect (CsrfProtect): CSRF protection
 
     Returns:
     JSONResponse: Success message with cleared cookies
     """
     try:
+        from fastapi_csrf_protect import CsrfProtect
+        csrf_protect = CsrfProtect()
         await csrf_protect.validate_csrf(request)
     except:
         # If CSRF validation fails, still allow logout for unauthenticated users
