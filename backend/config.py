@@ -9,8 +9,6 @@ import threading
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-# CSRF configuration
-from fastapi_csrf_protect import CsrfProtect
 
 def get_env_variables() -> None:
     """
@@ -77,8 +75,3 @@ assert ACCESS_TOKEN_SECRET, "ACCESS_TOKEN_SECRET environment variable not set"
 assert REFRESH_TOKEN_SECRET, "REFRESH_TOKEN_SECRET environment variable not set"
 assert ENCRYPTION_KEY, "ENCRYPTION_KEY environment variable not set"
 
-# CSRF configuration
-@CsrfProtect.load_config
-def get_csrf_config():
-    csrf_secret = os.environ.get("CSRF_SECRET", "default-csrf-secret-change-in-production")
-    return [("secret_key", csrf_secret), ("max_age", 3600)]

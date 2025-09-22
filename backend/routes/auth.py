@@ -2,10 +2,8 @@
 ## Use of this source code is governed by an GNU Affero General Public License v3.0
 ## license that can be found in the LICENSE file.
 
-from fastapi import APIRouter, Request, Cookie, Depends
+from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
-
-from fastapi_csrf_protect import CsrfProtect
 
 from config import limiter, token_blacklist, SECURE_COOKIES
 from auth import verify_credentials, verify_totp, create_access_token, create_refresh_token, verify_token, is_token_blacklisted
@@ -25,13 +23,6 @@ async def check_auth(request: Request, access_token: str = Cookie(None, alias="a
     Returns:
     dict: Authentication status
     """
-    try:
-        from fastapi_csrf_protect import CsrfProtect
-        csrf_protect = CsrfProtect()
-        await csrf_protect.validate_csrf(request)
-    except:
-        pass
-
     if not access_token:
         return {"authenticated": False}
 
@@ -44,20 +35,10 @@ async def check_auth(request: Request, access_token: str = Cookie(None, alias="a
     except:
         return {"authenticated": False}
 
-@router.get("/csrf-token", response_model=dict)
-def get_csrf_token(csrf_protect: CsrfProtect = Depends()):
-    """
-    Get CSRF token for frontend
-
-    Returns:
-    dict: CSRF token
-    """
-    csrf_data = csrf_protect.generate_csrf()
-    return {"csrf_token": csrf_data[0] if isinstance(csrf_data, list) else csrf_data}
 
 @router.post("/login")
 @limiter.limit("5/minute")  # Stricter limit for login attempts
-async def login(data:LoginModel, request: Request, csrf_protect: CsrfProtect = Depends()) -> JSONResponse:
+async def login(data:LoginModel, request: Request) -> JSONResponse:
     """
     Login endpoint for the API
 
@@ -71,12 +52,6 @@ async def login(data:LoginModel, request: Request, csrf_protect: CsrfProtect = D
     """
     from config import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
     from datetime import timedelta
-
-    try:
-        await csrf_protect.validate_csrf(request)
-    except:
-        # If CSRF validation fails, still allow login for unauthenticated users
-        pass
 
     from fastapi.security import HTTPBasicCredentials
     credentials = HTTPBasicCredentials(username=data.username, password=data.password)
@@ -124,13 +99,6 @@ async def logout(request: Request, access_token: str = Cookie(None, alias="acces
     Returns:
     JSONResponse: Success message with cleared cookies
     """
-    try:
-        from fastapi_csrf_protect import CsrfProtect
-        csrf_protect = CsrfProtect()
-        await csrf_protect.validate_csrf(request)
-    except:
-        # If CSRF validation fails, still allow logout for unauthenticated users
-        pass
 
     # Add tokens to blacklist if they exist
     if access_token:
@@ -156,7 +124,7 @@ async def logout(request: Request, access_token: str = Cookie(None, alias="acces
     return response
 
 @router.post("/refresh")
-async def refresh_token(request: Request, refresh_token: str = Cookie(None, alias="refresh_token"), csrf_protect: CsrfProtect = Depends()) -> JSONResponse:
+async def refresh_token(request: Request, refresh_token: str = Cookie(None, alias="refresh_token")) -> JSONResponse:
     """
     Refresh the access token using the refresh token
 
@@ -170,12 +138,6 @@ async def refresh_token(request: Request, refresh_token: str = Cookie(None, alia
     """
     from config import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
     from datetime import timedelta
-
-    try:
-        await csrf_protect.validate_csrf(request)
-    except:
-        # If CSRF validation fails, still allow refresh for unauthenticated users
-        pass
 
     if(refresh_token is None):
         from fastapi import HTTPException, status

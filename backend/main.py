@@ -10,9 +10,8 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
-from fastapi_csrf_protect.exceptions import CsrfProtectError
 
-from config import limiter, maintenance_mode, maintenance_lock, get_csrf_config
+from config import limiter, maintenance_mode, maintenance_lock
 from utils import start_scheduler, get_url
 
 from routes.auth import router as auth_router
@@ -26,12 +25,6 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
 
-@app.exception_handler(CsrfProtectError)
-def csrf_protect_exception_handler(request: Request, exc: CsrfProtectError):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.message}
-    )
 
 @app.on_event("startup")
 async def startup_event():

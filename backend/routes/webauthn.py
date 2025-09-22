@@ -2,9 +2,8 @@
 # Use of this source code is governed by an GNU Affero General Public License v3.0
 # license that can be found in the LICENSE file.
 
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi_csrf_protect import CsrfProtect
 
 from webauthn_auth import (
     generate_webauthn_authentication_options,
@@ -78,7 +77,7 @@ async def start_webauthn_authentication():
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/webauthn/authenticate/complete")
-async def complete_webauthn_authentication(request: Request, csrf_protect: CsrfProtect = Depends()):
+async def complete_webauthn_authentication(request: Request):
     """
     Complete WebAuthn authentication process.
 
@@ -103,13 +102,6 @@ async def complete_webauthn_authentication(request: Request, csrf_protect: CsrfP
         from webauthn.helpers import base64url_to_bytes
         challenge = base64url_to_bytes(challenge_b64)
         print(f"Retrieved challenge: {challenge}")
-
-        try:
-            await csrf_protect.validate_csrf(request)
-        except:
-            pass
-
-
 
         success = verify_webauthn_authentication({
             "credential": credential

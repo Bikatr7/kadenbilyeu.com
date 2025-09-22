@@ -4,7 +4,6 @@
 
 import typing
 from fastapi import APIRouter, File, UploadFile, Request, Depends
-from fastapi_csrf_protect import CsrfProtect
 
 from auth import get_current_active_user
 from database import get_envs, replace_sqlite_db
@@ -15,7 +14,7 @@ router = APIRouter()
 @router.post("/replace-database")
 @router.post("/replace-database/")
 @router.post("/replace-database/")
-async def upload_backup(request: Request, file: UploadFile = File(...), csrf_protect: CsrfProtect = Depends(), current_user:str = Depends(get_current_active_user)) -> typing.Dict[str, str]:
+async def upload_backup(request: Request, file: UploadFile = File(...), current_user:str = Depends(get_current_active_user)) -> typing.Dict[str, str]:
 
     """
     Replace the database with a backup
@@ -34,10 +33,6 @@ async def upload_backup(request: Request, file: UploadFile = File(...), csrf_pro
     import gnupg
     import shutil
 
-    try:
-        await csrf_protect.validate_csrf(request)
-    except:
-        pass
 
     try:
         global maintenance_mode
@@ -71,7 +66,7 @@ async def upload_backup(request: Request, file: UploadFile = File(...), csrf_pro
             maintenance_mode = False
 
 @router.post('/force-backup')
-async def force_backup(request: Request, csrf_protect: CsrfProtect = Depends(), current_user:str = Depends(get_current_active_user)) -> typing.Dict[str, str]:
+async def force_backup(request: Request, current_user:str = Depends(get_current_active_user)) -> typing.Dict[str, str]:
 
     """
     Force a backup
@@ -86,10 +81,6 @@ async def force_backup(request: Request, csrf_protect: CsrfProtect = Depends(), 
     """
     from utils import perform_backup
 
-    try:
-        await csrf_protect.validate_csrf(request)
-    except:
-        pass
 
     perform_backup()
 

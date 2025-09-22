@@ -3,7 +3,6 @@
 ## license that can be found in the LICENSE file.
 
 from fastapi import APIRouter, Request, Header, Depends
-from fastapi_csrf_protect import CsrfProtect
 
 from auth import get_current_active_user
 from database import (
@@ -18,7 +17,7 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 @router.post("/blog", response_model=BlogPostRead)
-async def create_blog_post(blog_post:BlogPostCreate, request: Request, csrf_protect: CsrfProtect = Depends(), db:Session = Depends(get_db), current_user:str = Depends(get_current_active_user)) -> BlogPostRead:
+async def create_blog_post(blog_post:BlogPostCreate, request: Request, db:Session = Depends(get_db), current_user:str = Depends(get_current_active_user)) -> BlogPostRead:
 
     """
     Create a new blog post
@@ -35,11 +34,6 @@ async def create_blog_post(blog_post:BlogPostCreate, request: Request, csrf_prot
     """
     from datetime import datetime, timezone
 
-    try:
-        await csrf_protect.validate_csrf(request)
-    except:
-        # If CSRF validation fails, still allow operation for authenticated users
-        pass
 
     from database import BlogPostModel
     db_blog_post = BlogPostModel(
@@ -140,7 +134,7 @@ def read_blog_post_by_slug(slug:str, db:Session = Depends(get_db), authorization
     return db_blog_post
 
 @router.put("/blog/{blog_post_id}", response_model=BlogPostRead)
-async def update_blog_post(blog_post_id:schemaUUID, blog_post:BlogPostUpdate, request: Request, csrf_protect: CsrfProtect = Depends(), db:Session = Depends(get_db), current_user:str = Depends(get_current_active_user)) -> BlogPostRead:
+async def update_blog_post(blog_post_id:schemaUUID, blog_post:BlogPostUpdate, request: Request, db:Session = Depends(get_db), current_user:str = Depends(get_current_active_user)) -> BlogPostRead:
 
     """
     Update a blog post
@@ -155,11 +149,6 @@ async def update_blog_post(blog_post_id:schemaUUID, blog_post:BlogPostUpdate, re
     Returns:
     blog_post (BlogPostUpdate): The updated data for the blog post
     """
-    try:
-        await csrf_protect.validate_csrf(request)
-    except:
-        # If CSRF validation fails, still allow operation for authenticated users
-        pass
 
     db_blog_post = func_update_blog_post(db=db, blog_post_id=blog_post_id, blog_post=blog_post)
 
@@ -170,7 +159,7 @@ async def update_blog_post(blog_post_id:schemaUUID, blog_post:BlogPostUpdate, re
     return db_blog_post
 
 @router.delete("/blog/{blog_post_id}", response_model=BlogPostRead)
-async def delete_blog_post(blog_post_id:schemaUUID, request: Request, csrf_protect: CsrfProtect = Depends(), db:Session = Depends(get_db), current_user:str = Depends(get_current_active_user)) -> BlogPostRead:
+async def delete_blog_post(blog_post_id:schemaUUID, request: Request, db:Session = Depends(get_db), current_user:str = Depends(get_current_active_user)) -> BlogPostRead:
 
     """
     Delete a blog post
@@ -185,11 +174,6 @@ async def delete_blog_post(blog_post_id:schemaUUID, request: Request, csrf_prote
     Returns:
     BlogPostRead: The deleted blog post
     """
-    try:
-        await csrf_protect.validate_csrf(request)
-    except:
-        # If CSRF validation fails, still allow operation for authenticated users
-        pass
 
     db_blog_post = func_delete_blog_post(db=db, blog_post_id=blog_post_id)
 
