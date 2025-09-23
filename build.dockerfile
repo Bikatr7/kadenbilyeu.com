@@ -3,36 +3,30 @@
 ## license that can be found in the LICENSE file.
 
 ## Stage 1: Build backend
-FROM python:3.11.8-slim
+FROM python:3.11-slim
 
-WORKDIR /app/
+WORKDIR /app
 
-## Copy necessary backend files
-COPY backend/main.py backend/requirements.txt ./
-## Testing COPY
-## COPY backend/main.py backend/requirements.txt backend/.env ./
-
-## Install required Python packages
+# 1) Install Python deps
+COPY backend/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-## Install required packages (linux) including GPG
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends gnupg2 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# 2) OS deps (gnupg)
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends gnupg2 \
+ && rm -rf /var/lib/apt/lists/*
 
-## Create database directory and logs directory
+# 3) Copy ALL backend code into /app (not just main.py)
+COPY backend/ ./
+
+# 4) Ensure db dir exists (you still bind-mount it)
 RUN mkdir -p /app/database/logs
 
-## Copy entrypoint script and make it executable
-COPY entrypoint.sh .
+# 5) Entrypoint
+COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-## Expose port 8000
+ENV PYTHONPATH=/app
 EXPOSE 8000
-
-## Mount the database volume
-VOLUME /app/database
-
-## Start the app
+VOLUME ["/app/database"]
 CMD ["/app/entrypoint.sh"]
