@@ -22,7 +22,12 @@ import base64
 from config import ENVIRONMENT
 
 ## not redoing my keys and i'm lazy
-RP_ID = "localhost"
+def get_rp_id():
+    if ENVIRONMENT == "development":
+        return "localhost"
+    else:
+        return "kadenbilyeu.com"
+
 RP_NAME = "Kaden Bilyeu Admin"
 
 def verify_authentication_response(*, credential, expected_challenge, expected_rp_id, expected_origin, credential_public_key, credential_current_sign_count, require_user_verification=False):
@@ -184,7 +189,7 @@ def generate_webauthn_authentication_options() -> tuple[str, bytes]:
     from webauthn.helpers.structs import UserVerificationRequirement
 
     authentication_options = generate_authentication_options(
-        rp_id=RP_ID,
+        rp_id=get_rp_id(),
         allow_credentials=allow_credentials,
         user_verification=UserVerificationRequirement.PREFERRED,
     )
@@ -229,21 +234,21 @@ def verify_webauthn_authentication(credential_data: Dict[str, Any], challenge: b
 
         public_key_bytes = base64.urlsafe_b64decode(matching_credential["public_key"] + "==")
 
+        rp_id = get_rp_id()
+        expected_origin = "https://localhost:5173" if ENVIRONMENT == "development" else "https://kadenbilyeu.com"
+
         print(f"Verifying with challenge: {challenge}")
-        print(f"Expected RP ID: {RP_ID}")
+        print(f"Expected RP ID: {rp_id}")
+        print(f"Expected origin: {expected_origin}")
         print(f"Matching credential: {matching_credential['credential_id'][:16]}...")
 
         try:
-            print(f"Verifying with challenge: {challenge}")
-            print(f"Expected RP ID: {RP_ID}")
-            print(f"Matching credential: {matching_credential['credential_id'][:16]}...")
-
             ## can't stop, won't stop, not giving a fuck about origins
             verification = verify_authentication_response(
                 credential=parsed_credential,
                 expected_challenge=challenge,
-                expected_rp_id=RP_ID,
-                expected_origin="https://localhost:5173",
+                expected_rp_id=rp_id,
+                expected_origin=expected_origin,
                 credential_public_key=public_key_bytes,
                 credential_current_sign_count=matching_credential["sign_count"],
             )
@@ -254,7 +259,7 @@ def verify_webauthn_authentication(credential_data: Dict[str, Any], challenge: b
             print(f"   Error type: {type(e).__name__}")
             print(f"   Parsed credential type: {type(parsed_credential)}")
             print(f"   Challenge length: {len(challenge)}")
-            print(f"   RP ID: {RP_ID}")
+            print(f"   RP ID: {rp_id}")
             print(f"   Public key bytes length: {len(public_key_bytes)}")
             print(f"   Credential response type: {type(parsed_credential.response)}")
             if hasattr(parsed_credential, 'response'):
