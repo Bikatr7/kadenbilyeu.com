@@ -30,6 +30,7 @@ dist-ssr
 *.suo
 *.ntvs*
 *.njsproj
+.glimpse
 *.sln
 *.sw?
 
