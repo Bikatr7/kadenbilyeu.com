@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 
 from pydantic import BaseModel
 
-from sqlalchemy import create_engine, Engine, Column, String, Text, DateTime, inspect, Inspector, Integer, text
+from sqlalchemy import create_engine, Engine, Column, String, Text, DateTime, inspect, Inspector, Integer, text, LargeBinary
 from sqlalchemy.orm import sessionmaker, close_all_sessions, Session
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy.dialects.postgresql import UUID as modelUUID
@@ -55,6 +55,23 @@ class BlogPostRead(BlogPostBase):
     class Config:
         orm_mode = True
 
+class WebAuthnCredentialBase(BaseModel):
+    credential_id: str
+    public_key: bytes
+    sign_count: int = 0
+    user_id: str = "admin"
+
+class WebAuthnCredentialCreate(WebAuthnCredentialBase):
+    pass
+
+class WebAuthnCredentialRead(WebAuthnCredentialBase):
+    id: schemaUUID
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True
+
 ## SQLAlchemy setup
 Base:DeclarativeMeta = declarative_base()
 
@@ -67,6 +84,16 @@ class BlogPostModel(Base):
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
     view_count = Column(Integer, default=0)
+
+class WebAuthnCredentialModel(Base):
+    __tablename__ = "webauthn_credentials"
+    id = Column(modelUUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
+    credential_id = Column(String, unique=True, index=True, nullable=False)
+    public_key = Column(LargeBinary, nullable=False)
+    sign_count = Column(Integer, default=0)
+    user_id = Column(String, default="admin")
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
 ## Database migration functions
 def migrate_database(engine:Engine) -> None:
@@ -357,3 +384,78 @@ def func_increment_view_count(db:Session, blog_post_id:schemaUUID):
     if(db_blog_post):
         db_blog_post.view_count = db_blog_post.view_count + 1 # type: ignore
         db.commit()
+
+def func_create_webauthn_credential(db: Session, credential: WebAuthnCredentialCreate) -> WebAuthnCredentialModel:
+    """
+    Create a WebAuthn credential in the database.
+
+    Args:
+    db (Session): The SQLAlchemy session
+    credential (WebAuthnCredentialCreate): The credential to create
+
+    Returns:
+    WebAuthnCredentialModel: The created credential
+    """
+    db_credential = WebAuthnCredentialModel(**credential.dict())
+    db.add(db_credential)
+    db.commit()
+    db.refresh(db_credential)
+    return db_credential
+
+def func_get_webauthn_credentials(db: Session, user_id: str = "admin") -> typing.List[WebAuthnCredentialModel]:
+    """
+    Get all WebAuthn credentials for a user.
+
+    Args:
+    db (Session): The SQLAlchemy session
+    user_id (str): The user ID (defaults to "admin")
+
+    Returns:
+    typing.List[WebAuthnCredentialModel]: List of credentials
+    """
+    return db.query(WebAuthnCredentialModel).filter(WebAuthnCredentialModel.user_id == user_id).all()
+
+def func_get_webauthn_credential_by_id(db: Session, credential_id: str) -> typing.Optional[WebAuthnCredentialModel]:
+    """
+    Get a WebAuthn credential by its credential ID.
+
+    Args:
+    db (Session): The SQLAlchemy session
+    credential_id (str): The credential ID
+
+    Returns:
+    typing.Optional[WebAuthnCredentialModel]: The credential or None
+    """
+    return db.query(WebAuthnCredentialModel).filter(WebAuthnCredentialModel.credential_id == credential_id).first()
+
+def func_update_webauthn_credential_sign_count(db: Session, credential_id: str, new_sign_count: int):
+    """
+    Update the sign count for a WebAuthn credential.
+
+    Args:
+    db (Session): The SQLAlchemy session
+    credential_id (str): The credential ID
+    new_sign_count (int): The new sign count
+    """
+    credential = db.query(WebAuthnCredentialModel).filter(WebAuthnCredentialModel.credential_id == credential_id).first()
+    if credential:
+        credential.sign_count = new_sign_count
+        db.commit()
+
+def func_delete_webauthn_credential(db: Session, credential_id: str) -> bool:
+    """
+    Delete a WebAuthn credential.
+
+    Args:
+    db (Session): The SQLAlchemy session
+    credential_id (str): The credential ID
+
+    Returns:
+    bool: True if deleted, False if not found
+    """
+    credential = db.query(WebAuthnCredentialModel).filter(WebAuthnCredentialModel.credential_id == credential_id).first()
+    if credential:
+        db.delete(credential)
+        db.commit()
+        return True
+    return False

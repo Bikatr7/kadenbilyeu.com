@@ -39,6 +39,7 @@ ADMIN_PASS_HASH = os.environ.get("ADMIN_PASS_HASH")
 TOTP_SECRET = os.environ.get("TOTP_SECRET")
 ACCESS_TOKEN_SECRET = os.environ.get("ACCESS_TOKEN_SECRET")
 REFRESH_TOKEN_SECRET = os.environ.get("REFRESH_TOKEN_SECRET")
+WEBAUTHN_REGISTER_SECRET = os.environ.get("WEBAUTHN_REGISTER_SECRET")
 
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
 
@@ -74,4 +75,5 @@ assert TOTP_SECRET, "TOTP_SECRET environment variable not set"
 assert ACCESS_TOKEN_SECRET, "ACCESS_TOKEN_SECRET environment variable not set"
 assert REFRESH_TOKEN_SECRET, "REFRESH_TOKEN_SECRET environment variable not set"
 assert ENCRYPTION_KEY, "ENCRYPTION_KEY environment variable not set"
+assert WEBAUTHN_REGISTER_SECRET, "WEBAUTHN_REGISTER_SECRET environment variable not set"
 
