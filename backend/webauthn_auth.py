@@ -113,7 +113,11 @@ def verify_webauthn_registration(credential_data: Dict[str, Any], challenge: byt
     db = next(get_db())
     try:
         credential_json = credential_data["credential"]
-        parsed_credential = parse_registration_credential_json(credential_json)
+        if isinstance(credential_json, str):
+            parsed_credential = parse_registration_credential_json(credential_json)
+        else:
+            import json
+            parsed_credential = parse_registration_credential_json(json.dumps(credential_json))
 
         verification = verify_registration_response(
             credential=parsed_credential,
@@ -208,7 +212,11 @@ def verify_webauthn_authentication(credential_data: Dict[str, Any], challenge: b
     db = next(get_db())
     try:
         credential_json = credential_data["credential"]
-        parsed_credential = parse_authentication_credential_json(credential_json)
+        if isinstance(credential_json, str):
+            parsed_credential = parse_authentication_credential_json(credential_json)
+        else:
+            import json
+            parsed_credential = parse_authentication_credential_json(json.dumps(credential_json))
         credential_id_b64 = bytes_to_base64url(parsed_credential.raw_id)
 
         print(f"Received credential_id_b64: {credential_id_b64}")

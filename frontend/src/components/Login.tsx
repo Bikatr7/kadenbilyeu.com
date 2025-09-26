@@ -167,7 +167,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) => {
                 credentials: 'include',
                 body: JSON.stringify({
                     challenge_id: data.challenge_id,
-                    credential: JSON.stringify({
+                    credential: {
                         id: credential.id,
                         rawId: arrayBufferToBase64(credential.rawId),
                         type: credential.type,
@@ -177,7 +177,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) => {
                             signature: arrayBufferToBase64(assertionResponse.signature),
                             userHandle: assertionResponse.userHandle ? arrayBufferToBase64(assertionResponse.userHandle) : null
                         }
-                    })
+                    }
                 })
             });
 
@@ -261,7 +261,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) => {
                 credentials: 'include',
                 body: JSON.stringify({
                     challenge_id: data.challenge_id,
-                    credential: JSON.stringify({
+                    credential: {
                         id: credential.id,
                         rawId: arrayBufferToBase64(credential.rawId),
                         type: credential.type,
@@ -269,7 +269,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) => {
                             attestationObject: arrayBufferToBase64(attestationResponse.attestationObject),
                             clientDataJSON: arrayBufferToBase64(attestationResponse.clientDataJSON)
                         }
-                    })
+                    }
                 })
             });
 
