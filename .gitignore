@@ -38,3 +38,4 @@ dist-ssr
 backend/database/blog.db
 
 .claude/*
+blog.db

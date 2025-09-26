@@ -50,6 +50,11 @@ SECURE_COOKIES = ENVIRONMENT != "development"
 TOKEN_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30 minutes for access tokens
 REFRESH_TOKEN_EXPIRE_MINUTES = 10080  # 7 days for refresh tokens
+JWT_ISSUER = os.environ.get(
+    "JWT_ISSUER",
+    "http://api.localhost:5000" if ENVIRONMENT == "development" else "https://api.kadenbilyeu.com"
+)
+JWT_AUDIENCE = os.environ.get("JWT_AUDIENCE", "kadenbilyeu-admin")
 
 # Rate limiting configuration
 limiter = Limiter(key_func=get_remote_address, default_limits=["100/minute"])
@@ -76,4 +81,6 @@ assert ACCESS_TOKEN_SECRET, "ACCESS_TOKEN_SECRET environment variable not set"
 assert REFRESH_TOKEN_SECRET, "REFRESH_TOKEN_SECRET environment variable not set"
 assert ENCRYPTION_KEY, "ENCRYPTION_KEY environment variable not set"
 assert WEBAUTHN_REGISTER_SECRET, "WEBAUTHN_REGISTER_SECRET environment variable not set"
+assert JWT_ISSUER, "JWT_ISSUER environment variable not set"
+assert JWT_AUDIENCE, "JWT_AUDIENCE environment variable not set"
 

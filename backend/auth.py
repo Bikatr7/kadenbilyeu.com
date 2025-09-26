@@ -18,7 +18,8 @@ from config import (
     ADMIN_USER, ADMIN_PASS_HASH, TOTP_SECRET,
     ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET,
     TOKEN_ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES,
-    REFRESH_TOKEN_EXPIRE_MINUTES, token_blacklist
+    REFRESH_TOKEN_EXPIRE_MINUTES, token_blacklist,
+    JWT_ISSUER, JWT_AUDIENCE
 )
 from database import TokenData
 
@@ -85,7 +86,14 @@ def create_access_token(data:dict, expires_delta:typing.Optional[timedelta] = No
     else:
         expire = datetime.now(timezone.utc) + timedelta(minutes=15)
 
-    to_encode.update({"exp": expire})
+    issued_at = datetime.now(timezone.utc)
+    to_encode.update({
+        "exp": expire,
+        "iat": issued_at,
+        "iss": JWT_ISSUER,
+        "aud": JWT_AUDIENCE,
+        "token_type": "access"
+    })
     encoded_jwt = jwt.encode(to_encode, ACCESS_TOKEN_SECRET, algorithm=TOKEN_ALGORITHM) # type: ignore
     return encoded_jwt
 
@@ -108,11 +116,18 @@ def create_refresh_token(data:dict, expires_delta:typing.Optional[timedelta] = N
     else:
         expire = datetime.now(timezone.utc) + timedelta(days=1)
 
-    to_encode.update({"exp": expire})
+    issued_at = datetime.now(timezone.utc)
+    to_encode.update({
+        "exp": expire,
+        "iat": issued_at,
+        "iss": JWT_ISSUER,
+        "aud": JWT_AUDIENCE,
+        "token_type": "refresh"
+    })
     encoded_jwt = jwt.encode(to_encode, REFRESH_TOKEN_SECRET, algorithm=TOKEN_ALGORITHM) # type: ignore
     return encoded_jwt
 
-def verify_token(token:str) -> TokenData:
+def _decode_token(token:str, secret:str, expected_type:str) -> TokenData:
     """
     Verify the given token and return the data
 
@@ -124,19 +139,33 @@ def verify_token(token:str) -> TokenData:
     """
 
     try:
-        payload = jwt.decode(token, ACCESS_TOKEN_SECRET, algorithms=[TOKEN_ALGORITHM]) # type: ignore
-        username:str = payload.get("sub")
-
-        if(username is None):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-
-        return TokenData(username=username)
-
+        payload = jwt.decode(
+            token,
+            secret,
+            algorithms=[TOKEN_ALGORITHM],
+            audience=JWT_AUDIENCE,
+            issuer=JWT_ISSUER
+        ) # type: ignore
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")
-
     except PyJWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
+    username:str = payload.get("sub")
+    token_type = payload.get("token_type")
+
+    if username is None or token_type != expected_type:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
+    return TokenData(username=username)
+
+def verify_token(token:str) -> TokenData:
+    """Verify an access token."""
+    return _decode_token(token, ACCESS_TOKEN_SECRET, "access")
+
+def verify_refresh_token(token:str) -> TokenData:
+    """Verify a refresh token."""
+    return _decode_token(token, REFRESH_TOKEN_SECRET, "refresh")
 
 def verify_credentials(credentials:HTTPBasicCredentials) -> None:
     """

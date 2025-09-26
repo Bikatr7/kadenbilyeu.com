@@ -42,6 +42,9 @@ def setup_local_environment() -> None:
         "REFRESH_TOKEN_SECRET": "secret",
         "NODE_ENV": "development",
         "ENCRYPTION_KEY": "password",
+        "JWT_ISSUER": "http://api.localhost:5000",
+        "JWT_AUDIENCE": "kadenbilyeu-admin",
+        "WEBAUTHN_REGISTER_SECRET": "local-webauthn-secret",
         "SMTP_SERVER": "test",
         "SMTP_PORT": "8000",
         "SMTP_USER": "test",
@@ -67,6 +70,9 @@ def setup_local_environment() -> None:
                 "ACCESS_TOKEN_SECRET=" + env_to_key_local["ACCESS_TOKEN_SECRET"] + "\n" +
                 "REFRESH_TOKEN_SECRET=" + env_to_key_local["REFRESH_TOKEN_SECRET"] + "\n" +
                 "ENCRYPTION_KEY=" + env_to_key_local["ENCRYPTION_KEY"] + "\n" +
+                "JWT_ISSUER=" + env_to_key_local["JWT_ISSUER"] + "\n" +
+                "JWT_AUDIENCE=" + env_to_key_local["JWT_AUDIENCE"] + "\n" +
+                "WEBAUTHN_REGISTER_SECRET=" + env_to_key_local["WEBAUTHN_REGISTER_SECRET"] + "\n" +
                 "SMTP_SERVER=" + env_to_key_local["SMTP_SERVER"] + "\n" +
                 "SMTP_PORT=" + env_to_key_local["SMTP_PORT"] + "\n" +
                 "SMTP_USER=" + env_to_key_local["SMTP_USER"] + "\n" +

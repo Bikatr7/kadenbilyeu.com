@@ -7,13 +7,18 @@ from datetime import timedelta
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 os.environ['ADMIN_USER'] = 'admin'
-os.environ['ADMIN_PASS_HASH'] = '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewfLkIwFzI8zUeO'
+os.environ['ADMIN_PASS_HASH'] = '$2b$12$MlPMcgDvVCU.s10xcB2fneIjZ/ymgz5O52yH5pshAFF5.bwPq4SMq'
 os.environ['TOTP_SECRET'] = 'JBSWY3DPEHPK3PXP'
 os.environ['ACCESS_TOKEN_SECRET'] = 'test_access_secret'
 os.environ['REFRESH_TOKEN_SECRET'] = 'test_refresh_secret'
+os.environ['JWT_ISSUER'] = 'test-issuer'
+os.environ['JWT_AUDIENCE'] = 'test-audience'
+os.environ['ENCRYPTION_KEY'] = 'test-encryption-key'
+os.environ['WEBAUTHN_REGISTER_SECRET'] = 'test-webauthn-secret'
 
 from auth import (
     create_access_token, create_refresh_token, verify_token,
+    verify_refresh_token,
     verify_credentials, verify_totp, get_current_user,
     is_token_blacklisted, get_token_from_cookie
 )
@@ -39,6 +44,13 @@ class TestTokenFunctions:
         data = {"sub": "testuser"}
         token = create_access_token(data)
         result = verify_token(token)
+        assert isinstance(result, TokenData)
+        assert result.username == "testuser"
+
+    def test_verify_refresh_token_valid(self):
+        data = {"sub": "testuser"}
+        token = create_refresh_token(data)
+        result = verify_refresh_token(token)
         assert isinstance(result, TokenData)
         assert result.username == "testuser"
 

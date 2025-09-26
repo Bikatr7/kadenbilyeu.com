@@ -6,12 +6,16 @@ from unittest.mock import patch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 os.environ['ADMIN_USER'] = 'admin'
-os.environ['ADMIN_PASS_HASH'] = '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewfLkIwFzI8zUeO'
+os.environ['ADMIN_PASS_HASH'] = '$2b$12$MlPMcgDvVCU.s10xcB2fneIjZ/ymgz5O52yH5pshAFF5.bwPq4SMq'
 os.environ['TOTP_SECRET'] = 'JBSWY3DPEHPK3PXP'
 os.environ['ACCESS_TOKEN_SECRET'] = 'test_access_secret'
 os.environ['REFRESH_TOKEN_SECRET'] = 'test_refresh_secret'
-os.environ['CSRF_SECRET'] = 'test_csrf_secret'
+os.environ['JWT_ISSUER'] = 'test-issuer'
+os.environ['JWT_AUDIENCE'] = 'test-audience'
+os.environ['ENCRYPTION_KEY'] = 'test-encryption-key'
+os.environ['WEBAUTHN_REGISTER_SECRET'] = 'test-webauthn-secret'
 os.environ['DATABASE_URL'] = 'sqlite:///./test_api.db'
+os.environ['ENVIRONMENT'] = 'testing'
 
 from main import app
 
@@ -73,13 +77,6 @@ class TestAuthEndpoints:
         response = client.post("/logout")
         assert response.status_code == 200
         assert "Logged out successfully" in response.json()["message"]
-
-    def test_csrf_token_endpoint(self):
-        response = client.get("/csrf-token")
-        assert response.status_code == 200
-        data = response.json()
-        assert "csrf_token" in data
-        assert isinstance(data["csrf_token"], (str, list))
 
     def test_refresh_token_no_token(self):
         response = client.post("/refresh")

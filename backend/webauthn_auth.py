@@ -4,6 +4,7 @@
 
 import base64
 from typing import Dict, Any, Optional, List, Tuple
+from datetime import datetime, timedelta, timezone
 
 from webauthn import (
     generate_authentication_options,
@@ -260,12 +261,25 @@ def verify_webauthn_authentication(credential_data: Dict[str, Any], challenge: b
     finally:
         db.close()
 
-webauthn_challenges = {}
+ChallengeData = Tuple[str, datetime]
+webauthn_challenges: Dict[str, ChallengeData] = {}
+WEBAUTHN_CHALLENGE_TTL = timedelta(minutes=5)
+
 
 def store_challenge(challenge_id: str, challenge: str):
-    """Store a WebAuthn challenge temporarily."""
-    webauthn_challenges[challenge_id] = challenge
+    """Store a WebAuthn challenge temporarily with expiration."""
+    expires_at = datetime.now(timezone.utc) + WEBAUTHN_CHALLENGE_TTL
+    webauthn_challenges[challenge_id] = (challenge, expires_at)
+
 
 def get_challenge(challenge_id: str) -> Optional[str]:
-    """Retrieve and remove a WebAuthn challenge."""
-    return webauthn_challenges.pop(challenge_id, None)
+    """Retrieve and remove a WebAuthn challenge if valid and not expired."""
+    challenge_entry = webauthn_challenges.pop(challenge_id, None)
+    if not challenge_entry:
+        return None
+
+    challenge, expires_at = challenge_entry
+    if datetime.now(timezone.utc) > expires_at:
+        return None
+
+    return challenge

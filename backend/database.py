@@ -105,15 +105,13 @@ def migrate_database(engine:Engine) -> None:
 
     inspector.clear_cache()
 
-    columns = [col['name'] for col in inspector.get_columns('blog_posts')]
-
     ## Migration 1 (2024-08-14) (Addition of view_count to blog_posts)
     try:
-        columns = [col['name'].lower() for col in inspector.get_columns('blog_posts')]
+        blog_columns = [col['name'].lower() for col in inspector.get_columns('blog_posts')]
 
-        print(f"Current columns in blog_posts: {columns}")
+        print(f"Current columns in blog_posts: {blog_columns}")
 
-        if('view_count' not in columns):
+        if 'view_count' not in blog_columns:
             print("view_count column not found. Attempting to add it.")
             with engine.connect() as connection:
                 connection.execute(text("ALTER TABLE blog_posts ADD COLUMN view_count INTEGER DEFAULT 0"))
@@ -124,11 +122,27 @@ def migrate_database(engine:Engine) -> None:
             print("view_count column already exists in blog_posts table")
 
         inspector.clear_cache()
-        columns = [col['name'].lower() for col in inspector.get_columns('blog_posts')]
+
+        ## Migration 2 (2024-11-01) Ensure webauthn_credentials has updated_at column
+        webauthn_columns = [col['name'].lower() for col in inspector.get_columns('webauthn_credentials')]
+        print(f"Current columns in webauthn_credentials: {webauthn_columns}")
+
+        if 'updated_at' not in webauthn_columns:
+            print("updated_at column missing in webauthn_credentials. Attempting to add it.")
+            with engine.connect() as connection:
+                connection.execute(
+                    text(
+                        "ALTER TABLE webauthn_credentials "
+                        "ADD COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP"
+                    )
+                )
+                connection.commit()
+            print("Added updated_at column to webauthn_credentials table")
+        else:
+            print("updated_at column already exists in webauthn_credentials table")
 
     except Exception as e:
         print(f"Error during migration: {str(e)}")
-        pass
 
 ## Database connection
 engine:Engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})

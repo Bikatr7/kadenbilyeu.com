@@ -6,10 +6,19 @@ from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 
 from config import limiter, token_blacklist, SECURE_COOKIES
-from auth import verify_credentials, verify_totp, create_access_token, create_refresh_token, verify_token, is_token_blacklisted
+from auth import (
+    verify_credentials,
+    verify_totp,
+    create_access_token,
+    create_refresh_token,
+    verify_token,
+    verify_refresh_token,
+    is_token_blacklisted
+)
 from database import LoginModel
 
 router = APIRouter()
+
 
 @router.get("/auth/check")
 async def check_auth(request: Request, access_token: str = Cookie(None, alias="access_token")):
@@ -147,7 +156,7 @@ async def refresh_token(request: Request, refresh_token: str = Cookie(None, alia
         from fastapi import HTTPException, status
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has been revoked")
 
-    token_data = verify_token(refresh_token)
+    token_data = verify_refresh_token(refresh_token)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": token_data.username}, expires_delta=access_token_expires
