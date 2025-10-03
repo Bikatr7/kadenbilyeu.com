@@ -6,25 +6,18 @@ import typing
 from datetime import datetime, timedelta, timezone
 
 from fastapi import HTTPException, status, Cookie, Depends
-from fastapi.security import HTTPBasicCredentials
 
-from passlib.context import CryptContext
 import jwt
 from jwt import PyJWTError
 
-import pyotp
-
 from config import (
-    ADMIN_USER, ADMIN_PASS_HASH, TOTP_SECRET,
+    ADMIN_USER,
     ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET,
     TOKEN_ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES,
     REFRESH_TOKEN_EXPIRE_MINUTES, token_blacklist,
     JWT_ISSUER, JWT_AUDIENCE
 )
 from database import TokenData
-
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def is_token_blacklisted(token: str) -> bool:
     """
@@ -166,34 +159,6 @@ def verify_token(token:str) -> TokenData:
 def verify_refresh_token(token:str) -> TokenData:
     """Verify a refresh token."""
     return _decode_token(token, REFRESH_TOKEN_SECRET, "refresh")
-
-def verify_credentials(credentials:HTTPBasicCredentials) -> None:
-    """
-    Verify the given credentials
-
-    Args:
-    credentials (HTTPBasicCredentials): The credentials to verify
-    """
-
-    if(not(credentials.username == ADMIN_USER and pwd_context.verify(credentials.password, ADMIN_PASS_HASH))):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Unauthorized",
-            headers={"WWW-Authenticate": "Basic"},
-        )
-
-def verify_totp(totp_code:str) -> None:
-    """
-    Verify the given TOTP code
-
-    Args:
-    totp_code (str): The TOTP code to verify
-    """
-
-    totp = pyotp.TOTP(TOTP_SECRET) # type: ignore
-
-    if(not totp.verify(totp_code)):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
 
 def get_current_user(token:str = Depends(get_token_from_cookie)):
     """

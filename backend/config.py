@@ -35,8 +35,6 @@ token_blacklist = set()
 # Environment variables
 ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
 ADMIN_USER = os.environ.get("ADMIN_USER")
-ADMIN_PASS_HASH = os.environ.get("ADMIN_PASS_HASH")
-TOTP_SECRET = os.environ.get("TOTP_SECRET")
 ACCESS_TOKEN_SECRET = os.environ.get("ACCESS_TOKEN_SECRET")
 REFRESH_TOKEN_SECRET = os.environ.get("REFRESH_TOKEN_SECRET")
 WEBAUTHN_REGISTER_SECRET = os.environ.get("WEBAUTHN_REGISTER_SECRET")
@@ -75,8 +73,6 @@ if(not os.path.exists(BACKUP_LOGS_DIR)):
 
 # Validation
 assert ADMIN_USER, "ADMIN_USER environment variable not set"
-assert ADMIN_PASS_HASH, "ADMIN_PASS_HASH environment variable not set"
-assert TOTP_SECRET, "TOTP_SECRET environment variable not set"
 assert ACCESS_TOKEN_SECRET, "ACCESS_TOKEN_SECRET environment variable not set"
 assert REFRESH_TOKEN_SECRET, "REFRESH_TOKEN_SECRET environment variable not set"
 assert ENCRYPTION_KEY, "ENCRYPTION_KEY environment variable not set"

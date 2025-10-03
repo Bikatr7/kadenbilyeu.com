@@ -20,11 +20,6 @@ from sqlalchemy.dialects.postgresql import UUID as modelUUID
 from config import DATABASE_URL, BACKUP_LOGS_DIR
 
 ## Pydantic models
-class LoginModel(BaseModel):
-    username:str
-    password:str
-    totp:str
-
 class LoginToken(BaseModel):
     access_token:str
     token_type:str

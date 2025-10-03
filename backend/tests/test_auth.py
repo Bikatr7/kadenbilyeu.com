@@ -7,8 +7,6 @@ from datetime import timedelta
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 os.environ['ADMIN_USER'] = 'admin'
-os.environ['ADMIN_PASS_HASH'] = '$2b$12$MlPMcgDvVCU.s10xcB2fneIjZ/ymgz5O52yH5pshAFF5.bwPq4SMq'
-os.environ['TOTP_SECRET'] = 'JBSWY3DPEHPK3PXP'
 os.environ['ACCESS_TOKEN_SECRET'] = 'test_access_secret'
 os.environ['REFRESH_TOKEN_SECRET'] = 'test_refresh_secret'
 os.environ['JWT_ISSUER'] = 'test-issuer'
@@ -18,13 +16,11 @@ os.environ['WEBAUTHN_REGISTER_SECRET'] = 'test-webauthn-secret'
 
 from auth import (
     create_access_token, create_refresh_token, verify_token,
-    verify_refresh_token,
-    verify_credentials, verify_totp, get_current_user,
+    verify_refresh_token, get_current_user,
     is_token_blacklisted, get_token_from_cookie
 )
 from database import TokenData
 from fastapi import HTTPException
-from fastapi.security import HTTPBasicCredentials
 
 
 class TestTokenFunctions:
@@ -68,36 +64,6 @@ class TestTokenFunctions:
             verify_token("invalid_token")
         assert exc_info.value.status_code == 401
         assert "Invalid token" in str(exc_info.value.detail)
-
-
-class TestCredentialVerification:
-    def test_verify_credentials_valid(self):
-        credentials = HTTPBasicCredentials(username="admin", password="password")
-        verify_credentials(credentials)
-
-    def test_verify_credentials_invalid_username(self):
-        credentials = HTTPBasicCredentials(username="wronguser", password="password")
-        with pytest.raises(HTTPException) as exc_info:
-            verify_credentials(credentials)
-        assert exc_info.value.status_code == 401
-
-    def test_verify_credentials_invalid_password(self):
-        credentials = HTTPBasicCredentials(username="admin", password="wrongpassword")
-        with pytest.raises(HTTPException) as exc_info:
-            verify_credentials(credentials)
-        assert exc_info.value.status_code == 401
-
-
-class TestTOTPVerification:
-    def test_verify_totp_valid(self):
-        with patch('pyotp.TOTP.verify', return_value=True):
-            verify_totp("123456")
-
-    def test_verify_totp_invalid(self):
-        with patch('pyotp.TOTP.verify', return_value=False):
-            with pytest.raises(HTTPException) as exc_info:
-                verify_totp("123456")
-            assert exc_info.value.status_code == 401
 
 
 class TestTokenBlacklist:

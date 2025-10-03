@@ -7,15 +7,12 @@ from fastapi.responses import JSONResponse
 
 from config import limiter, token_blacklist, SECURE_COOKIES
 from auth import (
-    verify_credentials,
-    verify_totp,
     create_access_token,
     create_refresh_token,
     verify_token,
     verify_refresh_token,
     is_token_blacklisted
 )
-from database import LoginModel
 
 router = APIRouter()
 
@@ -44,56 +41,6 @@ async def check_auth(request: Request, access_token: str = Cookie(None, alias="a
     except:
         return {"authenticated": False}
 
-
-@router.post("/login")
-@limiter.limit("5/minute")  # Stricter limit for login attempts
-async def login(data:LoginModel, request: Request) -> JSONResponse:
-    """
-    Login endpoint for the API
-
-    Args:
-    data (LoginModel): The data required to login
-    request (Request): The request object
-    csrf_protect (CsrfProtect): CSRF protection
-
-    Returns:
-    JSONResponse: Success message with tokens set as HttpOnly cookies
-    """
-    from config import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
-    from datetime import timedelta
-
-    from fastapi.security import HTTPBasicCredentials
-    credentials = HTTPBasicCredentials(username=data.username, password=data.password)
-    verify_credentials(credentials)
-    verify_totp(data.totp)
-
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": data.username}, expires_delta=access_token_expires
-    )
-    refresh_token_expires = timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
-    refresh_token = create_refresh_token(
-        data={"sub": data.username}, expires_delta=refresh_token_expires
-    )
-
-    response = JSONResponse(content={"message": "Login successful", "token_type": "bearer"})
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        secure=SECURE_COOKIES,
-        samesite="Lax",
-        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60
-    )
-    response.set_cookie(
-        key="refresh_token",
-        value=refresh_token,
-        httponly=True,
-        secure=SECURE_COOKIES,
-        samesite="Lax",
-        max_age=REFRESH_TOKEN_EXPIRE_MINUTES * 60
-    )
-    return response
 
 @router.post("/logout")
 async def logout(request: Request, access_token: str = Cookie(None, alias="access_token"), refresh_token: str = Cookie(None, alias="refresh_token")) -> JSONResponse:
