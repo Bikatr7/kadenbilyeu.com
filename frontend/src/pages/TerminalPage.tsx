@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 // chakra-ui
-import { Box, Container, Text, VStack, Spinner, Alert, AlertIcon } from "@chakra-ui/react";
+import { Box, Spinner, Alert, AlertIcon, Text } from "@chakra-ui/react";
 
 // xterm
 import { Terminal } from '@xterm/xterm';
@@ -85,6 +85,9 @@ function TerminalPage() {
         // Open terminal in DOM
         term.open(terminalRef.current);
         fitAddon.fit();
+
+        // Focus the terminal so user can type immediately
+        term.focus();
 
         xtermRef.current = term;
         fitAddonRef.current = fitAddon;
@@ -199,76 +202,50 @@ function TerminalPage() {
         <Box
             bg="black"
             color="white"
-            minHeight="100vh"
-            pt={4}
+            height="100vh"
+            overflow="hidden"
             className={isRetro ? 'retro-mode' : ''}
             position="relative"
         >
-            <Login onLogin={handleLogin} onLogout={handleLogout} />
-            <Container maxW="container.xl">
-                <VStack spacing={4} align="stretch">
-                    <Text
-                        fontSize="2xl"
-                        fontWeight="bold"
-                        textAlign="center"
-                        color={isRetro ? 'purple.400' : 'yellow.400'}
-                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                    >
-                        {isRetro ? '[HOMELAB TERMINAL]' : 'Homelab Terminal'}
-                    </Text>
+            <Box position="absolute" top="1rem" right="1rem" zIndex={10}>
+                <Login onLogin={handleLogin} onLogout={handleLogout} />
+            </Box>
 
-                    {error && (
-                        <Alert
-                            status="error"
-                            bg={isRetro ? 'rgba(255, 0, 0, 0.2)' : 'rgba(255, 0, 0, 0.1)'}
-                            border={isRetro ? '2px solid' : '1px solid'}
-                            borderColor="red.400"
-                            borderRadius={isRetro ? 'none' : '8px'}
-                        >
-                            <AlertIcon />
-                            <Text fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"} fontSize={isRetro ? 'xs' : 'sm'}>
-                                {error}
-                            </Text>
-                        </Alert>
-                    )}
-
-                    <Box
+            {error && (
+                <Box position="absolute" top="5rem" left="50%" transform="translateX(-50%)" zIndex={10} maxW="md">
+                    <Alert
+                        status="error"
+                        bg={isRetro ? 'rgba(255, 0, 0, 0.2)' : 'rgba(255, 0, 0, 0.1)'}
                         border={isRetro ? '2px solid' : '1px solid'}
-                        borderColor={isConnected ? (isRetro ? 'purple.400' : 'yellow.400') : 'red.400'}
+                        borderColor="red.400"
                         borderRadius={isRetro ? 'none' : '8px'}
-                        p={2}
-                        bg="black"
-                        position="relative"
-                        height="calc(100vh - 200px)"
-                        boxShadow={isRetro ? '0 0 10px rgba(147, 51, 234, 0.3)' : '0 0 8px rgba(255, 215, 0, 0.2)'}
                     >
-                        <Box
-                            ref={terminalRef}
-                            height="100%"
-                            width="100%"
-                        />
-                        {!isConnected && (
-                            <Box
-                                position="absolute"
-                                top="50%"
-                                left="50%"
-                                transform="translate(-50%, -50%)"
-                            >
-                                <Spinner size="xl" color={isRetro ? 'purple.400' : 'yellow.400'} />
-                            </Box>
-                        )}
-                    </Box>
+                        <AlertIcon />
+                        <Text fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"} fontSize={isRetro ? 'xs' : 'sm'}>
+                            {error}
+                        </Text>
+                    </Alert>
+                </Box>
+            )}
 
-                    <Text
-                        fontSize={isRetro ? 'xs' : 'sm'}
-                        textAlign="center"
-                        color={isRetro ? 'purple.200' : 'gray.400'}
-                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                    >
-                        {isConnected ? (isRetro ? '[CONNECTED]' : 'Connected to homelab') : (isRetro ? '[DISCONNECTED]' : 'Disconnected')}
-                    </Text>
-                </VStack>
-            </Container>
+            <Box
+                ref={terminalRef}
+                height="100%"
+                width="100%"
+                p={2}
+            />
+
+            {!isConnected && (
+                <Box
+                    position="absolute"
+                    top="50%"
+                    left="50%"
+                    transform="translate(-50%, -50%)"
+                    zIndex={5}
+                >
+                    <Spinner size="xl" color={isRetro ? 'purple.400' : 'yellow.400'} />
+                </Box>
+            )}
         </Box>
     );
 }
