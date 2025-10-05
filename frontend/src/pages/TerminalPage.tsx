@@ -63,24 +63,6 @@ function TerminalPage() {
     useEffect(() => {
         if (isAuthChecking || !isLoggedIn || !terminalRef.current) return;
 
-        // Get access token from cookie
-        const getAccessToken = () => {
-            const cookies = document.cookie.split(';');
-            for (const cookie of cookies) {
-                const [name, value] = cookie.trim().split('=');
-                if (name === 'access_token') {
-                    return value;
-                }
-            }
-            return null;
-        };
-
-        const accessToken = getAccessToken();
-        if (!accessToken) {
-            setError('Not authenticated - please log in first');
-            return;
-        }
-
         // Create terminal instance
         const term = new Terminal({
             cursorBlink: true,
@@ -109,7 +91,7 @@ function TerminalPage() {
 
         // Connect WebSocket
         const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = getURL('/admin/terminal/ws').replace(/^https?:/, wsProtocol) + `?token=${encodeURIComponent(accessToken)}`;
+        const wsUrl = getURL('/admin/terminal/ws').replace(/^https?:/, wsProtocol);
 
         const ws = new WebSocket(wsUrl);
         wsRef.current = ws;
