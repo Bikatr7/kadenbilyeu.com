@@ -17,8 +17,24 @@ const createSlug = (title) => {
 
 (async () => {
   try {
-    const res = await fetch(API_ENDPOINT);
-    const posts = await res.json();
+    let posts = [];
+
+    // Try to fetch blog posts, but don't fail if API is unavailable
+    try {
+      const res = await fetch(API_ENDPOINT);
+      if (res.ok) {
+        const contentType = res.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          posts = await res.json();
+        } else {
+          console.warn('API returned non-JSON response, skipping blog posts in sitemap');
+        }
+      } else {
+        console.warn(`API returned status ${res.status}, skipping blog posts in sitemap`);
+      }
+    } catch (apiError) {
+      console.warn('Failed to fetch blog posts from API, generating sitemap with static pages only:', apiError.message);
+    }
 
     const staticUrls = [
       { url: '/', priority: '1.0', changefreq: 'weekly' },
@@ -30,7 +46,7 @@ const createSlug = (title) => {
     const domains = ['https://kadenbilyeu.com', 'https://bikatr7.com'];
 
     const urls = [
-      ...staticUrls.flatMap((page) => 
+      ...staticUrls.flatMap((page) =>
         domains.map((d) => ({
           loc: `${d}${page.url}`,
           lastmod: new Date().toISOString().split('T')[0],
@@ -39,10 +55,10 @@ const createSlug = (title) => {
           alternate: domains.filter(alt => alt !== d).map(alt => `${alt}${page.url}`)
         }))
       ),
-      ...posts.flatMap((post) => 
+      ...posts.flatMap((post) =>
         domains.map((d) => ({
           loc: `${d}/blog/${createSlug(post.title)}`,
-          lastmod: post.updated_at ? new Date(post.updated_at).toISOString().split('T')[0] : 
+          lastmod: post.updated_at ? new Date(post.updated_at).toISOString().split('T')[0] :
                    new Date(post.created_at).toISOString().split('T')[0],
           changefreq: 'monthly',
           priority: '0.6',
