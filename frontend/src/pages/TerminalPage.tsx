@@ -100,28 +100,37 @@ function TerminalPage() {
         wsRef.current = ws;
 
         ws.onopen = () => {
+            console.log('[TERMINAL] WebSocket connected');
             setIsConnected(true);
             setError('');
+            term.focus(); // Focus again after connection
         };
 
         ws.onmessage = (event) => {
+            console.log('[TERMINAL] Received from server:', event.data);
             term.write(event.data);
         };
 
-        ws.onerror = () => {
+        ws.onerror = (error) => {
+            console.error('[TERMINAL] WebSocket error:', error);
             setError('WebSocket connection error');
             setIsConnected(false);
         };
 
         ws.onclose = () => {
+            console.log('[TERMINAL] WebSocket closed');
             setIsConnected(false);
             term.writeln('\r\n\x1b[31mConnection closed\x1b[0m');
         };
 
         // Send input to WebSocket
         term.onData((data) => {
+            console.log('[TERMINAL] User typed:', data, 'WebSocket state:', ws.readyState);
             if (ws.readyState === WebSocket.OPEN) {
+                console.log('[TERMINAL] Sending to server');
                 ws.send(data);
+            } else {
+                console.error('[TERMINAL] Cannot send - WebSocket not open');
             }
         });
 
@@ -184,7 +193,7 @@ function TerminalPage() {
                 justifyContent="center"
                 position="relative"
             >
-                <Login onLogin={handleLogin} onLogout={handleLogout} />
+                <Login onLogin={handleLogin} onLogout={handleLogout} isLoggedIn={false} />
                 <Text
                     fontSize="xl"
                     fontWeight="bold"
@@ -208,7 +217,7 @@ function TerminalPage() {
             position="relative"
         >
             <Box position="absolute" top="1rem" right="1rem" zIndex={10}>
-                <Login onLogin={handleLogin} onLogout={handleLogout} />
+                <Login onLogin={handleLogin} onLogout={handleLogout} isLoggedIn={isLoggedIn} />
             </Box>
 
             {error && (

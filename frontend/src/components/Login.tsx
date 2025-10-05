@@ -20,9 +20,10 @@ import { useTheme } from '../contexts/ThemeContext';
 interface LoginProps {
     onLogin: () => void;
     onLogout: () => void;
+    isLoggedIn?: boolean;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) => {
+const Login: React.FC<LoginProps> = ({ onLogin, onLogout, isLoggedIn = false }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isOpen: isRegisterOpen, onOpen: onRegisterOpen, onClose: onRegisterClose } = useDisclosure();
     const { isOpen: isSuccessOpen, onOpen: onSuccessOpen, onClose: onSuccessClose } = useDisclosure();
@@ -293,13 +294,22 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) => {
         }
     };
 
+    const handleLogout = async () => {
+        try {
+            await fetch(getURL('/logout'), {
+                method: 'POST',
+                credentials: 'include'
+            });
+            onLogout();
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+    };
+
     return (
         <>
             <Button
-                position="absolute"
-                top="1rem"
-                right="1rem"
-                onClick={onOpen}
+                onClick={isLoggedIn ? handleLogout : onOpen}
                 zIndex="2"
                 _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                 _active={{ transform: 'scale(0.99)' }}
@@ -307,12 +317,12 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout }) => {
                 height="40px"
                 bg={isRetro ? "black" : "transparent"}
                 border={isRetro ? "2px solid" : "none"}
-                borderColor="purple.400"
+                borderColor={isLoggedIn ? "red.400" : "purple.400"}
                 rounded={isRetro ? "none" : "full"}
-                color={isRetro ? "purple.200" : undefined}
+                color={isRetro ? (isLoggedIn ? "red.200" : "purple.200") : undefined}
                 fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
             >
-                {isLoading ? <Spinner size="sm" /> : 'Login'}
+                {isLoading ? <Spinner size="sm" /> : (isLoggedIn ? 'Logout' : 'Login')}
             </Button>
 
             <Modal isOpen={isOpen} onClose={handleClose} isCentered size="lg">
