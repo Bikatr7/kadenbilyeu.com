@@ -29,9 +29,6 @@ get_env_variables()
 maintenance_mode = False
 maintenance_lock = threading.Lock()
 
-# Token blacklist for logout functionality
-token_blacklist = set()
-
 # Environment variables
 ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
 ADMIN_USER = os.environ.get("ADMIN_USER")

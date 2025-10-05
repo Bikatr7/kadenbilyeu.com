@@ -90,6 +90,13 @@ class WebAuthnCredentialModel(Base):
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
+class BlacklistedTokenModel(Base):
+    __tablename__ = "blacklisted_tokens"
+    id = Column(modelUUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
+    token = Column(String, unique=True, index=True, nullable=False)
+    blacklisted_at = Column(DateTime, default=datetime.now(timezone.utc))
+    expires_at = Column(DateTime, nullable=False)
+
 ## Database migration functions
 def migrate_database(engine:Engine) -> None:
     """
@@ -468,3 +475,53 @@ def func_delete_webauthn_credential(db: Session, credential_id: str) -> bool:
         db.commit()
         return True
     return False
+
+def func_add_token_to_blacklist(db: Session, token: str, expires_at: datetime) -> None:
+    """
+    Add a token to the blacklist.
+
+    Args:
+    db (Session): The SQLAlchemy session
+    token (str): The token to blacklist
+    expires_at (datetime): When the token expires
+    """
+    try:
+        blacklisted_token = BlacklistedTokenModel(token=token, expires_at=expires_at)
+        db.add(blacklisted_token)
+        db.commit()
+    except Exception:
+        # Token might already be blacklisted, ignore
+        db.rollback()
+
+def func_is_token_blacklisted(db: Session, token: str) -> bool:
+    """
+    Check if a token is blacklisted.
+
+    Args:
+    db (Session): The SQLAlchemy session
+    token (str): The token to check
+
+    Returns:
+    bool: True if token is blacklisted and not expired
+    """
+    blacklisted = db.query(BlacklistedTokenModel).filter(
+        BlacklistedTokenModel.token == token,
+        BlacklistedTokenModel.expires_at > datetime.now(timezone.utc)
+    ).first()
+    return blacklisted is not None
+
+def func_cleanup_expired_blacklisted_tokens(db: Session) -> int:
+    """
+    Remove expired tokens from the blacklist.
+
+    Args:
+    db (Session): The SQLAlchemy session
+
+    Returns:
+    int: Number of tokens removed
+    """
+    deleted = db.query(BlacklistedTokenModel).filter(
+        BlacklistedTokenModel.expires_at <= datetime.now(timezone.utc)
+    ).delete()
+    db.commit()
+    return deleted

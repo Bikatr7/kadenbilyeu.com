@@ -187,22 +187,18 @@ function TerminalPage() {
             <Box
                 bg="black"
                 color="white"
-                minHeight="100vh"
+                height="100vh"
+                overflow="hidden"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                position="relative"
+                position="fixed"
+                top={0}
+                left={0}
+                right={0}
+                bottom={0}
             >
                 <Login onLogin={handleLogin} onLogout={handleLogout} isLoggedIn={false} />
-                <Text
-                    fontSize="xl"
-                    fontWeight="bold"
-                    textAlign="center"
-                    color={isRetro ? 'purple.400' : 'yellow.400'}
-                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                >
-                    {isRetro ? '[UNAUTHORIZED]' : 'Please log in'}
-                </Text>
             </Box>
         );
     }
@@ -214,7 +210,11 @@ function TerminalPage() {
             height="100vh"
             overflow="hidden"
             className={isRetro ? 'retro-mode' : ''}
-            position="relative"
+            position="fixed"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
         >
             <Box position="absolute" top="1rem" right="1rem" zIndex={10}>
                 <Login onLogin={handleLogin} onLogout={handleLogout} isLoggedIn={isLoggedIn} />

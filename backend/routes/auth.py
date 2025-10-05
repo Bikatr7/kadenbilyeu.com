@@ -2,10 +2,11 @@
 ## Use of this source code is governed by an GNU Affero General Public License v3.0
 ## license that can be found in the LICENSE file.
 
-from fastapi import APIRouter, Request, Cookie
+from fastapi import APIRouter, Request, Cookie, Depends
 from fastapi.responses import JSONResponse
+from sqlalchemy.orm import Session
 
-from config import limiter, token_blacklist, SECURE_COOKIES
+from config import limiter, SECURE_COOKIES
 from auth import (
     create_access_token,
     create_refresh_token,
@@ -13,6 +14,7 @@ from auth import (
     verify_refresh_token,
     is_token_blacklisted
 )
+from database import get_db, func_add_token_to_blacklist
 
 router = APIRouter()
 
@@ -43,7 +45,12 @@ async def check_auth(request: Request, access_token: str = Cookie(None, alias="a
 
 
 @router.post("/logout")
-async def logout(request: Request, access_token: str = Cookie(None, alias="access_token"), refresh_token: str = Cookie(None, alias="refresh_token")) -> JSONResponse:
+async def logout(
+    request: Request,
+    access_token: str = Cookie(None, alias="access_token"),
+    refresh_token: str = Cookie(None, alias="refresh_token"),
+    db: Session = Depends(get_db)
+) -> JSONResponse:
     """
     Logout endpoint - clears authentication cookies and blacklists tokens
 
@@ -51,16 +58,30 @@ async def logout(request: Request, access_token: str = Cookie(None, alias="acces
     request (Request): The request object
     access_token (str): The access token to blacklist
     refresh_token (str): The refresh token to blacklist
+    db (Session): Database session
 
     Returns:
     JSONResponse: Success message with cleared cookies
     """
+    import jwt
+    from datetime import datetime, timezone
+    from config import ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, TOKEN_ALGORITHM
 
-    # Add tokens to blacklist if they exist
     if access_token:
-        token_blacklist.add(access_token)
+        try:
+            payload = jwt.decode(access_token, ACCESS_TOKEN_SECRET, algorithms=[TOKEN_ALGORITHM], options={"verify_signature": False})
+            exp = datetime.fromtimestamp(payload.get('exp', 0), tz=timezone.utc)
+            func_add_token_to_blacklist(db, access_token, exp)
+        except Exception:
+            pass
+
     if refresh_token:
-        token_blacklist.add(refresh_token)
+        try:
+            payload = jwt.decode(refresh_token, REFRESH_TOKEN_SECRET, algorithms=[TOKEN_ALGORITHM], options={"verify_signature": False})
+            exp = datetime.fromtimestamp(payload.get('exp', 0), tz=timezone.utc)
+            func_add_token_to_blacklist(db, refresh_token, exp)
+        except Exception:
+            pass
 
     response = JSONResponse(content={"message": "Logged out successfully"})
     response.delete_cookie(
@@ -80,20 +101,26 @@ async def logout(request: Request, access_token: str = Cookie(None, alias="acces
     return response
 
 @router.post("/refresh")
-async def refresh_token(request: Request, refresh_token: str = Cookie(None, alias="refresh_token")) -> JSONResponse:
+async def refresh_token(
+    request: Request,
+    refresh_token: str = Cookie(None, alias="refresh_token"),
+    db: Session = Depends(get_db)
+) -> JSONResponse:
     """
     Refresh the access token using the refresh token
 
     Args:
     request (Request): The request object
     refresh_token (str): The refresh token from cookie
-    csrf_protect (CsrfProtect): CSRF protection
+    db (Session): Database session
 
     Returns:
     JSONResponse: Success message with new tokens set as HttpOnly cookies
     """
     from config import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
-    from datetime import timedelta
+    from datetime import timedelta, datetime, timezone
+    import jwt
+    from config import REFRESH_TOKEN_SECRET, TOKEN_ALGORITHM
 
     if(refresh_token is None):
         from fastapi import HTTPException, status
@@ -104,6 +131,14 @@ async def refresh_token(request: Request, refresh_token: str = Cookie(None, alia
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has been revoked")
 
     token_data = verify_refresh_token(refresh_token)
+
+    try:
+        payload = jwt.decode(refresh_token, REFRESH_TOKEN_SECRET, algorithms=[TOKEN_ALGORITHM], options={"verify_signature": False})
+        exp = datetime.fromtimestamp(payload.get('exp', 0), tz=timezone.utc)
+        func_add_token_to_blacklist(db, refresh_token, exp)
+    except Exception:
+        pass
+
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": token_data.username}, expires_delta=access_token_expires

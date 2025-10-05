@@ -5,6 +5,7 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
+import secrets
 
 from webauthn_auth import (
     generate_webauthn_authentication_options,
@@ -15,7 +16,7 @@ from webauthn_auth import (
     get_challenge,
 )
 from database import get_db, func_get_webauthn_credentials
-from config import WEBAUTHN_REGISTER_SECRET
+from config import WEBAUTHN_REGISTER_SECRET, limiter
 import uuid
 import json
 
@@ -45,9 +46,12 @@ async def get_webauthn_status(db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/webauthn/register/start")
+@limiter.limit("5/hour")  # Strict rate limiting for registration
 async def start_webauthn_registration(request: Request):
     """
     Start WebAuthn registration process with password protection.
+
+    Rate limited to 5 attempts per hour to prevent brute force attacks.
 
     Returns:
         JSONResponse: Registration options
@@ -56,23 +60,17 @@ async def start_webauthn_registration(request: Request):
         data = await request.json()
         password = data.get("password", "")
 
-        if password != WEBAUTHN_REGISTER_SECRET:
+        if not secrets.compare_digest(password.encode(), WEBAUTHN_REGISTER_SECRET.encode()):
             raise HTTPException(status_code=403, detail="Invalid registration password")
 
-        print("Starting WebAuthn registration...")
         challenge_id = str(uuid.uuid4())
-        print(f"Generated challenge_id: {challenge_id}")
-
         options_json, challenge_bytes = generate_webauthn_registration_options("admin")
-        print(f"Generated registration options")
 
         options_dict = json.loads(options_json)
 
         from webauthn.helpers import bytes_to_base64url
         challenge_b64 = bytes_to_base64url(challenge_bytes)
         store_challenge(challenge_id, challenge_b64)
-
-        print(f"Stored challenge for challenge_id: {challenge_id}")
 
         return JSONResponse(content={
             "challenge_id": challenge_id,
@@ -102,8 +100,6 @@ async def complete_webauthn_registration(request: Request):
         challenge_id = data["challenge_id"]
         credential = data["credential"]
 
-        print(f"Received registration challenge_id: {challenge_id}")
-        print(f"Received credential data: {credential[:100] if isinstance(credential, str) else str(credential)[:100]}...")
 
         challenge_b64 = get_challenge(challenge_id)
         if not challenge_b64:
@@ -111,7 +107,6 @@ async def complete_webauthn_registration(request: Request):
 
         from webauthn.helpers import base64url_to_bytes
         challenge = base64url_to_bytes(challenge_b64)
-        print(f"Retrieved challenge: {challenge}")
 
         success = verify_webauthn_registration({
             "credential": credential
@@ -141,20 +136,15 @@ async def start_webauthn_authentication():
         JSONResponse: Authentication options
     """
     try:
-        print("Starting WebAuthn authentication...")
         challenge_id = str(uuid.uuid4())
-        print(f"Generated challenge_id: {challenge_id}")
 
         options_json, challenge_bytes = generate_webauthn_authentication_options("admin")
-        print(f"Generated authentication options")
 
         options_dict = json.loads(options_json)
 
         from webauthn.helpers import bytes_to_base64url
         challenge_b64 = bytes_to_base64url(challenge_bytes)
         store_challenge(challenge_id, challenge_b64)
-
-        print(f"Stored challenge for challenge_id: {challenge_id}")
 
         return JSONResponse(content={
             "challenge_id": challenge_id,
@@ -181,17 +171,12 @@ async def complete_webauthn_authentication(request: Request):
         data = await request.json()
         challenge_id = data["challenge_id"]
         credential = data["credential"]
-
-        print(f"Received challenge_id: {challenge_id}")
-        print(f"Received credential data: {credential[:100] if isinstance(credential, str) else str(credential)[:100]}...")
-
         challenge_b64 = get_challenge(challenge_id)
         if not challenge_b64:
             raise HTTPException(status_code=400, detail="Invalid or expired challenge")
 
         from webauthn.helpers import base64url_to_bytes
         challenge = base64url_to_bytes(challenge_b64)
-        print(f"Retrieved challenge: {challenge}")
 
         success = verify_webauthn_authentication({
             "credential": credential

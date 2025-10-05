@@ -14,10 +14,10 @@ from config import (
     ADMIN_USER,
     ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET,
     TOKEN_ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES,
-    REFRESH_TOKEN_EXPIRE_MINUTES, token_blacklist,
+    REFRESH_TOKEN_EXPIRE_MINUTES,
     JWT_ISSUER, JWT_AUDIENCE
 )
-from database import TokenData
+from database import TokenData, get_db, func_is_token_blacklisted
 
 def is_token_blacklisted(token: str) -> bool:
     """
@@ -29,7 +29,11 @@ def is_token_blacklisted(token: str) -> bool:
     Returns:
     bool: True if token is blacklisted
     """
-    return token in token_blacklist
+    db = next(get_db())
+    try:
+        return func_is_token_blacklisted(db, token)
+    finally:
+        db.close()
 
 def get_token_from_cookie(access_token: str = Cookie(None, alias="access_token")):
     """

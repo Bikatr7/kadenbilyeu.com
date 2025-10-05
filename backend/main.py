@@ -11,13 +11,14 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
 
-from config import limiter, maintenance_mode, maintenance_lock
+from config import limiter, maintenance_mode, maintenance_lock, SECURE_COOKIES
 from utils import start_scheduler, get_url
 
 from routes.auth import router as auth_router
 from routes.blog import router as blog_router
 from routes.admin import router as admin_router
 from routes.webauthn import router as webauthn_router
+from routes.terminal import router as terminal_router
 
 app = FastAPI()
 
@@ -38,6 +39,24 @@ async def maintenance_middleware(request:Request, call_next):
         return JSONResponse(status_code=503, content={"message": "Server is in maintenance mode"})
 
     response = await call_next(request)
+
+    return response
+
+@app.middleware("http")
+async def security_headers_middleware(request:Request, call_next):
+    response = await call_next(request)
+
+    # Clickjacking protection
+    response.headers["X-Frame-Options"] = "DENY"
+    # MIME type sniffing
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    # Referrer policy
+    response.headers["Referrer-Policy"] = "no-referrer"
+    # Lock down powerful APIs by default
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+    # Enforce HTTPS for a year in production
+    if SECURE_COOKIES:
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
 
     return response
 
@@ -66,6 +85,7 @@ app.include_router(auth_router)
 app.include_router(blog_router)
 app.include_router(admin_router)
 app.include_router(webauthn_router)
+app.include_router(terminal_router)
 
 ## Root endpoint
 @app.get("/")

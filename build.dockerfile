@@ -11,9 +11,9 @@ WORKDIR /app
 COPY backend/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 2) OS deps (gnupg)
+# 2) OS deps (gnupg, openssh-client)
 RUN apt-get update \
- && apt-get install -y --no-install-recommends gnupg2 \
+ && apt-get install -y --no-install-recommends gnupg2 openssh-client \
  && rm -rf /var/lib/apt/lists/*
 
 # 3) Copy ALL backend code into /app (not just main.py)
