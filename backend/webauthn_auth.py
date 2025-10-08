@@ -45,12 +45,16 @@ def get_rp_id():
     else:
         return "kadenbilyeu.com"
 
-def get_expected_origin():
-    """Get the expected origin based on environment."""
+def get_expected_origins():
+    """Get the expected origins based on environment."""
     if ENVIRONMENT == "development":
-        return "http://localhost:5173"
+        return ["http://localhost:5173"]
     else:
-        return "https://kadenbilyeu.com"
+        return ["https://kadenbilyeu.com", "https://bikatr7.com"]
+
+def get_expected_origin():
+    """Get the expected origin based on environment (legacy function)."""
+    return get_expected_origins()[0]
 
 RP_NAME = "Kaden Bilyeu Admin"
 
@@ -120,11 +124,16 @@ def verify_webauthn_registration(credential_data: Dict[str, Any], challenge: byt
             import json
             parsed_credential = parse_registration_credential_json(json.dumps(credential_json))
 
+        allowed_origins = get_expected_origins()
+        if parsed_credential.response.client_data.origin not in allowed_origins:
+            print(f"❌ Origin {parsed_credential.response.client_data.origin} not in allowed origins: {allowed_origins}")
+            return False
+
         verification = verify_registration_response(
             credential=parsed_credential,
             expected_challenge=challenge,
             expected_rp_id=get_rp_id(),
-            expected_origin=get_expected_origin(),
+            expected_origin=parsed_credential.response.client_data.origin,  # Use the actual origin from credential
             require_user_verification=False,
         )
 
@@ -230,12 +239,17 @@ def verify_webauthn_authentication(credential_data: Dict[str, Any], challenge: b
 
         print(f"Found matching credential: {matching_credential.credential_id[:16]}...")
 
+        allowed_origins = get_expected_origins()
+        if parsed_credential.response.client_data.origin not in allowed_origins:
+            print(f"❌ Origin {parsed_credential.response.client_data.origin} not in allowed origins: {allowed_origins}")
+            return False
+
         try:
             verification = verify_authentication_response(
                 credential=parsed_credential,
                 expected_challenge=challenge,
                 expected_rp_id=get_rp_id(),
-                expected_origin=get_expected_origin(),
+                expected_origin=parsed_credential.response.client_data.origin,  # Use the actual origin from credential
                 credential_public_key=matching_credential.public_key,
                 credential_current_sign_count=matching_credential.sign_count,
                 require_user_verification=False,

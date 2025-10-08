@@ -19,8 +19,9 @@ from auth import (
     verify_refresh_token, get_current_user,
     is_token_blacklisted, get_token_from_cookie
 )
-from database import TokenData
+from database import TokenData, func_add_token_to_blacklist, get_db, BlacklistedTokenModel
 from fastapi import HTTPException
+from datetime import datetime, timedelta, timezone
 
 
 class TestTokenFunctions:
@@ -68,15 +69,29 @@ class TestTokenFunctions:
 
 class TestTokenBlacklist:
     def setup_method(self):
-        from auth import token_blacklist
-        token_blacklist.clear()
+        # Clear any existing blacklisted tokens for testing
+        db = next(get_db())
+        try:
+            db.query(BlacklistedTokenModel).delete()
+            db.commit()
+        except:
+            db.rollback()
+        finally:
+            db.close()
 
     def test_is_token_blacklisted_empty(self):
         assert not is_token_blacklisted("sometoken")
 
     def test_is_token_blacklisted_after_adding(self):
-        from auth import token_blacklist
-        token_blacklist.add("blacklisted_token")
+        # Add token to blacklist
+        db = next(get_db())
+        try:
+            expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
+            func_add_token_to_blacklist(db, "blacklisted_token", expires_at)
+            db.commit()
+        finally:
+            db.close()
+
         assert is_token_blacklisted("blacklisted_token")
         assert not is_token_blacklisted("other_token")
 
@@ -93,8 +108,14 @@ class TestTokenExtraction:
         assert "Not authenticated" in str(exc_info.value.detail)
 
     def test_get_token_from_cookie_blacklisted(self):
-        from auth import token_blacklist
-        token_blacklist.add("blacklisted_token")
+        # Add token to blacklist
+        db = next(get_db())
+        try:
+            expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
+            func_add_token_to_blacklist(db, "blacklisted_token", expires_at)
+            db.commit()
+        finally:
+            db.close()
 
         with pytest.raises(HTTPException) as exc_info:
             get_token_from_cookie("blacklisted_token")
