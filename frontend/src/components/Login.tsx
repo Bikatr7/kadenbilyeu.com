@@ -16,19 +16,14 @@ import { getURL } from '../utils';
 
 // context
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 
-interface LoginProps {
-    onLogin: () => void;
-    onLogout: () => void;
-    isLoggedIn?: boolean;
-}
-
-const Login: React.FC<LoginProps> = ({ onLogin, onLogout, isLoggedIn = false }) => {
+const Login: React.FC = () => {
+    const { isLoggedIn, isLoading: authLoading, login: onLogin, logout: onLogout } = useAuth();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isOpen: isRegisterOpen, onOpen: onRegisterOpen, onClose: onRegisterClose } = useDisclosure();
     const { isOpen: isSuccessOpen, onOpen: onSuccessOpen, onClose: onSuccessClose } = useDisclosure();
     const { isRetro } = useTheme();
-    const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticating, setIsAuthenticating] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
     const [error, setError] = useState('');
@@ -89,31 +84,6 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout, isLoggedIn = false }) 
         return bytes;
     };
 
-    useEffect(() => {
-        const checkLoginStatus = async () => {
-            try {
-                const response = await fetch(getURL('/auth/check'), {
-                    credentials: 'include'
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.authenticated) {
-                        onLogin();
-                    } else {
-                        onLogout();
-                    }
-                } else {
-                    onLogout();
-                }
-            } catch (error) {
-                onLogout();
-            }
-            setIsLoading(false);
-        };
-
-        checkLoginStatus();
-    }, []);
 
     const handleClose = () => {
         setError('');
@@ -295,15 +265,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout, isLoggedIn = false }) 
     };
 
     const handleLogout = async () => {
-        try {
-            await fetch(getURL('/logout'), {
-                method: 'POST',
-                credentials: 'include'
-            });
-            onLogout();
-        } catch (error) {
-            console.error('Logout error:', error);
-        }
+        await onLogout();
     };
 
     return (
@@ -322,7 +284,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onLogout, isLoggedIn = false }) 
                 color={isRetro ? (isLoggedIn ? "red.200" : "purple.200") : undefined}
                 fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
             >
-                {isLoading ? <Spinner size="sm" /> : (isLoggedIn ? 'Logout' : 'Login')}
+                {authLoading ? <Spinner size="sm" /> : (isLoggedIn ? 'Logout' : 'Login')}
             </Button>
 
             <Modal isOpen={isOpen} onClose={handleClose} isCentered size="lg">

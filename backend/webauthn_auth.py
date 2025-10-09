@@ -13,7 +13,7 @@ from webauthn import (
     verify_registration_response,
     options_to_json
 )
-from webauthn.helpers import parse_authentication_credential_json, parse_registration_credential_json
+from webauthn.helpers import parse_authentication_credential_json, parse_registration_credential_json, parse_client_data_json
 from webauthn.helpers import (
     base64url_to_bytes,
     bytes_to_base64url,
@@ -124,16 +124,18 @@ def verify_webauthn_registration(credential_data: Dict[str, Any], challenge: byt
             import json
             parsed_credential = parse_registration_credential_json(json.dumps(credential_json))
 
+        client_data = parse_client_data_json(parsed_credential.response.client_data_json)
+
         allowed_origins = get_expected_origins()
-        if parsed_credential.response.client_data.origin not in allowed_origins:
-            print(f"❌ Origin {parsed_credential.response.client_data.origin} not in allowed origins: {allowed_origins}")
+        if client_data.origin not in allowed_origins:
+            print(f"❌ Origin {client_data.origin} not in allowed origins: {allowed_origins}")
             return False
 
         verification = verify_registration_response(
             credential=parsed_credential,
             expected_challenge=challenge,
             expected_rp_id=get_rp_id(),
-            expected_origin=parsed_credential.response.client_data.origin,  # Use the actual origin from credential
+            expected_origin=client_data.origin, 
             require_user_verification=False,
         )
 
@@ -239,9 +241,11 @@ def verify_webauthn_authentication(credential_data: Dict[str, Any], challenge: b
 
         print(f"Found matching credential: {matching_credential.credential_id[:16]}...")
 
+        client_data = parse_client_data_json(parsed_credential.response.client_data_json)
+
         allowed_origins = get_expected_origins()
-        if parsed_credential.response.client_data.origin not in allowed_origins:
-            print(f"❌ Origin {parsed_credential.response.client_data.origin} not in allowed origins: {allowed_origins}")
+        if client_data.origin not in allowed_origins:
+            print(f"❌ Origin {client_data.origin} not in allowed origins: {allowed_origins}")
             return False
 
         try:
@@ -249,7 +253,7 @@ def verify_webauthn_authentication(credential_data: Dict[str, Any], challenge: b
                 credential=parsed_credential,
                 expected_challenge=challenge,
                 expected_rp_id=get_rp_id(),
-                expected_origin=parsed_credential.response.client_data.origin,  # Use the actual origin from credential
+                expected_origin=client_data.origin, 
                 credential_public_key=matching_credential.public_key,
                 credential_current_sign_count=matching_credential.sign_count,
                 require_user_verification=False,

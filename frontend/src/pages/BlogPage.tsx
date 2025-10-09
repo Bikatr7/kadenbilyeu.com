@@ -12,7 +12,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Box, Button, VStack, Text, Flex, useToast } from "@chakra-ui/react";
 
 // components
-import Login from "../components/Login";
 import MakePost from "../components/MakePost";
 import EditPost from "../components/EditPost";
 import EmbedSEO from '../components/EmbedSEO';
@@ -23,6 +22,10 @@ import { getURL, formatDate, createSlug, authenticatedFetch } from '../utils';
 
 // contexts
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
+
+// assets
+import elmo from '../assets/images/elmo.webp';
 
 interface BlogPost {
     id: string;
@@ -34,8 +37,8 @@ interface BlogPost {
 
 const BlogPage: React.FC = () => {
     const { isRetro } = useTheme();
+    const { isLoggedIn } = useAuth();
     const navigate = useNavigate();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, postId: string | null }>({ x: 0, y: 0, postId: null });
@@ -77,19 +80,6 @@ const BlogPage: React.FC = () => {
         fetchBlogPosts();
     }, [fetchBlogPosts]);
 
-    const handleLogin = () => setIsLoggedIn(true);
-    const handleLogout = async () => {
-        try {
-            await fetch(getURL('/logout'), {
-                method: 'POST',
-                credentials: 'include'
-            });
-        } catch (error) {
-            console.error('Logout error:', error);
-        }
-
-        setIsLoggedIn(false);
-    };
     const handleNewPost = () => {
         fetchBlogPosts();
         toast({
@@ -271,35 +261,28 @@ const BlogPage: React.FC = () => {
                 imageAlt="Kaden Bilyeu (Bikatr7) Profile Picture"
             />
 
-            <Flex justify="flex-end" p="1rem" bg="black" width="100%" gap="1rem" flexWrap="wrap">
-                {isLoggedIn ? (
-                    <>
-                        <MakePost onPost={handleNewPost} />
-                        <Button
-                            onClick={handleForceBackup}
-                            rounded={isRetro ? "none" : "full"}
-                            border={isRetro ? "2px solid" : "none"}
-                            borderColor="purple.400"
-                            bg={isRetro ? "black" : undefined}
-                            _hover={{
-                                color: isRetro ? 'purple.400' : 'yellow',
-                                transform: 'scale(1.01)'
-                            }}
-                        >
-                            Force Backup
-                        </Button>
-                        <Button as="label" _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
-                            Upload Database
-                            <input type="file" accept=".pgp" style={{ display: 'none' }} onChange={handleFileChange} />
-                        </Button>
-                        <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
-                            Logout
-                        </Button>
-                    </>
-                ) : (
-                    <Login onLogin={handleLogin} onLogout={handleLogout} />
-                )}
-            </Flex>
+            {isLoggedIn && (
+                <Flex justify="flex-end" p="1rem" bg="black" width="100%" gap="1rem" flexWrap="wrap">
+                    <MakePost onPost={handleNewPost} />
+                    <Button
+                        onClick={handleForceBackup}
+                        rounded={isRetro ? "none" : "full"}
+                        border={isRetro ? "2px solid" : "none"}
+                        borderColor="purple.400"
+                        bg={isRetro ? "black" : undefined}
+                        _hover={{
+                            color: isRetro ? 'purple.400' : 'yellow',
+                            transform: 'scale(1.01)'
+                        }}
+                    >
+                        Force Backup
+                    </Button>
+                    <Button as="label" _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
+                        Upload Database
+                        <input type="file" accept=".pgp" style={{ display: 'none' }} onChange={handleFileChange} />
+                    </Button>
+                </Flex>
+            )}
 
             {isLoading ? (
                 <LoadingSpinner />
@@ -359,13 +342,42 @@ const BlogPage: React.FC = () => {
                                     </Link>
                                 ))
                             ) : (
-                                <Flex justify="center" align="center" height="100%">
+                                <Flex justify="center" align="center" height="100%" flexDirection="column" gap={4} p={4}>
+                                    <Box
+                                        as="img"
+                                        src={elmo}
+                                        alt="Elmo in flames"
+                                        maxW={{ base: "150px", md: "200px" }}
+                                        mb={2}
+                                        style={{
+                                            imageRendering: isRetro ? 'pixelated' : 'auto'
+                                        }}
+                                    />
                                     <Text
-                                        fontSize="xl"
-                                        color={isRetro ? "purple.400" : "yellow"}
+                                        fontSize={isRetro ? "4xl" : "6xl"}
+                                        color={isRetro ? "red.400" : "red.500"}
                                         fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                        fontWeight="bold"
                                     >
-                                        No Current Posts
+                                        500
+                                    </Text>
+                                    <Text
+                                        fontSize={isRetro ? "md" : "xl"}
+                                        color={isRetro ? "purple.300" : "yellow"}
+                                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                        textAlign="center"
+                                        lineHeight={isRetro ? "2" : "normal"}
+                                    >
+                                        {isRetro ? "OOPS! SERVER IS DOWN LOL" : "Oops! Server is down lol"}
+                                    </Text>
+                                    <Text
+                                        fontSize="sm"
+                                        color={isRetro ? "purple.200" : "gray.400"}
+                                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                        textAlign="center"
+                                        lineHeight={isRetro ? "1.8" : "normal"}
+                                    >
+                                        {isRetro ? "NO POSTS FOUND" : "No posts found... probably a skill issue"}
                                     </Text>
                                 </Flex>
                             )}
