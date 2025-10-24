@@ -88,6 +88,7 @@ function NamedDivider({ name, id, isExpandable = false, isExpanded = false, onTo
       id={id} 
       position="relative" 
       py={6}
+      scrollMarginTop={{ base: '96px', md: '120px' }}
       cursor={isExpandable && !isRetro ? "pointer" : "default"} 
       onClick={isExpandable && !isRetro ? onToggle : undefined}
     >
