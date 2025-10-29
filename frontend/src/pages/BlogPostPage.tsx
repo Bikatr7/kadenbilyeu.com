@@ -29,6 +29,7 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 // context
 import { useTheme } from '../contexts/ThemeContext';
 import { useCache } from '../contexts/CacheContext';
+import { useAuth } from '../contexts/AuthContext';
 
 interface BlogPost {
     id: string;
@@ -45,10 +46,10 @@ const BlogPostPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const toast = useToast();
+    const { isLoggedIn } = useAuth();
     const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [_, setIsLoading] = useState(false);
     const { isRetro } = useTheme();
     const { getCache, setCache } = useCache();
@@ -91,22 +92,8 @@ const BlogPostPage: React.FC = () => {
             setIsLoading(false);
         };
 
-        const checkLoginStatus = async () => {
-            try {
-                const response = await fetch(getURL('/auth/check'), {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                const data = await response.json();
-                setIsLoggedIn(data.authenticated);
-            } catch (error) {
-                setIsLoggedIn(false);
-            }
-        };
-
         fetchBlogPost();
-        checkLoginStatus();
-    }, [id]);
+    }, [id, getCache, setCache]);
 
     const getBackLink = () => {
         if (location.state?.from === '/blog' || location.state?.from === '/blog/directory') {

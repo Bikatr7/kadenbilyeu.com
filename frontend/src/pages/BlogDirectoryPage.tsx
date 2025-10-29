@@ -15,7 +15,6 @@ import { Box, Button, VStack, Text, Flex } from "@chakra-ui/react";
 import { ArrowBackIcon } from '@chakra-ui/icons';
 
 // components
-import Login from "../components/Login";
 import EditPost from "../components/EditPost";
 import EmbedSEO from "../components/EmbedSEO";
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -25,6 +24,7 @@ import { getURL, formatDate, createSlug, authenticatedFetch } from '../utils';
 
 // context
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 
 interface BlogPost {
     id: string;
@@ -36,8 +36,8 @@ interface BlogPost {
 
 const BlogDirectoryPage: React.FC = () => {
     const { isRetro } = useTheme();
+    const { isLoggedIn } = useAuth();
     const navigate = useNavigate();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, postId: string | null }>({ x: 0, y: 0, postId: null });
@@ -78,21 +78,6 @@ const BlogDirectoryPage: React.FC = () => {
     useEffect(() => {
         fetchBlogPosts();
     }, [fetchBlogPosts]);
-
-    const handleLogin = () => setIsLoggedIn(true);
-    const handleLogout = async () => {
-        try {
-            await fetch(getURL('/logout'), {
-                method: 'POST',
-                credentials: 'include'
-            });
-        } catch (error) {
-            console.error('Logout error:', error);
-        }
-
-        // Update local state
-        setIsLoggedIn(false);
-    };
 
     const handleRightClick = (e: React.MouseEvent, postId: string) => {
         if (isLoggedIn) {
@@ -198,14 +183,6 @@ const BlogDirectoryPage: React.FC = () => {
                         </Text>
                     </Flex>
 
-                    {/* Right side - Auth controls */}
-                    <Flex gap="1rem" align="center" flexWrap="wrap">
-                        {isLoggedIn ? (
-                            <Button onClick={handleLogout} _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>Logout</Button>
-                        ) : (
-                            <Login onLogin={handleLogin} onLogout={handleLogout} />
-                        )}
-                    </Flex>
                 </Flex>
             </Box>
 

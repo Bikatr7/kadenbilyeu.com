@@ -9,7 +9,7 @@ import { Box, Container,Divider, Flex, IconButton, Image, Stack, Text } from '@c
 import { useTheme } from '../contexts/ThemeContext';
 
 // icons and images
-import { IconBrandGithub } from '@tabler/icons-react';
+import { IconBrandGithub, IconActivity } from '@tabler/icons-react';
 
 // logo
 import logo from '../assets/images/personals/kb.webp';
@@ -38,23 +38,41 @@ function Footer()
                 justify={{ base: 'space-between', md: 'space-between' }}
                 align={{ base: 'center', md: 'center' }}>
                 <Flex display={{ base: 'flex', md: 'none' }} width="100%" justify="space-between" align="center">
-                    <IconButton 
-                        as='a' 
-                        href='https://github.com/Bikatr7' 
-                        aria-label='Github' 
-                        icon={<IconBrandGithub />}
-                        bg="transparent"
-                        color={isRetro ? "purple.200" : "white"}
-                        border={isRetro ? "2px solid" : "none"}
-                        borderColor="purple.400"
-                        borderRadius="none"
-                        _hover={{
-                            bg: 'transparent',
-                            color: isRetro ? 'purple.400' : 'yellow',
-                            transform: 'scale(1.1)'
-                        }}
-                    />
-                    <Text 
+                    <Flex gap={2}>
+                        <IconButton
+                            as='a'
+                            href='https://github.com/Bikatr7'
+                            aria-label='Github'
+                            icon={<IconBrandGithub />}
+                            bg="transparent"
+                            color={isRetro ? "purple.200" : "white"}
+                            border={isRetro ? "2px solid" : "none"}
+                            borderColor="purple.400"
+                            borderRadius="none"
+                            _hover={{
+                                bg: 'transparent',
+                                color: isRetro ? 'purple.400' : 'yellow',
+                                transform: 'scale(1.1)'
+                            }}
+                        />
+                        <IconButton
+                            as='a'
+                            href={isRetro ? 'https://status.bikatr7.com' : 'https://status.kadenbilyeu.com'}
+                            aria-label='Status'
+                            icon={<IconActivity />}
+                            bg="transparent"
+                            color={isRetro ? "purple.200" : "white"}
+                            border={isRetro ? "2px solid" : "none"}
+                            borderColor="purple.400"
+                            borderRadius="none"
+                            _hover={{
+                                bg: 'transparent',
+                                color: isRetro ? 'purple.400' : 'yellow',
+                                transform: 'scale(1.1)'
+                            }}
+                        />
+                    </Flex>
+                    <Text
                         textAlign="center"
                         fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                         fontSize={isRetro ? { base: "10px", md: "xs" } : "inherit"}
@@ -65,30 +83,48 @@ function Footer()
                 </Flex>
                 <Flex display={{ base: 'none', md: 'flex' }} width="100%" justify="space-between" align="center">
                     <Image src={logo} boxSize='30px' alt="Kaden Bilyeu (Bikatr7) Logo" />
-                    <Text 
-                        textAlign="center" 
+                    <Text
+                        textAlign="center"
                         flex="1"
                         fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                         fontSize={isRetro ? "xs" : "inherit"}
                     >
                         © 2024-2025 {isRetro ? 'Bikatr7' : 'Kaden Bilyeu (Bikatr7)'}. All rights reserved
                     </Text>
-                    <IconButton 
-                        as='a' 
-                        href='https://github.com/Bikatr7' 
-                        aria-label='Github' 
-                        icon={<IconBrandGithub />}
-                        bg="transparent"
-                        color={isRetro ? "purple.200" : "white"}
-                        border={isRetro ? "2px solid" : "none"}
-                        borderColor="purple.400"
-                        borderRadius="none"
-                        _hover={{
-                            bg: 'transparent',
-                            color: isRetro ? 'purple.400' : 'yellow',
-                            transform: 'scale(1.1)'
-                        }}
-                    />
+                    <Flex gap={2}>
+                        <IconButton
+                            as='a'
+                            href='https://github.com/Bikatr7'
+                            aria-label='Github'
+                            icon={<IconBrandGithub />}
+                            bg="transparent"
+                            color={isRetro ? "purple.200" : "white"}
+                            border={isRetro ? "2px solid" : "none"}
+                            borderColor="purple.400"
+                            borderRadius="none"
+                            _hover={{
+                                bg: 'transparent',
+                                color: isRetro ? 'purple.400' : 'yellow',
+                                transform: 'scale(1.1)'
+                            }}
+                        />
+                        <IconButton
+                            as='a'
+                            href={isRetro ? 'https://status.bikatr7.com' : 'https://status.kadenbilyeu.com'}
+                            aria-label='Status'
+                            icon={<IconActivity />}
+                            bg="transparent"
+                            color={isRetro ? "purple.200" : "white"}
+                            border={isRetro ? "2px solid" : "none"}
+                            borderColor="purple.400"
+                            borderRadius="none"
+                            _hover={{
+                                bg: 'transparent',
+                                color: isRetro ? 'purple.400' : 'yellow',
+                                transform: 'scale(1.1)'
+                            }}
+                        />
+                    </Flex>
                 </Flex>
             </Container>
         </Box>

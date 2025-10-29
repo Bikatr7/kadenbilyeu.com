@@ -15,12 +15,15 @@ import { IconDeviceGamepad2 } from '@tabler/icons-react';
 
 // custom components
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
+import Login from './Login';
 
 // assets
 import resume from '../assets/pdfs/Kaden_Truett_Bilyeu_Resume_July_2025.pdf';
 
 function Navbar() {
     const { isRetro, toggleRetro } = useTheme();
+    const { isLoggedIn } = useAuth();
     const location = useLocation();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [activeHover, setActiveHover] = useState<string | null>(null);
@@ -156,6 +159,34 @@ function Navbar() {
                     >
                         RESUME
                     </Button>
+
+                    {isLoggedIn && (
+                        <Button
+                            as={Link}
+                            to="/admin"
+                            size="sm"
+                            bg={isRetro ? "black" : "blue.900"}
+                            color={isRetro ? "blue.200" : "white"}
+                            _hover={{
+                                color: isRetro ? 'blue.400' : 'yellow',
+                                bg: isRetro ? 'blue.800' : 'blue.900',
+                                transform: 'scale(1.01)'
+                            }}
+                            _active={{
+                                bg: isRetro ? 'blue.700' : 'blue.900',
+                                transform: 'scale(0.98)'
+                            }}
+                            borderRadius={isRetro ? "none" : "md"}
+                            border={isRetro ? "2px solid" : "none"}
+                            borderColor={isRetro ? "blue.400" : "transparent"}
+                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                            fontSize={isRetro ? "xs" : "sm"}
+                        >
+                            ADMIN
+                        </Button>
+                    )}
+
+                    <Login />
                 </HStack>
 
                 {/* Mobile Menu Button - Top Right */}
@@ -219,10 +250,13 @@ function Navbar() {
                                 <NavLink to="/" mobile>HOME</NavLink>
                                 <NavLink to="/portfolio" mobile>PORTFOLIO</NavLink>
                                 <NavLink to="/blog" mobile>BLOG</NavLink>
+                                {isLoggedIn && (
+                                    <NavLink to="/admin" mobile>ADMIN</NavLink>
+                                )}
                             </VStack>
 
-                            {/* Resume Button at Bottom */}
-                            <Box p={6}>
+                            {/* Resume and Login Buttons at Bottom */}
+                            <VStack spacing={3} p={6}>
                                 <Button
                                     as="a"
                                     href={resume}
@@ -247,7 +281,10 @@ function Navbar() {
                                 >
                                     RESUME
                                 </Button>
-                            </Box>
+                                <Box w="full">
+                                    <Login />
+                                </Box>
+                            </VStack>
                         </DrawerBody>
                     </DrawerContent>
                 </Drawer>

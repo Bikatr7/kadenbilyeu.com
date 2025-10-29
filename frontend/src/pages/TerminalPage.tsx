@@ -16,49 +16,22 @@ import { FitAddon } from '@xterm/addon-fit';
 import { WebLinksAddon } from '@xterm/addon-web-links';
 import '@xterm/xterm/css/xterm.css';
 
-// components
-import Login from '../components/Login';
-
 // utils
 import { getURL } from '../utils';
 
 // contexts
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 
 function TerminalPage() {
     const { isRetro } = useTheme();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { isLoggedIn, isLoading: isAuthChecking } = useAuth();
     const terminalRef = useRef<HTMLDivElement>(null);
     const xtermRef = useRef<Terminal | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
     const fitAddonRef = useRef<FitAddon | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [error, setError] = useState<string>('');
-    const [isAuthChecking, setIsAuthChecking] = useState(true);
-
-    useEffect(() => {
-        // Check authentication first
-        const checkAuth = async () => {
-            try {
-                const response = await fetch(getURL('/auth/check'), {
-                    credentials: 'include'
-                });
-
-                const data = await response.json();
-                if (response.ok && data.authenticated) {
-                    setIsLoggedIn(true);
-                } else {
-                    setIsLoggedIn(false);
-                }
-            } catch (err) {
-                setIsLoggedIn(false);
-            } finally {
-                setIsAuthChecking(false);
-            }
-        };
-
-        checkAuth();
-    }, []);
 
     useEffect(() => {
         if (isAuthChecking || !isLoggedIn || !terminalRef.current) return;
@@ -159,14 +132,6 @@ function TerminalPage() {
         };
     }, [isAuthChecking, isLoggedIn, isRetro]);
 
-    const handleLogin = () => {
-        setIsLoggedIn(true);
-    };
-
-    const handleLogout = () => {
-        setIsLoggedIn(false);
-    };
-
     if (isAuthChecking) {
         return (
             <Box
@@ -198,7 +163,13 @@ function TerminalPage() {
                 right={0}
                 bottom={0}
             >
-                <Login onLogin={handleLogin} onLogout={handleLogout} isLoggedIn={false} />
+                <Text
+                    fontSize="xl"
+                    fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                    color={isRetro ? "purple.400" : "yellow"}
+                >
+                    Please log in to access the terminal
+                </Text>
             </Box>
         );
     }
@@ -216,10 +187,6 @@ function TerminalPage() {
             right={0}
             bottom={0}
         >
-            <Box position="absolute" top="1rem" right="1rem" zIndex={10}>
-                <Login onLogin={handleLogin} onLogout={handleLogout} isLoggedIn={isLoggedIn} />
-            </Box>
-
             {error && (
                 <Box position="absolute" top="5rem" left="50%" transform="translateX(-50%)" zIndex={10} maxW="md">
                     <Alert

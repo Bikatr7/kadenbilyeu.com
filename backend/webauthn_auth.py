@@ -13,7 +13,7 @@ from webauthn import (
     verify_registration_response,
     options_to_json
 )
-from webauthn.helpers import parse_authentication_credential_json, parse_registration_credential_json
+from webauthn.helpers import parse_authentication_credential_json, parse_registration_credential_json, parse_client_data_json
 from webauthn.helpers import (
     base64url_to_bytes,
     bytes_to_base64url,
