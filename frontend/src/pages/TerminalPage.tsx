@@ -152,13 +152,12 @@ function TerminalPage() {
             <Box
                 bg="black"
                 color="white"
-                height="100vh"
                 overflow="hidden"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
                 position="fixed"
-                top={0}
+                top={{ base: '56px', md: '64px' }}
                 left={0}
                 right={0}
                 bottom={0}
@@ -178,11 +177,10 @@ function TerminalPage() {
         <Box
             bg="black"
             color="white"
-            height="100vh"
             overflow="hidden"
             className={isRetro ? 'retro-mode' : ''}
             position="fixed"
-            top={0}
+            top={{ base: '56px', md: '64px' }}
             left={0}
             right={0}
             bottom={0}

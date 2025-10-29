@@ -96,10 +96,14 @@ async def terminal_websocket(
 
         logger.debug(f"[TERMINAL] SSH command: {' '.join(ssh_command)}")
 
-        # Spawn PTY process
+        # Spawn PTY process with terminal env
+        env = os.environ.copy()
+        env.setdefault("TERM", "xterm-256color")
+        env.setdefault("COLORTERM", "truecolor")
         pty_process = ptyprocess.PtyProcessUnicode.spawn(
             ssh_command,
-            dimensions=(24, 80)  # default terminal size
+            dimensions=(24, 80),  # default terminal size
+            env=env
         )
         logger.info(f"[TERMINAL] PTY process spawned successfully")
 
