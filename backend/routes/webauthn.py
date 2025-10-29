@@ -19,8 +19,10 @@ from database import get_db, func_get_webauthn_credentials
 from config import WEBAUTHN_REGISTER_SECRET, limiter
 import uuid
 import json
+import logging
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 @router.get("/webauthn/status")
 async def get_webauthn_status(db: Session = Depends(get_db)):
@@ -79,9 +81,7 @@ async def start_webauthn_registration(request: Request):
     except HTTPException:
         raise
     except Exception as e:
-        print(f"Error in start_webauthn_registration: {e}")
-        import traceback
-        traceback.print_exc()
+        logger.exception(f"Error in start_webauthn_registration: {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/webauthn/register/complete")
@@ -122,9 +122,7 @@ async def complete_webauthn_registration(request: Request):
     except HTTPException:
         raise
     except Exception as e:
-        print(f"Error in complete_webauthn_registration: {e}")
-        import traceback
-        traceback.print_exc()
+        logger.exception(f"Error in complete_webauthn_registration: {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/webauthn/authenticate/start")
@@ -151,9 +149,7 @@ async def start_webauthn_authentication():
             "options": options_dict
         })
     except Exception as e:
-        print(f"Error in start_webauthn_authentication: {e}")
-        import traceback
-        traceback.print_exc()
+        logger.exception(f"Error in start_webauthn_authentication: {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/webauthn/authenticate/complete")
@@ -226,4 +222,5 @@ async def complete_webauthn_authentication(request: Request):
     except HTTPException:
         raise
     except Exception as e:
+        logger.exception(f"Error in complete_webauthn_authentication: {e}")
         raise HTTPException(status_code=400, detail=str(e))

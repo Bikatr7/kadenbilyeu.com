@@ -22,6 +22,14 @@ from routes.terminal import router as terminal_router
 
 app = FastAPI()
 
+## Logging configuration
+import logging
+from config import ENVIRONMENT
+logging.basicConfig(
+    level=logging.DEBUG if ENVIRONMENT == "development" else logging.INFO,
+    format="%(asctime)s %(levelname)s [%(name)s] %(message)s"
+)
+
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
@@ -29,7 +37,9 @@ app.add_middleware(SlowAPIMiddleware)
 
 @app.on_event("startup")
 async def startup_event():
-    start_scheduler()
+    from config import ENVIRONMENT
+    if ENVIRONMENT != "testing":
+        start_scheduler()
 
 ## Middleware
 @app.middleware("http")
@@ -64,6 +74,8 @@ async def security_headers_middleware(request:Request, call_next):
 origins = [
     "https://bikatr7.com",
     "https://kadenbilyeu.com",
+    "https://status.kadenbilyeu.com",
+    "https://status.bikatr7.com",
     "http://localhost:5173",
     "https://kadenbilyeu-com.pages.dev",
     "https://*.kadenbilyeu-com.pages.dev",

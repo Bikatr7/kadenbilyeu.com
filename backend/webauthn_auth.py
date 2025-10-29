@@ -2,8 +2,8 @@
 # Use of this source code is governed by an GNU Affero General Public License v3.0
 # license that can be found in the LICENSE file.
 
-import base64
-from typing import Dict, Any, Optional, List, Tuple
+import json
+from typing import Any, Optional, Dict
 from datetime import datetime, timedelta, timezone
 
 from webauthn import (
@@ -38,6 +38,11 @@ from database import (
     get_db
 )
 
+import logging
+import base64
+
+logger = logging.getLogger(__name__)
+
 def get_rp_id():
     """Get the relying party ID based on environment."""
     if ENVIRONMENT == "development":
@@ -55,6 +60,67 @@ def get_expected_origins():
 def get_expected_origin():
     """Get the expected origin based on environment (legacy function)."""
     return get_expected_origins()[0]
+
+def get_origin_from_client_data_json(client_data_json: bytes) -> str:
+    """
+    Extract the origin from client_data_json.
+
+    Args:
+        client_data_json: The client data JSON as bytes
+
+    Returns:
+        The origin string
+    """
+    client_data_str = client_data_json.decode('utf-8')
+    client_data = json.loads(client_data_str)
+    return client_data.get('origin', '')
+
+
+def _to_base64url(value: str) -> str:
+    """Convert base64 (standard) string to base64url without padding. If already base64url, return as-is."""
+    try:
+        # Normalize padding for base64 decode
+        padded = value + "==="
+        decoded = base64.b64decode(padded)
+        return bytes_to_base64url(decoded)
+    except Exception:
+        return value
+
+
+def normalize_registration_credential_b64(credential_obj: dict) -> dict:
+    """Ensure registration credential fields use base64url encoding expected by the webauthn lib."""
+    obj = dict(credential_obj)
+    try:
+        obj['rawId'] = _to_base64url(obj.get('rawId', ''))
+        resp = dict(obj.get('response', {}))
+        if 'attestationObject' in resp:
+            resp['attestationObject'] = _to_base64url(resp['attestationObject'])
+        if 'clientDataJSON' in resp:
+            resp['clientDataJSON'] = _to_base64url(resp['clientDataJSON'])
+        obj['response'] = resp
+    except Exception:
+        pass
+    return obj
+
+
+def normalize_authentication_credential_b64(credential_obj: dict) -> dict:
+    """Ensure authentication credential fields use base64url encoding expected by the webauthn lib."""
+    obj = dict(credential_obj)
+    try:
+        obj['rawId'] = _to_base64url(obj.get('rawId', ''))
+        resp = dict(obj.get('response', {}))
+        if 'authenticatorData' in resp:
+            resp['authenticatorData'] = _to_base64url(resp['authenticatorData'])
+        if 'clientDataJSON' in resp:
+            resp['clientDataJSON'] = _to_base64url(resp['clientDataJSON'])
+        if 'signature' in resp:
+            resp['signature'] = _to_base64url(resp['signature'])
+        if 'userHandle' in resp and resp['userHandle'] is not None:
+            resp['userHandle'] = _to_base64url(resp['userHandle'])
+        obj['response'] = resp
+    except Exception:
+        pass
+    return obj
 
 RP_NAME = "Kaden Bilyeu Admin"
 
@@ -83,7 +149,7 @@ def generate_webauthn_registration_options(user_id: str = "admin") -> tuple[str,
                     )
                 )
             except Exception as e:
-                print(f"Error processing credential {cred.credential_id}: {e}")
+                logger.warning(f"Error processing credential {cred.credential_id}: {e}")
 
         registration_options = generate_registration_options(
             rp_id=get_rp_id(),
@@ -118,22 +184,23 @@ def verify_webauthn_registration(credential_data: Dict[str, Any], challenge: byt
     db = next(get_db())
     try:
         credential_json = credential_data["credential"]
-        if isinstance(credential_json, str):
-            parsed_credential = parse_registration_credential_json(credential_json)
-        else:
-            import json
-            parsed_credential = parse_registration_credential_json(json.dumps(credential_json))
+        if not isinstance(credential_json, str):
+            credential_json = json.dumps(normalize_registration_credential_b64(credential_json))
+        parsed_credential = parse_registration_credential_json(credential_json)
+
+        # Extract origin from client_data_json
+        origin = get_origin_from_client_data_json(parsed_credential.response.client_data_json)
 
         allowed_origins = get_expected_origins()
-        if parsed_credential.response.client_data.origin not in allowed_origins:
-            print(f"❌ Origin {parsed_credential.response.client_data.origin} not in allowed origins: {allowed_origins}")
+        if origin not in allowed_origins:
+            logger.error(f"Origin {origin} not in allowed origins: {allowed_origins}")
             return False
 
         verification = verify_registration_response(
             credential=parsed_credential,
             expected_challenge=challenge,
             expected_rp_id=get_rp_id(),
-            expected_origin=parsed_credential.response.client_data.origin,  # Use the actual origin from credential
+            expected_origin=origin,
             require_user_verification=False,
         )
 
@@ -149,13 +216,11 @@ def verify_webauthn_registration(credential_data: Dict[str, Any], challenge: byt
         )
 
         func_create_webauthn_credential(db, new_credential)
-        print(f"Successfully registered new WebAuthn credential: {credential_id_b64[:16]}...")
+        logger.info(f"Registered new WebAuthn credential: {credential_id_b64[:16]}...")
         return True
 
     except Exception as e:
-        print(f"WebAuthn registration verification failed: {str(e)}")
-        import traceback
-        traceback.print_exc()
+        logger.exception(f"WebAuthn registration verification failed: {str(e)}")
         return False
     finally:
         db.close()
@@ -173,17 +238,17 @@ def generate_webauthn_authentication_options(user_id: str = "admin") -> tuple[st
     db = next(get_db())
     try:
         credentials = func_get_webauthn_credentials(db, user_id)
-        print(f"Got {len(credentials)} credentials from database")
+        logger.debug(f"Got {len(credentials)} credentials from database")
 
         if not credentials:
             raise ValueError("No WebAuthn credentials found for user")
 
         allow_credentials = []
         for cred in credentials:
-            print(f"Processing credential: {cred.credential_id[:16]}...")
+            logger.debug(f"Processing credential: {cred.credential_id[:16]}...")
             try:
                 cred_id_bytes = base64url_to_bytes(cred.credential_id)
-                print(f"  Converted credential ID to bytes: {len(cred_id_bytes)} bytes")
+                logger.debug(f"  Converted credential ID to bytes: {len(cred_id_bytes)} bytes")
                 allow_credentials.append(
                     PublicKeyCredentialDescriptor(
                         id=cred_id_bytes,
@@ -191,9 +256,9 @@ def generate_webauthn_authentication_options(user_id: str = "admin") -> tuple[st
                     )
                 )
             except Exception as e:
-                print(f"Error creating credential descriptor for {cred.credential_id[:16]}...: {e}")
+                logger.warning(f"Error creating credential descriptor for {cred.credential_id[:16]}...: {e}")
 
-        print(f"Created {len(allow_credentials)} allow_credentials")
+        logger.debug(f"Created {len(allow_credentials)} allow_credentials")
 
         authentication_options = generate_authentication_options(
             rp_id=get_rp_id(),
@@ -201,7 +266,7 @@ def generate_webauthn_authentication_options(user_id: str = "admin") -> tuple[st
             user_verification=UserVerificationRequirement.PREFERRED,
         )
 
-        print(f"Authentication options challenge: {authentication_options.challenge}")
+        logger.debug(f"Authentication options challenge: {authentication_options.challenge}")
 
         return options_to_json(authentication_options), authentication_options.challenge
     finally:
@@ -222,26 +287,27 @@ def verify_webauthn_authentication(credential_data: Dict[str, Any], challenge: b
     db = next(get_db())
     try:
         credential_json = credential_data["credential"]
-        if isinstance(credential_json, str):
-            parsed_credential = parse_authentication_credential_json(credential_json)
-        else:
-            import json
-            parsed_credential = parse_authentication_credential_json(json.dumps(credential_json))
+        if not isinstance(credential_json, str):
+            credential_json = json.dumps(normalize_authentication_credential_b64(credential_json))
+        parsed_credential = parse_authentication_credential_json(credential_json)
         credential_id_b64 = bytes_to_base64url(parsed_credential.raw_id)
 
-        print(f"Received credential_id_b64: {credential_id_b64}")
+        logger.debug(f"Received credential_id_b64: {credential_id_b64}")
 
         matching_credential = func_get_webauthn_credential_by_id(db, credential_id_b64)
 
         if not matching_credential:
-            print(f"No matching credential found for {credential_id_b64[:16]}...")
+            logger.error(f"No matching credential found for {credential_id_b64[:16]}...")
             return False
 
-        print(f"Found matching credential: {matching_credential.credential_id[:16]}...")
+        logger.debug(f"Found matching credential: {matching_credential.credential_id[:16]}...")
+
+        # Extract origin from client_data_json
+        origin = get_origin_from_client_data_json(parsed_credential.response.client_data_json)
 
         allowed_origins = get_expected_origins()
-        if parsed_credential.response.client_data.origin not in allowed_origins:
-            print(f"❌ Origin {parsed_credential.response.client_data.origin} not in allowed origins: {allowed_origins}")
+        if origin not in allowed_origins:
+            logger.error(f"Origin {origin} not in allowed origins: {allowed_origins}")
             return False
 
         try:
@@ -249,7 +315,7 @@ def verify_webauthn_authentication(credential_data: Dict[str, Any], challenge: b
                 credential=parsed_credential,
                 expected_challenge=challenge,
                 expected_rp_id=get_rp_id(),
-                expected_origin=parsed_credential.response.client_data.origin,  # Use the actual origin from credential
+                expected_origin=origin,
                 credential_public_key=matching_credential.public_key,
                 credential_current_sign_count=matching_credential.sign_count,
                 require_user_verification=False,
@@ -260,40 +326,38 @@ def verify_webauthn_authentication(credential_data: Dict[str, Any], challenge: b
             func_update_webauthn_credential_sign_count(
                 db, credential_id_b64, verification.new_sign_count
             )
-            print(f"✅ WebAuthn authentication successful for {credential_id_b64[:16]}...")
+            logger.info(f"WebAuthn authentication successful for {credential_id_b64[:16]}...")
             return True
 
         except InvalidAuthenticationResponse as e:
-            print(f"❌ WebAuthn verification failed: {e}")
+            logger.warning(f"WebAuthn verification failed: {e}")
             return False
 
     except Exception as e:
-        print(f"WebAuthn authentication verification failed: {str(e)}")
-        import traceback
-        traceback.print_exc()
+        logger.exception(f"WebAuthn authentication verification failed: {str(e)}")
         return False
     finally:
         db.close()
 
-ChallengeData = Tuple[str, datetime]
-webauthn_challenges: Dict[str, ChallengeData] = {}
 WEBAUTHN_CHALLENGE_TTL = timedelta(minutes=5)
 
 
 def store_challenge(challenge_id: str, challenge: str):
     """Store a WebAuthn challenge temporarily with expiration."""
+    from database import func_store_webauthn_challenge, get_db
     expires_at = datetime.now(timezone.utc) + WEBAUTHN_CHALLENGE_TTL
-    webauthn_challenges[challenge_id] = (challenge, expires_at)
+    db = next(get_db())
+    try:
+        func_store_webauthn_challenge(db, challenge_id, challenge, expires_at)
+    finally:
+        db.close()
 
 
 def get_challenge(challenge_id: str) -> Optional[str]:
     """Retrieve and remove a WebAuthn challenge if valid and not expired."""
-    challenge_entry = webauthn_challenges.pop(challenge_id, None)
-    if not challenge_entry:
-        return None
-
-    challenge, expires_at = challenge_entry
-    if datetime.now(timezone.utc) > expires_at:
-        return None
-
-    return challenge
+    from database import func_get_webauthn_challenge, get_db
+    db = next(get_db())
+    try:
+        return func_get_webauthn_challenge(db, challenge_id)
+    finally:
+        db.close()

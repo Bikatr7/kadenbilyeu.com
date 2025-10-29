@@ -20,12 +20,3 @@ def setup_test_environment():
     os.environ.setdefault('DATABASE_URL', 'sqlite:///./test.db')
     os.environ.setdefault('ENVIRONMENT', 'testing')
 
-
-@pytest.fixture(autouse=True)
-def mock_csrf_validation():
-    """Mock CSRF validation for all tests."""
-    from unittest.mock import AsyncMock, patch
-    with patch('fastapi_csrf_protect.CsrfProtect.validate_csrf', new_callable=AsyncMock) as mock_validate:
-        mock_validate.return_value = None  # No exception raised
-        yield mock_validate
-

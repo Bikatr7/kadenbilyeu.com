@@ -9,8 +9,10 @@ import json
 import ptyprocess
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from auth import verify_token, is_token_blacklisted
+import logging
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 @router.websocket("/admin/terminal/ws")
 async def terminal_websocket(
@@ -39,53 +41,51 @@ async def terminal_websocket(
             "bikatr7.pages.dev",
         )
         if not any(is_valid_origin(origin_host, allowed) for allowed in allowed_origins):
-            print(f"[TERMINAL] ❌ Disallowed WS Origin: {origin}")
+            logger.warning(f"[TERMINAL] Disallowed WS Origin: {origin}")
             await websocket.close(code=1008, reason="Origin not allowed")
             return
     except Exception as e:
-        print(f"[TERMINAL] ❌ Origin check error: {str(e)}")
+        logger.exception(f"[TERMINAL] Origin check error: {str(e)}")
         await websocket.close(code=1008, reason="Origin check failed")
         return
 
     # Verify auth token from cookies
     try:
-        print(f"[TERMINAL] New WebSocket connection attempt")
+        logger.info(f"[TERMINAL] New WebSocket connection attempt")
         cookies = websocket.cookies
-        print(f"[TERMINAL] Cookies received: {list(cookies.keys())}")
+        logger.debug(f"[TERMINAL] Cookies received: {list(cookies.keys())}")
 
         access_token = cookies.get("access_token")
         if not access_token:
-            print(f"[TERMINAL] ❌ No access_token cookie found")
+            logger.warning(f"[TERMINAL] No access_token cookie found")
             await websocket.close(code=1008, reason="Not authenticated")
             return
 
-        print(f"[TERMINAL] Access token found, checking blacklist")
+        logger.debug(f"[TERMINAL] Access token found, checking blacklist")
         if is_token_blacklisted(access_token):
-            print(f"[TERMINAL] ❌ Token is blacklisted")
+            logger.warning(f"[TERMINAL] Token is blacklisted")
             await websocket.close(code=1008, reason="Token revoked")
             return
 
-        print(f"[TERMINAL] Verifying token")
+        logger.debug(f"[TERMINAL] Verifying token")
         token_data = verify_token(access_token)
         if not token_data or not token_data.username:
-            print(f"[TERMINAL] ❌ Invalid token data")
+            logger.warning(f"[TERMINAL] Invalid token data")
             await websocket.close(code=1008, reason="Invalid token")
             return
 
-        print(f"[TERMINAL] ✅ Authentication successful for user: {token_data.username}")
+        logger.info(f"[TERMINAL] Authentication successful for user: {token_data.username}")
     except Exception as e:
-        print(f"[TERMINAL] ❌ Authentication error: {str(e)}")
-        import traceback
-        traceback.print_exc()
+        logger.exception(f"[TERMINAL] Authentication error: {str(e)}")
         await websocket.close(code=1008, reason="Authentication failed")
         return
 
     await websocket.accept()
-    print(f"[TERMINAL] WebSocket connection accepted")
+    logger.info(f"[TERMINAL] WebSocket connection accepted")
 
     # Spawn SSH process to connect to host
     try:
-        print(f"[TERMINAL] Starting SSH connection to host.docker.internal")
+        logger.info(f"[TERMINAL] Starting SSH connection to host.docker.internal")
         ssh_command = [
             "ssh",
             "-o", "StrictHostKeyChecking=accept-new",
@@ -94,14 +94,14 @@ async def terminal_websocket(
             "kbilyeu@host.docker.internal"
         ]
 
-        print(f"[TERMINAL] SSH command: {' '.join(ssh_command)}")
+        logger.debug(f"[TERMINAL] SSH command: {' '.join(ssh_command)}")
 
         # Spawn PTY process
         pty_process = ptyprocess.PtyProcessUnicode.spawn(
             ssh_command,
             dimensions=(24, 80)  # default terminal size
         )
-        print(f"[TERMINAL] PTY process spawned successfully")
+        logger.info(f"[TERMINAL] PTY process spawned successfully")
 
         # Task for reading from PTY and sending to WebSocket
         async def read_from_pty():
@@ -116,7 +116,7 @@ async def terminal_websocket(
                     except EOFError:
                         break
                     except Exception as e:
-                        print(f"Error reading from PTY: {e}")
+                        logger.warning(f"Error reading from PTY: {e}")
                         break
             finally:
                 if pty_process.isalive():
@@ -128,7 +128,7 @@ async def terminal_websocket(
                 while True:
                     try:
                         data = await websocket.receive()
-                        print(f"[TERMINAL] Received data from WebSocket: {data}")
+                        logger.debug(f"[TERMINAL] Received data from WebSocket: {data}")
 
                         if "text" in data and data["text"] is not None:
                             text_payload = data["text"]
@@ -139,17 +139,17 @@ async def terminal_websocket(
                                     if json_data.get("type") == "resize":
                                         rows = int(json_data.get("rows", 24))
                                         cols = int(json_data.get("cols", 80))
-                                        print(f"[TERMINAL] Resizing terminal to {rows}x{cols}")
+                                        logger.debug(f"[TERMINAL] Resizing terminal to {rows}x{cols}")
                                         pty_process.setwinsize(rows, cols)
                                         continue
                                 except Exception:
                                     pass
 
-                            print(f"[TERMINAL] Writing text to PTY: {repr(text_payload)}")
+                            logger.debug(f"[TERMINAL] Writing text to PTY: {repr(text_payload)}")
                             await asyncio.to_thread(pty_process.write, text_payload)
 
                         elif "bytes" in data and data["bytes"] is not None:
-                            print(f"[TERMINAL] Writing bytes to PTY")
+                            logger.debug(f"[TERMINAL] Writing bytes to PTY")
                             try:
                                 decoded = data["bytes"].decode('utf-8', errors='ignore')
                             except Exception:
@@ -157,12 +157,10 @@ async def terminal_websocket(
                             if decoded:
                                 await asyncio.to_thread(pty_process.write, decoded)
                     except WebSocketDisconnect:
-                        print(f"[TERMINAL] WebSocket disconnected")
+                        logger.info(f"[TERMINAL] WebSocket disconnected")
                         break
                     except Exception as e:
-                        print(f"[TERMINAL] Error writing to PTY: {e}")
-                        import traceback
-                        traceback.print_exc()
+                        logger.warning(f"[TERMINAL] Error writing to PTY: {e}")
                         break
             finally:
                 if pty_process.isalive():
@@ -177,7 +175,7 @@ async def terminal_websocket(
 
     except Exception as e:
         error_msg = f"Terminal error: {str(e)}"
-        print(error_msg)
+        logger.exception(error_msg)
         try:
             await websocket.send_text(f"\r\n\033[31m{error_msg}\033[0m\r\n")
         except:

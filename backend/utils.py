@@ -16,6 +16,9 @@ from gnupg import GPG
 
 from config import ENVIRONMENT, BACKUP_LOGS_DIR
 from database import get_envs
+import logging
+
+logger = logging.getLogger(__name__)
 
 def get_url() -> str:
     if(ENVIRONMENT == "development"):
@@ -191,7 +194,7 @@ def perform_backup() -> None:
         ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL, enable_emails = get_envs()
 
         if not enable_emails:
-            print("Backup disabled (ENABLE_BACKUP_EMAILS is set to false)")
+            logger.info("Backup disabled (ENABLE_BACKUP_EMAILS is set to false)")
             return
 
         from config import DATABASE_PATH
@@ -215,10 +218,10 @@ def perform_backup() -> None:
         os.remove(compressed_path)
         os.remove(encrypted_path)
 
-        print("Backup completed successfully")
+        logger.info("Backup completed successfully")
 
     except Exception as e:
-        print(f"Backup failed: {str(e)}")
+        logger.exception(f"Backup failed: {str(e)}")
 
 def perform_backup_scheduled() -> None:
     """
@@ -230,14 +233,14 @@ def start_scheduler():
     try:
         ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL, enable_emails = get_envs()
         if not enable_emails:
-            print("Backup scheduler disabled (ENABLE_BACKUP_EMAILS is set to false)")
+            logger.info("Backup scheduler disabled (ENABLE_BACKUP_EMAILS is set to false)")
             return
 
         scheduler = BackgroundScheduler()
         scheduler.add_job(perform_backup_scheduled, 'interval', hours=24)  # Backup every 24 hours
         scheduler.start()
 
-        print("Backup scheduler started")
+        logger.info("Backup scheduler started")
 
     except Exception as e:
-        print(f"Failed to start backup scheduler: {str(e)}")
+        logger.exception(f"Failed to start backup scheduler: {str(e)}")

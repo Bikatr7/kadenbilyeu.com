@@ -18,6 +18,8 @@ from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy.dialects.postgresql import UUID as modelUUID
 
 from config import DATABASE_URL, BACKUP_LOGS_DIR
+import logging
+logger = logging.getLogger(__name__)
 
 ## Pydantic models
 class LoginToken(BaseModel):
@@ -97,6 +99,13 @@ class BlacklistedTokenModel(Base):
     blacklisted_at = Column(DateTime, default=datetime.now(timezone.utc))
     expires_at = Column(DateTime, nullable=False)
 
+class WebAuthnChallengeModel(Base):
+    __tablename__ = "webauthn_challenges"
+    challenge_id = Column(String, primary_key=True, index=True, nullable=False)
+    challenge = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    expires_at = Column(DateTime, nullable=False)
+
 ## Database migration functions
 def migrate_database(engine:Engine) -> None:
     """
@@ -111,26 +120,26 @@ def migrate_database(engine:Engine) -> None:
     try:
         blog_columns = [col['name'].lower() for col in inspector.get_columns('blog_posts')]
 
-        print(f"Current columns in blog_posts: {blog_columns}")
+        logger.debug(f"Current columns in blog_posts: {blog_columns}")
 
         if 'view_count' not in blog_columns:
-            print("view_count column not found. Attempting to add it.")
+            logger.info("view_count column not found. Attempting to add it.")
             with engine.connect() as connection:
                 connection.execute(text("ALTER TABLE blog_posts ADD COLUMN view_count INTEGER DEFAULT 0"))
                 connection.commit()
 
-            print("Added view_count column to blog_posts table")
+            logger.info("Added view_count column to blog_posts table")
         else:
-            print("view_count column already exists in blog_posts table")
+            logger.debug("view_count column already exists in blog_posts table")
 
         inspector.clear_cache()
 
         ## Migration 2 (2024-11-01) Ensure webauthn_credentials has updated_at column
         webauthn_columns = [col['name'].lower() for col in inspector.get_columns('webauthn_credentials')]
-        print(f"Current columns in webauthn_credentials: {webauthn_columns}")
+        logger.debug(f"Current columns in webauthn_credentials: {webauthn_columns}")
 
         if 'updated_at' not in webauthn_columns:
-            print("updated_at column missing in webauthn_credentials. Attempting to add it.")
+            logger.info("updated_at column missing in webauthn_credentials. Attempting to add it.")
             with engine.connect() as connection:
                 connection.execute(
                     text(
@@ -139,12 +148,12 @@ def migrate_database(engine:Engine) -> None:
                     )
                 )
                 connection.commit()
-            print("Added updated_at column to webauthn_credentials table")
+            logger.info("Added updated_at column to webauthn_credentials table")
         else:
-            print("updated_at column already exists in webauthn_credentials table")
+            logger.debug("updated_at column already exists in webauthn_credentials table")
 
     except Exception as e:
-        print(f"Error during migration: {str(e)}")
+        logger.exception(f"Error during migration: {str(e)}")
 
 ## Database connection
 engine:Engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
@@ -522,6 +531,75 @@ def func_cleanup_expired_blacklisted_tokens(db: Session) -> int:
     """
     deleted = db.query(BlacklistedTokenModel).filter(
         BlacklistedTokenModel.expires_at <= datetime.now(timezone.utc)
+    ).delete()
+    db.commit()
+    return deleted
+
+def func_store_webauthn_challenge(db: Session, challenge_id: str, challenge: str, expires_at: datetime) -> None:
+    """
+    Store a WebAuthn challenge in the database.
+
+    Args:
+        db (Session): The SQLAlchemy session
+        challenge_id (str): Unique ID for the challenge
+        challenge (str): The challenge string
+        expires_at (datetime): When the challenge expires
+    """
+    db_challenge = WebAuthnChallengeModel(
+        challenge_id=challenge_id,
+        challenge=challenge,
+        expires_at=expires_at
+    )
+    db.add(db_challenge)
+    db.commit()
+
+def func_get_webauthn_challenge(db: Session, challenge_id: str) -> typing.Optional[str]:
+    """
+    Retrieve and remove a WebAuthn challenge if valid and not expired.
+
+    Args:
+        db (Session): The SQLAlchemy session
+        challenge_id (str): The challenge ID to retrieve
+
+    Returns:
+        Optional[str]: The challenge string if valid, None otherwise
+    """
+    challenge_entry = db.query(WebAuthnChallengeModel).filter(
+        WebAuthnChallengeModel.challenge_id == challenge_id
+    ).first()
+
+    if not challenge_entry:
+        return None
+
+    # Check if expired - make both datetimes timezone-aware for comparison
+    expires_at = challenge_entry.expires_at
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+
+    if datetime.now(timezone.utc) > expires_at:
+        # Delete expired challenge
+        db.delete(challenge_entry)
+        db.commit()
+        return None
+
+    # Valid challenge - get the value and delete it (one-time use)
+    challenge = challenge_entry.challenge
+    db.delete(challenge_entry)
+    db.commit()
+    return challenge
+
+def func_cleanup_expired_webauthn_challenges(db: Session) -> int:
+    """
+    Remove expired WebAuthn challenges from the database.
+
+    Args:
+        db (Session): The SQLAlchemy session
+
+    Returns:
+        int: Number of challenges removed
+    """
+    deleted = db.query(WebAuthnChallengeModel).filter(
+        WebAuthnChallengeModel.expires_at <= datetime.now(timezone.utc)
     ).delete()
     db.commit()
     return deleted
