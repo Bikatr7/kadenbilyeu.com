@@ -45,6 +45,7 @@ async def check_auth(request: Request, access_token: str = Cookie(None, alias="a
 
 
 @router.post("/logout")
+@limiter.limit("30/minute")
 async def logout(
     request: Request,
     access_token: str = Cookie(None, alias="access_token"),
@@ -101,6 +102,7 @@ async def logout(
     return response
 
 @router.post("/refresh")
+@limiter.limit("60/minute")
 async def refresh_token(
     request: Request,
     refresh_token: str = Cookie(None, alias="refresh_token"),

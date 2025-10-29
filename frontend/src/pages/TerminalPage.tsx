@@ -80,7 +80,6 @@ function TerminalPage() {
         };
 
         ws.onmessage = (event) => {
-            console.log('[TERMINAL] Received from server:', event.data);
             term.write(event.data);
         };
 
@@ -98,12 +97,8 @@ function TerminalPage() {
 
         // Send input to WebSocket
         term.onData((data) => {
-            console.log('[TERMINAL] User typed:', data, 'WebSocket state:', ws.readyState);
             if (ws.readyState === WebSocket.OPEN) {
-                console.log('[TERMINAL] Sending to server');
                 ws.send(data);
-            } else {
-                console.error('[TERMINAL] Cannot send - WebSocket not open');
             }
         });
 

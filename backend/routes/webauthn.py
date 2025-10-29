@@ -126,7 +126,8 @@ async def complete_webauthn_registration(request: Request):
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/webauthn/authenticate/start")
-async def start_webauthn_authentication():
+@limiter.limit("60/minute")
+async def start_webauthn_authentication(request: Request):
     """
     Start WebAuthn authentication process with database credentials.
 
@@ -153,6 +154,7 @@ async def start_webauthn_authentication():
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/webauthn/authenticate/complete")
+@limiter.limit("60/minute")
 async def complete_webauthn_authentication(request: Request):
     """
     Complete WebAuthn authentication process.

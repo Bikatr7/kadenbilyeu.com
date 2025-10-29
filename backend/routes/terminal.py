@@ -26,21 +26,26 @@ async def terminal_websocket(
         websocket (WebSocket): The WebSocket connection
     """
 
-    def is_valid_origin(origin_host: str, allowed_domain: str) -> bool:
-        """Check if origin is exact match or valid subdomain"""
-        return origin_host == allowed_domain or origin_host.endswith('.' + allowed_domain)
+    def normalize_hostport(hostport: str) -> str:
+        hostport = hostport.lower()
+        if hostport.endswith(":443"):
+            return hostport[:-4]
+        if hostport.endswith(":80"):
+            return hostport[:-3]
+        return hostport
 
     try:
         origin = websocket.headers.get("origin", "")
         origin_host = origin.split("//", 1)[-1].split('/')[0]  # Extract just the host:port
-        allowed_origins = (
+        origin_host = normalize_hostport(origin_host)
+
+        allowed_hosts = {
             "localhost:5173",
+            "localhost",
             "kadenbilyeu.com",
             "bikatr7.com",
-            "kadenbilyeu-com.pages.dev",
-            "bikatr7.pages.dev",
-        )
-        if not any(is_valid_origin(origin_host, allowed) for allowed in allowed_origins):
+        }
+        if origin_host not in allowed_hosts:
             logger.warning(f"[TERMINAL] Disallowed WS Origin: {origin}")
             await websocket.close(code=1008, reason="Origin not allowed")
             return

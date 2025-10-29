@@ -64,6 +64,20 @@ async def security_headers_middleware(request:Request, call_next):
     response.headers["Referrer-Policy"] = "no-referrer"
     # Lock down powerful APIs by default
     response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+    # Cache control for API responses
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+    # Basic CSP to mitigate XSS; adjust as needed for frontend
+    # Allow same-origin resources; images and fonts from self/data; WS same-origin
+    csp = (
+        "default-src 'self'; "
+        "script-src 'self'; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data:; "
+        "font-src 'self' data:; "
+        "connect-src 'self'; "
+        "frame-ancestors 'none'"
+    )
+    response.headers["Content-Security-Policy"] = csp
     # Enforce HTTPS for a year in production
     if SECURE_COOKIES:
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
