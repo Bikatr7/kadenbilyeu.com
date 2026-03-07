@@ -4,11 +4,8 @@
 
 // maintain allman bracket style for consistency
 
-// react
-import { useEffect, useState } from 'react';
-
 // chakra-ui
-import { Button, Flex, Heading, Image, Stack, Text, Box, Spinner, VStack } from '@chakra-ui/react';
+import { Button, Flex, Heading, Image, Stack, Text, Box } from '@chakra-ui/react';
 
 // icons and images
 import { IconBrandGithub } from '@tabler/icons-react';
@@ -26,32 +23,12 @@ const scrollingTextKeyframes = keyframes`
 
 function Preface({ showContent, toggleContent }: { showContent: boolean, toggleContent: () => void }) {
     const { isRetro } = useTheme();
-    const [wakatimeLoaded, setWakatimeLoaded] = useState(false);
-    const [retroWakatimeLoaded, setRetroWakatimeLoaded] = useState(false);
 
     const handleClick = () => {
         if (!showContent) {
             toggleContent();
         }
     };
-
-    // Preload Wakatime image to prevent layout shift
-    useEffect(() => {
-        if (!isRetro) {
-            const img: HTMLImageElement = document.createElement('img');
-            img.src = "https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=dark&layout=compact&langs_count=10";
-            img.onload = () => setWakatimeLoaded(true);
-        }
-    }, [isRetro]);
-
-    // Preload retro Wakatime image
-    useEffect(() => {
-        if (isRetro) {
-            const img: HTMLImageElement = document.createElement('img');
-            img.src = "https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=highcontrast&layout=compact&langs_count=10";
-            img.onload = () => setRetroWakatimeLoaded(true);
-        }
-    }, [isRetro]);
 
     return (
         <Stack direction={{ base: 'column', md: 'row' }} bg="black" id="home" paddingTop={5} >
@@ -171,7 +148,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
             </Flex>
             {!isRetro && (
                 <Flex flex={1} direction="column" alignItems="center" justifyContent="center" p={8}>
-                    <Stack spacing={6} align="center" maxW="500px">
+                    <Stack spacing={6} align="center">
                         <Image
                             boxSize={400}
                             alt="Kaden Bilyeu's Profile Picture"
@@ -181,40 +158,6 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                             border="3px solid"
                             borderColor="gray.600"
                         />
-                        <Box
-                            border="2px solid"
-                            borderColor="gray.600"
-                            bg="gray.900"
-                            p={4}
-                            borderRadius="lg"
-                            width="100%"
-                            minHeight="280px"
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center"
-                        >
-                            {!wakatimeLoaded ? (
-                                <VStack spacing={3} py={8}>
-                                    <Spinner
-                                        size="lg"
-                                        color="yellow.400"
-                                        thickness="3px"
-                                        speed="0.8s"
-                                    />
-                                    <Text color="gray.400" fontSize="sm" fontWeight="medium">
-                                        Loading WakaTime stats...
-                                    </Text>
-                                </VStack>
-                            ) : (
-                                <Image
-                                    src="https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=dark&layout=compact&langs_count=10"
-                                    alt="Bikatr7's WakaTime Graph"
-                                    width="100%"
-                                    height="auto"
-                                    maxWidth="400px"
-                                />
-                            )}
-                        </Box>
                     </Stack>
                 </Flex>
             )}
@@ -237,39 +180,6 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                             border="2px solid"
                             borderColor="purple.400"
                         />
-                    </Box>
-                    <Box
-                        border="2px solid"
-                        borderColor="purple.400"
-                        bg="black"
-                        p={3}
-                        width={{ base: "100%", lg: "450px" }}
-                        minHeight="280px"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                    >
-                        {!retroWakatimeLoaded ? (
-                            <VStack spacing={3} py={8}>
-                                <Spinner
-                                    size="lg"
-                                    color="purple.400"
-                                    thickness="3px"
-                                    speed="0.8s"
-                                />
-                                <Text color="purple.300" fontSize="sm" fontWeight="medium" fontFamily="'Press Start 2P', monospace">
-                                    LOADING WAKATIME...
-                                </Text>
-                            </VStack>
-                        ) : (
-                            <Image
-                                src="https://github-readme-stats.vercel.app/api/wakatime?username=Bikatr7&theme=highcontrast&layout=compact&langs_count=10"
-                                alt="Bikatr7's WakaTime Graph"
-                                width="100%"
-                                height="auto"
-                                maxWidth="400px"
-                            />
-                        )}
                     </Box>
                 </Flex>
             )}

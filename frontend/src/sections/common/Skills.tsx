@@ -209,7 +209,7 @@ function Skills() {
                         {developingSkills.join(" • ")}
                     </Box>
                     <Text fontSize="sm" color="gray.500" mt={2}>
-                        This is due to my current internship and personal interests.
+                        This is due to my current work and personal interests.
                     </Text>
                 </Box>
             )}

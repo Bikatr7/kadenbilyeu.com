@@ -118,7 +118,7 @@ function HomeIntroduction() {
                             textAlign="left"
                             pl={8}
                         >
-                            I'm currently looking for New Graduate opportunities and a possible Spring 2026 Internship. Please contact me if I interest you. Would be especially excited for any opportunities in the defense sector, startups, or anything cool involving AI.
+                            I'm currently looking for New Graduate opportunities. Please contact me if I interest you. Would be especially excited for any opportunities in the defense sector, startups, or anything cool involving AI.
                         </Text>
                     </>
                     <Stack
