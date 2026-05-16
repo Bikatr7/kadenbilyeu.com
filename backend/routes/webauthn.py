@@ -14,9 +14,12 @@ from webauthn_auth import (
     verify_webauthn_registration,
     store_challenge,
     get_challenge,
+    WEBAUTHN_PURPOSE_REGISTRATION,
+    WEBAUTHN_PURPOSE_AUTHENTICATION,
 )
 from database import get_db, func_get_webauthn_credentials
-from config import WEBAUTHN_REGISTER_SECRET, limiter
+from config import ADMIN_USER, WEBAUTHN_REGISTER_SECRET, limiter
+from auth import get_current_active_user
 import uuid
 import json
 import logging
@@ -25,7 +28,10 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 @router.get("/webauthn/status")
-async def get_webauthn_status(db: Session = Depends(get_db)):
+async def get_webauthn_status(
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_active_user)
+):
     """
     Get information about the configured WebAuthn credentials.
 
@@ -33,7 +39,7 @@ async def get_webauthn_status(db: Session = Depends(get_db)):
         JSONResponse: Status of configured credentials
     """
     try:
-        credentials = func_get_webauthn_credentials(db, "admin")
+        credentials = func_get_webauthn_credentials(db, ADMIN_USER)
         return JSONResponse(content={
             "configured_keys": len(credentials),
             "keys": [
@@ -66,13 +72,13 @@ async def start_webauthn_registration(request: Request):
             raise HTTPException(status_code=403, detail="Invalid registration password")
 
         challenge_id = str(uuid.uuid4())
-        options_json, challenge_bytes = generate_webauthn_registration_options("admin")
+        options_json, challenge_bytes = generate_webauthn_registration_options(ADMIN_USER)
 
         options_dict = json.loads(options_json)
 
         from webauthn.helpers import bytes_to_base64url
         challenge_b64 = bytes_to_base64url(challenge_bytes)
-        store_challenge(challenge_id, challenge_b64)
+        store_challenge(challenge_id, challenge_b64, WEBAUTHN_PURPOSE_REGISTRATION)
 
         return JSONResponse(content={
             "challenge_id": challenge_id,
@@ -99,9 +105,12 @@ async def complete_webauthn_registration(request: Request):
         data = await request.json()
         challenge_id = data["challenge_id"]
         credential = data["credential"]
+        password = data.get("password", "")
 
+        if not secrets.compare_digest(password.encode(), WEBAUTHN_REGISTER_SECRET.encode()):
+            raise HTTPException(status_code=403, detail="Invalid registration password")
 
-        challenge_b64 = get_challenge(challenge_id)
+        challenge_b64 = get_challenge(challenge_id, WEBAUTHN_PURPOSE_REGISTRATION)
         if not challenge_b64:
             raise HTTPException(status_code=400, detail="Invalid or expired challenge")
 
@@ -110,7 +119,7 @@ async def complete_webauthn_registration(request: Request):
 
         success = verify_webauthn_registration({
             "credential": credential
-        }, challenge, "admin")
+        }, challenge, ADMIN_USER)
 
         if not success:
             raise HTTPException(status_code=400, detail="WebAuthn registration failed")
@@ -137,13 +146,13 @@ async def start_webauthn_authentication(request: Request):
     try:
         challenge_id = str(uuid.uuid4())
 
-        options_json, challenge_bytes = generate_webauthn_authentication_options("admin")
+        options_json, challenge_bytes = generate_webauthn_authentication_options(ADMIN_USER)
 
         options_dict = json.loads(options_json)
 
         from webauthn.helpers import bytes_to_base64url
         challenge_b64 = bytes_to_base64url(challenge_bytes)
-        store_challenge(challenge_id, challenge_b64)
+        store_challenge(challenge_id, challenge_b64, WEBAUTHN_PURPOSE_AUTHENTICATION)
 
         return JSONResponse(content={
             "challenge_id": challenge_id,
@@ -169,7 +178,7 @@ async def complete_webauthn_authentication(request: Request):
         data = await request.json()
         challenge_id = data["challenge_id"]
         credential = data["credential"]
-        challenge_b64 = get_challenge(challenge_id)
+        challenge_b64 = get_challenge(challenge_id, WEBAUTHN_PURPOSE_AUTHENTICATION)
         if not challenge_b64:
             raise HTTPException(status_code=400, detail="Invalid or expired challenge")
 
@@ -178,7 +187,7 @@ async def complete_webauthn_authentication(request: Request):
 
         success = verify_webauthn_authentication({
             "credential": credential
-        }, challenge, "admin")
+        }, challenge, ADMIN_USER)
 
         if not success:
             raise HTTPException(status_code=401, detail="WebAuthn authentication failed")
@@ -189,11 +198,11 @@ async def complete_webauthn_authentication(request: Request):
 
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": "admin"}, expires_delta=access_token_expires
+            data={"sub": ADMIN_USER}, expires_delta=access_token_expires
         )
         refresh_token_expires = timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
         refresh_token = create_refresh_token(
-            data={"sub": "admin"}, expires_delta=refresh_token_expires
+            data={"sub": ADMIN_USER}, expires_delta=refresh_token_expires
         )
 
         response = JSONResponse(content={

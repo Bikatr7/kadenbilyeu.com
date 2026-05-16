@@ -340,24 +340,32 @@ def verify_webauthn_authentication(credential_data: Dict[str, Any], challenge: b
         db.close()
 
 WEBAUTHN_CHALLENGE_TTL = timedelta(minutes=5)
+WEBAUTHN_PURPOSE_REGISTRATION = "registration"
+WEBAUTHN_PURPOSE_AUTHENTICATION = "authentication"
 
 
-def store_challenge(challenge_id: str, challenge: str):
+def store_challenge(challenge_id: str, challenge: str, purpose: str):
     """Store a WebAuthn challenge temporarily with expiration."""
     from database import func_store_webauthn_challenge, get_db
+    if purpose not in {WEBAUTHN_PURPOSE_REGISTRATION, WEBAUTHN_PURPOSE_AUTHENTICATION}:
+        raise ValueError("Invalid WebAuthn challenge purpose")
+
     expires_at = datetime.now(timezone.utc) + WEBAUTHN_CHALLENGE_TTL
     db = next(get_db())
     try:
-        func_store_webauthn_challenge(db, challenge_id, challenge, expires_at)
+        func_store_webauthn_challenge(db, challenge_id, challenge, expires_at, purpose)
     finally:
         db.close()
 
 
-def get_challenge(challenge_id: str) -> Optional[str]:
+def get_challenge(challenge_id: str, purpose: str) -> Optional[str]:
     """Retrieve and remove a WebAuthn challenge if valid and not expired."""
     from database import func_get_webauthn_challenge, get_db
+    if purpose not in {WEBAUTHN_PURPOSE_REGISTRATION, WEBAUTHN_PURPOSE_AUTHENTICATION}:
+        raise ValueError("Invalid WebAuthn challenge purpose")
+
     db = next(get_db())
     try:
-        return func_get_webauthn_challenge(db, challenge_id)
+        return func_get_webauthn_challenge(db, challenge_id, purpose)
     finally:
         db.close()

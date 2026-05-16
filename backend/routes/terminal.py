@@ -9,6 +9,7 @@ import json
 import ptyprocess
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from auth import verify_token, is_token_blacklisted
+from config import ADMIN_USER
 import logging
 
 router = APIRouter()
@@ -74,7 +75,7 @@ async def terminal_websocket(
 
         logger.debug(f"[TERMINAL] Verifying token")
         token_data = verify_token(access_token)
-        if not token_data or not token_data.username:
+        if not token_data or token_data.username != ADMIN_USER:
             logger.warning(f"[TERMINAL] Invalid token data")
             await websocket.close(code=1008, reason="Invalid token")
             return

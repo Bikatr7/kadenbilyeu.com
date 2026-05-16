@@ -138,6 +138,7 @@ const Login: React.FC = () => {
                 credentials: 'include',
                 body: JSON.stringify({
                     challenge_id: data.challenge_id,
+                    password: registerPassword,
                     credential: {
                         id: credential.id,
                         rawId: arrayBufferToBase64(credential.rawId),

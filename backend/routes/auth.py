@@ -6,7 +6,7 @@ from fastapi import APIRouter, Request, Cookie, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
-from config import limiter, SECURE_COOKIES
+from config import ADMIN_USER, limiter, SECURE_COOKIES
 from auth import (
     create_access_token,
     create_refresh_token,
@@ -39,6 +39,8 @@ async def check_auth(request: Request, access_token: str = Cookie(None, alias="a
 
     try:
         token_data = verify_token(access_token)
+        if token_data.username != ADMIN_USER:
+            return {"authenticated": False}
         return {"authenticated": True, "user": token_data.username}
     except:
         return {"authenticated": False}
@@ -133,6 +135,9 @@ async def refresh_token(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has been revoked")
 
     token_data = verify_refresh_token(refresh_token)
+    if token_data.username != ADMIN_USER:
+        from fastapi import HTTPException, status
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
 
     try:
         payload = jwt.decode(refresh_token, REFRESH_TOKEN_SECRET, algorithms=[TOKEN_ALGORITHM], options={"verify_signature": False})

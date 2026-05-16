@@ -43,10 +43,12 @@ class TestWebAuthnEndpoints:
         mock_verify.return_value = True
         resp = client.post('/webauthn/register/complete', json={
             'challenge_id': 'cid',
+            'password': 'test-webauthn-secret',
             'credential': { 'id': 'id', 'rawId': 'cmF3', 'type': 'public-key', 'response': {} }
         })
         assert resp.status_code == 200
         assert 'WebAuthn credential registered successfully' in resp.json().get('message', '')
+        mock_get_chal.assert_called_once_with('cid', 'registration')
 
     @patch('routes.webauthn.verify_webauthn_registration')
     @patch('routes.webauthn.get_challenge')
@@ -55,9 +57,32 @@ class TestWebAuthnEndpoints:
         mock_verify.return_value = False
         resp = client.post('/webauthn/register/complete', json={
             'challenge_id': 'cid',
+            'password': 'test-webauthn-secret',
             'credential': { 'id': 'id', 'rawId': 'cmF3', 'type': 'public-key', 'response': {} }
         })
         assert resp.status_code == 400
+
+    @patch('routes.webauthn.get_challenge')
+    def test_register_complete_requires_password(self, mock_get_chal):
+        resp = client.post('/webauthn/register/complete', json={
+            'challenge_id': 'cid',
+            'credential': { 'id': 'id', 'rawId': 'cmF3', 'type': 'public-key', 'response': {} }
+        })
+        assert resp.status_code == 403
+        mock_get_chal.assert_not_called()
+
+    @patch('routes.webauthn.verify_webauthn_registration')
+    @patch('routes.webauthn.get_challenge')
+    def test_register_complete_rejects_authentication_challenge(self, mock_get_chal, mock_verify):
+        mock_get_chal.return_value = None
+        resp = client.post('/webauthn/register/complete', json={
+            'challenge_id': 'cid',
+            'password': 'test-webauthn-secret',
+            'credential': { 'id': 'id', 'rawId': 'cmF3', 'type': 'public-key', 'response': {} }
+        })
+        assert resp.status_code == 400
+        mock_get_chal.assert_called_once_with('cid', 'registration')
+        mock_verify.assert_not_called()
 
     @patch('routes.webauthn.generate_webauthn_authentication_options')
     def test_authenticate_start(self, mock_gen):
@@ -80,6 +105,7 @@ class TestWebAuthnEndpoints:
         assert resp.status_code == 200
         body = resp.json()
         assert body.get('token_type') == 'bearer'
+        mock_get_chal.assert_called_once_with('cid', 'authentication')
         # Cookies should be set
         cookies = resp.cookies
         assert cookies.get('access_token') is not None
@@ -96,4 +122,15 @@ class TestWebAuthnEndpoints:
         })
         assert resp.status_code == 401
 
+    @patch('routes.webauthn.verify_webauthn_authentication')
+    @patch('routes.webauthn.get_challenge')
+    def test_authenticate_complete_rejects_registration_challenge(self, mock_get_chal, mock_verify):
+        mock_get_chal.return_value = None
+        resp = client.post('/webauthn/authenticate/complete', json={
+            'challenge_id': 'cid',
+            'credential': { 'id': 'id', 'rawId': 'cmF3', 'type': 'public-key', 'response': {} }
+        })
+        assert resp.status_code == 400
+        mock_get_chal.assert_called_once_with('cid', 'authentication')
+        mock_verify.assert_not_called()
 

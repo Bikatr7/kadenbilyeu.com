@@ -103,6 +103,7 @@ class WebAuthnChallengeModel(Base):
     __tablename__ = "webauthn_challenges"
     challenge_id = Column(String, primary_key=True, index=True, nullable=False)
     challenge = Column(String, nullable=False)
+    purpose = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     expires_at = Column(DateTime, nullable=False)
 
@@ -151,6 +152,32 @@ def migrate_database(engine:Engine) -> None:
             logger.info("Added updated_at column to webauthn_credentials table")
         else:
             logger.debug("updated_at column already exists in webauthn_credentials table")
+
+        inspector.clear_cache()
+
+        ## Migration 3 (2026-05-16) Bind WebAuthn challenges to their intended purpose
+        challenge_columns = [col['name'].lower() for col in inspector.get_columns('webauthn_challenges')]
+        logger.debug(f"Current columns in webauthn_challenges: {challenge_columns}")
+
+        if 'purpose' not in challenge_columns:
+            logger.info("purpose column missing in webauthn_challenges. Attempting to add it.")
+            try:
+                with engine.connect() as connection:
+                    connection.execute(
+                        text(
+                            "ALTER TABLE webauthn_challenges "
+                            "ADD COLUMN purpose VARCHAR NOT NULL DEFAULT 'authentication'"
+                        )
+                    )
+                    connection.commit()
+                logger.info("Added purpose column to webauthn_challenges table")
+            except Exception as e:
+                if "duplicate column name: purpose" in str(e).lower():
+                    logger.info("purpose column was added by another worker")
+                else:
+                    raise
+        else:
+            logger.debug("purpose column already exists in webauthn_challenges table")
 
     except Exception as e:
         logger.exception(f"Error during migration: {str(e)}")
@@ -535,7 +562,7 @@ def func_cleanup_expired_blacklisted_tokens(db: Session) -> int:
     db.commit()
     return deleted
 
-def func_store_webauthn_challenge(db: Session, challenge_id: str, challenge: str, expires_at: datetime) -> None:
+def func_store_webauthn_challenge(db: Session, challenge_id: str, challenge: str, expires_at: datetime, purpose: str) -> None:
     """
     Store a WebAuthn challenge in the database.
 
@@ -544,22 +571,25 @@ def func_store_webauthn_challenge(db: Session, challenge_id: str, challenge: str
         challenge_id (str): Unique ID for the challenge
         challenge (str): The challenge string
         expires_at (datetime): When the challenge expires
+        purpose (str): The challenge purpose, either registration or authentication
     """
     db_challenge = WebAuthnChallengeModel(
         challenge_id=challenge_id,
         challenge=challenge,
+        purpose=purpose,
         expires_at=expires_at
     )
     db.add(db_challenge)
     db.commit()
 
-def func_get_webauthn_challenge(db: Session, challenge_id: str) -> typing.Optional[str]:
+def func_get_webauthn_challenge(db: Session, challenge_id: str, purpose: str) -> typing.Optional[str]:
     """
     Retrieve and remove a WebAuthn challenge if valid and not expired.
 
     Args:
         db (Session): The SQLAlchemy session
         challenge_id (str): The challenge ID to retrieve
+        purpose (str): The expected challenge purpose
 
     Returns:
         Optional[str]: The challenge string if valid, None otherwise
@@ -569,6 +599,11 @@ def func_get_webauthn_challenge(db: Session, challenge_id: str) -> typing.Option
     ).first()
 
     if not challenge_entry:
+        return None
+
+    if challenge_entry.purpose != purpose:
+        db.delete(challenge_entry)
+        db.commit()
         return None
 
     # Check if expired - make both datetimes timezone-aware for comparison
