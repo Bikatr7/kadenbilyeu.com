@@ -26,11 +26,9 @@ import AdminPage from './pages/AdminPage';
 import MinimalModePage from './pages/MinimalModePage';
 
 // contexts
-import { useAuth } from './contexts/AuthContext';
 import { useSiteSettings } from './contexts/SiteSettingsContext';
 
 function MinimalModeGate({ children }: { children: JSX.Element }) {
-    const { isLoggedIn } = useAuth();
     const { settings, isLoading } = useSiteSettings();
 
     if (isLoading) {
@@ -48,7 +46,7 @@ function MinimalModeGate({ children }: { children: JSX.Element }) {
         );
     }
 
-    if (settings.minimal_mode && !isLoggedIn) {
+    if (settings.minimal_mode) {
         return <MinimalModePage />;
     }
 
@@ -57,17 +55,16 @@ function MinimalModeGate({ children }: { children: JSX.Element }) {
 
 function Layout() {
     const location = useLocation();
-    const { isLoggedIn } = useAuth();
     const { settings, isLoading } = useSiteSettings();
     const isBlogPage = location.pathname.startsWith('/blog');
     const isTerminalPage = location.pathname === '/admin/terminal';
-    const isPublicMinimal = !isLoading && settings.minimal_mode && !isLoggedIn;
+    const isMinimal = isLoading || settings.minimal_mode;
 
     return (
         <>
             <Navbar />
             <Box position="relative" flex="1" zIndex="1" overflow="hidden">
-                {isBlogPage && !isPublicMinimal && <BlogBackground />}
+                {isBlogPage && !isMinimal && <BlogBackground />}
                 <Container maxW="6xl" flex="1" position="relative" zIndex="2">
                     <Outlet />
                 </Container>

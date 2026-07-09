@@ -13,7 +13,6 @@ import { IconBrandGithub } from '@tabler/icons-react';
 import face from '../../assets/images/personals/kadenbilyeu.webp';
 import bikatr7Logo from '../../assets/images/personals/bikatr7_logo.webp';
 import { useTheme } from '../../contexts/ThemeContext';
-import { useAuth } from '../../contexts/AuthContext';
 import { useSiteSettings } from '../../contexts/SiteSettingsContext';
 
 import { keyframes } from '@emotion/react';
@@ -25,9 +24,8 @@ const scrollingTextKeyframes = keyframes`
 
 function Preface({ showContent, toggleContent }: { showContent: boolean, toggleContent: () => void }) {
     const { isRetro } = useTheme();
-    const { isLoggedIn } = useAuth();
     const { settings, isLoading: settingsLoading } = useSiteSettings();
-    const isPublicMinimal = (settingsLoading || settings.minimal_mode) && !isLoggedIn;
+    const isMinimal = settingsLoading || settings.minimal_mode;
 
     const handleClick = () => {
         if (!showContent) {
@@ -99,7 +97,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                                 >
                                     More about me
                                 </Button>
-                                {!isPublicMinimal && (
+                                {!isMinimal && (
                                     <Button
                                         as="a"
                                         href="/portfolio"
@@ -113,7 +111,7 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                                 )}
                             </>
                         )}
-                        {!isPublicMinimal && (
+                        {!isMinimal && (
                             <Button
                                 as="a"
                                 href="/blog"

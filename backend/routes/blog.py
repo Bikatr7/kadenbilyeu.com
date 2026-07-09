@@ -4,8 +4,7 @@
 
 from fastapi import APIRouter, Request, Header, Depends, HTTPException
 
-from auth import get_current_active_user, is_token_blacklisted, verify_token
-from config import ADMIN_USER
+from auth import get_current_active_user
 from database import (
     BlogPostRead, BlogPostCreate, BlogPostUpdate,
     func_get_blog_posts, func_get_blog_post, func_get_blog_post_by_slug,
@@ -17,25 +16,6 @@ from sqlalchemy.orm import Session
 
 router = APIRouter()
 
-def request_has_admin_cookie(request:Request) -> bool:
-    """
-    Check whether a public request is from the admin session.
-    """
-
-    access_token = request.cookies.get("access_token")
-
-    if not access_token:
-        return False
-
-    try:
-        if is_token_blacklisted(access_token):
-            return False
-
-        token_data = verify_token(access_token)
-        return token_data.username == ADMIN_USER
-    except Exception:
-        return False
-
 def require_blog_available(request:Request, db:Session) -> None:
     """
     Hide public blog reads while minimal mode is enabled.
@@ -43,7 +23,7 @@ def require_blog_available(request:Request, db:Session) -> None:
 
     site_settings = func_get_site_settings(db)
 
-    if site_settings.minimal_mode and not request_has_admin_cookie(request):
+    if site_settings.minimal_mode:
         raise HTTPException(status_code=404, detail="Blog not found")
 
 @router.post("/blog", response_model=BlogPostRead)

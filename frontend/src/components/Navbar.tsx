@@ -29,9 +29,9 @@ function Navbar() {
     const location = useLocation();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [activeHover, setActiveHover] = useState<string | null>(null);
-    const isPublicMinimal = (settingsLoading || settings.minimal_mode) && !isLoggedIn;
-    const resumeHref = isPublicMinimal ? "/resume" : resume;
-    const resumeDownload = isPublicMinimal ? undefined : "Kaden_Truett_Bilyeu_Resume_July_2025.pdf";
+    const isMinimal = settingsLoading || settings.minimal_mode;
+    const resumeHref = isMinimal ? "/resume" : resume;
+    const resumeDownload = isMinimal ? undefined : "Kaden_Truett_Bilyeu_Resume_July_2025.pdf";
 
     const isActiveRoute = (path: string) => {
         if (path === '/') {
@@ -121,7 +121,7 @@ function Navbar() {
 
                 {/* Desktop Navigation */}
                 <HStack spacing={6} display={{ base: "none", md: "flex" }} flex="1" ml={8}>
-                    {!isPublicMinimal && (
+                    {!isMinimal && (
                         <>
                             <NavLink to="/portfolio">PORTFOLIO</NavLink>
                             <NavLink to="/blog">BLOG</NavLink>
@@ -257,7 +257,7 @@ function Navbar() {
                             {/* Navigation Links */}
                             <VStack spacing={6} align="start" p={6}>
                                 <NavLink to="/" mobile>HOME</NavLink>
-                                {!isPublicMinimal && (
+                                {!isMinimal && (
                                     <>
                                         <NavLink to="/portfolio" mobile>PORTFOLIO</NavLink>
                                         <NavLink to="/blog" mobile>BLOG</NavLink>
