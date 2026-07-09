@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from pydantic import BaseModel
 
 from sqlalchemy import create_engine, Engine, Column, String, Text, DateTime, inspect, Inspector, Integer, text, LargeBinary, Boolean
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker, close_all_sessions, Session
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy.dialects.postgresql import UUID as modelUUID
@@ -202,10 +203,14 @@ engine:Engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": F
 SessionLocal:sessionmaker = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def create_tables_if_not_exist(engine, base:DeclarativeMeta) -> None:
-    inspector:Inspector = inspect(engine)
-    for table_name in base.metadata.tables.keys():
-        if(not inspector.has_table(table_name)):
-            base.metadata.tables[table_name].create(engine)
+    for table_name, table in base.metadata.tables.items():
+        try:
+            table.create(engine, checkfirst=True)
+        except OperationalError as e:
+            if "already exists" in str(e).lower():
+                logger.info(f"{table_name} table was created by another worker")
+            else:
+                raise
 
 create_tables_if_not_exist(engine, Base)
 migrate_database(engine)
