@@ -5,10 +5,11 @@
 // maintain allman bracket style for consistency
 
 // react
+import { useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // chakra-ui
-import { Box, Button, VStack, Text, Heading, useToast, Divider } from "@chakra-ui/react";
+import { Box, Button, VStack, Text, Heading, useToast, Divider, FormControl, FormLabel, HStack, Switch } from "@chakra-ui/react";
 
 // components
 import EmbedSEO from '../components/EmbedSEO';
@@ -20,12 +21,15 @@ import { getURL, authenticatedFetch } from '../utils';
 // contexts
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useSiteSettings } from '../contexts/SiteSettingsContext';
 
 const AdminPage: React.FC = () => {
     const { isRetro } = useTheme();
     const { isLoggedIn } = useAuth();
+    const { settings, isLoading: settingsLoading, updateMinimalMode } = useSiteSettings();
     const navigate = useNavigate();
     const toast = useToast();
+    const [isUpdatingMinimalMode, setIsUpdatingMinimalMode] = useState(false);
 
     // Redirect if not logged in
     if (!isLoggedIn) {
@@ -130,6 +134,33 @@ const AdminPage: React.FC = () => {
         });
     };
 
+    const handleMinimalModeChange = async (event: ChangeEvent<HTMLInputElement>) => {
+        const minimalMode = event.target.checked;
+        setIsUpdatingMinimalMode(true);
+
+        try {
+            await updateMinimalMode(minimalMode);
+            toast({
+                title: minimalMode ? "Minimal mode enabled." : "Minimal mode disabled.",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+        catch (error) {
+            toast({
+                title: "Error updating minimal mode.",
+                description: "The website mode could not be updated.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+        }
+        finally {
+            setIsUpdatingMinimalMode(false);
+        }
+    };
+
     return (
         <Box
             bg="transparent"
@@ -157,6 +188,52 @@ const AdminPage: React.FC = () => {
                 >
                     {isRetro ? "ADMIN PANEL" : "Admin Panel"}
                 </Heading>
+
+                {/* Website Settings Section */}
+                <Box
+                    border="2px solid"
+                    borderColor={isRetro ? "purple.400" : "gray.600"}
+                    p={6}
+                    bg={isRetro ? "black" : "rgba(0, 0, 0, 0.5)"}
+                    borderRadius={isRetro ? "none" : "md"}
+                >
+                    <Heading
+                        fontSize={{ base: "xl", md: "2xl" }}
+                        mb={4}
+                        color={isRetro ? "purple.300" : "yellow"}
+                        fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                    >
+                        {isRetro ? "WEBSITE MODE" : "Website Mode"}
+                    </Heading>
+                    <FormControl display="flex" alignItems="center" justifyContent="space-between">
+                        <FormLabel
+                            htmlFor="minimal-mode"
+                            mb="0"
+                            color={isRetro ? "purple.200" : "white"}
+                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                        >
+                            {isRetro ? "MINIMAL MODE" : "Minimal Mode"}
+                        </FormLabel>
+                        <HStack spacing={3}>
+                            <Text
+                                color={settings.minimal_mode ? "green.300" : "gray.400"}
+                                fontSize={isRetro ? "xs" : "sm"}
+                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                            >
+                                {settings.minimal_mode ? "Enabled" : "Disabled"}
+                            </Text>
+                            <Switch
+                                id="minimal-mode"
+                                isChecked={settings.minimal_mode}
+                                isDisabled={settingsLoading || isUpdatingMinimalMode}
+                                onChange={handleMinimalModeChange}
+                                colorScheme={isRetro ? "purple" : "yellow"}
+                            />
+                        </HStack>
+                    </FormControl>
+                </Box>
+
+                <Divider borderColor={isRetro ? "purple.400" : "gray.600"} />
 
                 {/* Blog Management Section */}
                 <Box

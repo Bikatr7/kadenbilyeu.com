@@ -13,6 +13,8 @@ import { IconBrandGithub } from '@tabler/icons-react';
 import face from '../../assets/images/personals/kadenbilyeu.webp';
 import bikatr7Logo from '../../assets/images/personals/bikatr7_logo.webp';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useSiteSettings } from '../../contexts/SiteSettingsContext';
 
 import { keyframes } from '@emotion/react';
 
@@ -23,6 +25,9 @@ const scrollingTextKeyframes = keyframes`
 
 function Preface({ showContent, toggleContent }: { showContent: boolean, toggleContent: () => void }) {
     const { isRetro } = useTheme();
+    const { isLoggedIn } = useAuth();
+    const { settings, isLoading: settingsLoading } = useSiteSettings();
+    const isPublicMinimal = (settingsLoading || settings.minimal_mode) && !isLoggedIn;
 
     const handleClick = () => {
         if (!showContent) {
@@ -94,36 +99,40 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                                 >
                                     More about me
                                 </Button>
-                                <Button
-                                    as="a"
-                                    href="/portfolio"
-                                    rounded="full"
-                                    size="md"
-                                    _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
-                                    _active={{ transform: 'scale(0.99)' }}
-                                >
-                                    My Portfolio
-                                </Button>
+                                {!isPublicMinimal && (
+                                    <Button
+                                        as="a"
+                                        href="/portfolio"
+                                        rounded="full"
+                                        size="md"
+                                        _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
+                                        _active={{ transform: 'scale(0.99)' }}
+                                    >
+                                        My Portfolio
+                                    </Button>
+                                )}
                             </>
                         )}
-                        <Button
-                            as="a"
-                            href="/blog"
-                            rounded={isRetro ? "none" : "full"}
-                            border={isRetro ? "2px solid" : "none"}
-                            borderColor={isRetro ? "purple.400" : "transparent"}
-                            bg={isRetro ? "black" : undefined}
-                            color={isRetro ? "purple.200" : undefined}
-                            fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
-                            size="md"
-                            _hover={{
-                                color: isRetro ? 'purple.400' : 'yellow',
-                                transform: 'scale(1.01)'
-                            }}
-                            _active={{ transform: 'scale(0.99)' }}
-                        >
-                            My Blog
-                        </Button>
+                        {!isPublicMinimal && (
+                            <Button
+                                as="a"
+                                href="/blog"
+                                rounded={isRetro ? "none" : "full"}
+                                border={isRetro ? "2px solid" : "none"}
+                                borderColor={isRetro ? "purple.400" : "transparent"}
+                                bg={isRetro ? "black" : undefined}
+                                color={isRetro ? "purple.200" : undefined}
+                                fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
+                                size="md"
+                                _hover={{
+                                    color: isRetro ? 'purple.400' : 'yellow',
+                                    transform: 'scale(1.01)'
+                                }}
+                                _active={{ transform: 'scale(0.99)' }}
+                            >
+                                My Blog
+                            </Button>
+                        )}
                         <Button
                             as="a"
                             href="https://github.com/Bikatr7"

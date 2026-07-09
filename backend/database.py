@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 
 from pydantic import BaseModel
 
-from sqlalchemy import create_engine, Engine, Column, String, Text, DateTime, inspect, Inspector, Integer, text, LargeBinary
+from sqlalchemy import create_engine, Engine, Column, String, Text, DateTime, inspect, Inspector, Integer, text, LargeBinary, Boolean
 from sqlalchemy.orm import sessionmaker, close_all_sessions, Session
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy.dialects.postgresql import UUID as modelUUID
@@ -69,6 +69,15 @@ class WebAuthnCredentialRead(WebAuthnCredentialBase):
     class Config:
         orm_mode = True
 
+class SiteSettingsRead(BaseModel):
+    minimal_mode: bool = False
+
+    class Config:
+        orm_mode = True
+
+class SiteSettingsUpdate(BaseModel):
+    minimal_mode: bool
+
 ## SQLAlchemy setup
 Base:DeclarativeMeta = declarative_base()
 
@@ -106,6 +115,12 @@ class WebAuthnChallengeModel(Base):
     purpose = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     expires_at = Column(DateTime, nullable=False)
+
+class SiteSettingsModel(Base):
+    __tablename__ = "site_settings"
+    id = Column(String, primary_key=True, index=True, default="global")
+    minimal_mode = Column(Boolean, default=False, nullable=False)
+    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
 ## Database migration functions
 def migrate_database(engine:Engine) -> None:
@@ -561,6 +576,33 @@ def func_cleanup_expired_blacklisted_tokens(db: Session) -> int:
     ).delete()
     db.commit()
     return deleted
+
+def func_get_site_settings(db: Session) -> SiteSettingsModel:
+    """
+    Get the site-wide settings row, creating it with defaults if needed.
+    """
+
+    settings = db.query(SiteSettingsModel).filter(SiteSettingsModel.id == "global").first()
+
+    if settings is None:
+        settings = SiteSettingsModel(id="global", minimal_mode=False)
+        db.add(settings)
+        db.commit()
+        db.refresh(settings)
+
+    return settings
+
+def func_update_site_settings(db: Session, site_settings: SiteSettingsUpdate) -> SiteSettingsModel:
+    """
+    Update site-wide settings.
+    """
+
+    settings = func_get_site_settings(db)
+    settings.minimal_mode = site_settings.minimal_mode
+    db.commit()
+    db.refresh(settings)
+
+    return settings
 
 def func_store_webauthn_challenge(db: Session, challenge_id: str, challenge: str, expires_at: datetime, purpose: str) -> None:
     """

@@ -16,6 +16,7 @@ import { IconDeviceGamepad2 } from '@tabler/icons-react';
 // custom components
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useSiteSettings } from '../contexts/SiteSettingsContext';
 import Login from './Login';
 
 // assets
@@ -24,9 +25,13 @@ import resume from '../assets/pdfs/Kaden_Truett_Bilyeu_Resume_July_2025.pdf';
 function Navbar() {
     const { isRetro, toggleRetro } = useTheme();
     const { isLoggedIn } = useAuth();
+    const { settings, isLoading: settingsLoading } = useSiteSettings();
     const location = useLocation();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [activeHover, setActiveHover] = useState<string | null>(null);
+    const isPublicMinimal = (settingsLoading || settings.minimal_mode) && !isLoggedIn;
+    const resumeHref = isPublicMinimal ? "/resume" : resume;
+    const resumeDownload = isPublicMinimal ? undefined : "Kaden_Truett_Bilyeu_Resume_July_2025.pdf";
 
     const isActiveRoute = (path: string) => {
         if (path === '/') {
@@ -116,8 +121,12 @@ function Navbar() {
 
                 {/* Desktop Navigation */}
                 <HStack spacing={6} display={{ base: "none", md: "flex" }} flex="1" ml={8}>
-                    <NavLink to="/portfolio">PORTFOLIO</NavLink>
-                    <NavLink to="/blog">BLOG</NavLink>
+                    {!isPublicMinimal && (
+                        <>
+                            <NavLink to="/portfolio">PORTFOLIO</NavLink>
+                            <NavLink to="/blog">BLOG</NavLink>
+                        </>
+                    )}
                 </HStack>
 
                 {/* Desktop Controls */}
@@ -137,8 +146,8 @@ function Navbar() {
 
                     <Button
                         as="a"
-                        href={resume}
-                        download="Kaden_Truett_Bilyeu_Resume_July_2025.pdf"
+                        href={resumeHref}
+                        download={resumeDownload}
                         size="sm"
                         bg={isRetro ? "black" : "red.900"}
                         color={isRetro ? "purple.200" : "white"}
@@ -248,8 +257,12 @@ function Navbar() {
                             {/* Navigation Links */}
                             <VStack spacing={6} align="start" p={6}>
                                 <NavLink to="/" mobile>HOME</NavLink>
-                                <NavLink to="/portfolio" mobile>PORTFOLIO</NavLink>
-                                <NavLink to="/blog" mobile>BLOG</NavLink>
+                                {!isPublicMinimal && (
+                                    <>
+                                        <NavLink to="/portfolio" mobile>PORTFOLIO</NavLink>
+                                        <NavLink to="/blog" mobile>BLOG</NavLink>
+                                    </>
+                                )}
                                 {isLoggedIn && (
                                     <NavLink to="/admin" mobile>ADMIN</NavLink>
                                 )}
@@ -260,8 +273,8 @@ function Navbar() {
                                 <Login buttonWidth="full" onLogoutComplete={onClose} />
                                 <Button
                                     as="a"
-                                    href={resume}
-                                    download="Kaden_Truett_Bilyeu_Resume_July_2025.pdf"
+                                    href={resumeHref}
+                                    download={resumeDownload}
                                     w="full"
                                     bg={isRetro ? "black" : "red.900"}
                                     color={isRetro ? "purple.200" : "white"}

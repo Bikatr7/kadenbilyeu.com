@@ -6,10 +6,39 @@ import typing
 from fastapi import APIRouter, File, UploadFile, Request, Depends
 
 from auth import get_current_active_user
-from database import get_envs, replace_sqlite_db
+from database import (
+    SiteSettingsRead,
+    SiteSettingsUpdate,
+    get_db,
+    get_envs,
+    replace_sqlite_db,
+    func_get_site_settings,
+    func_update_site_settings,
+)
 from config import maintenance_mode, maintenance_lock
+from sqlalchemy.orm import Session
 
 router = APIRouter()
+
+@router.get("/site-settings", response_model=SiteSettingsRead)
+async def read_site_settings(db:Session = Depends(get_db)) -> SiteSettingsRead:
+    """
+    Read public site settings.
+    """
+
+    return func_get_site_settings(db)
+
+@router.patch("/site-settings", response_model=SiteSettingsRead)
+async def update_site_settings(
+    site_settings:SiteSettingsUpdate,
+    db:Session = Depends(get_db),
+    current_user:str = Depends(get_current_active_user),
+) -> SiteSettingsRead:
+    """
+    Update site settings.
+    """
+
+    return func_update_site_settings(db, site_settings)
 
 @router.post("/replace-database")
 @router.post("/replace-database/")

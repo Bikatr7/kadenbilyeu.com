@@ -12,11 +12,16 @@ import { IconBrandTwitter, IconBrandLinkedin, IconMail, IconBrandGithub } from '
 
 // context
 import { useTheme } from '../../contexts/ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useSiteSettings } from '../../contexts/SiteSettingsContext';
 
 
 
 function HomeIntroduction() {
     const { isRetro } = useTheme();
+    const { isLoggedIn } = useAuth();
+    const { settings, isLoading: settingsLoading } = useSiteSettings();
+    const isPublicMinimal = (settingsLoading || settings.minimal_mode) && !isLoggedIn;
 
     return (
         <Box padding="5" position="relative">
@@ -100,7 +105,10 @@ function HomeIntroduction() {
                             textAlign="left"
                             pl={8}
                         >
-                            Welcome to my personal website! Below are my personal projects, skills, some info about me and the site, and my contact info. If you want something more detailed and related to my work, check out my portfolio page.
+                            {isPublicMinimal
+                                ? "Welcome to my personal website! Below are my personal projects, skills, some info about me and the site, and my contact info."
+                                : "Welcome to my personal website! Below are my personal projects, skills, some info about me and the site, and my contact info. If you want something more detailed and related to my work, check out my portfolio page."
+                            }
                         </Text>
                         <Text
                             fontSize="md"
