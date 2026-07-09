@@ -27,6 +27,7 @@ import AdminPage from './pages/AdminPage';
 function Layout() {
     const location = useLocation();
     const isBlogPage = location.pathname.startsWith('/blog');
+    const isTerminalPage = location.pathname === '/admin/terminal';
 
     return (
         <>
@@ -37,7 +38,7 @@ function Layout() {
                     <Outlet />
                 </Container>
             </Box>
-            <Footer />
+            {!isTerminalPage && <Footer />}
         </>
     );
 }
