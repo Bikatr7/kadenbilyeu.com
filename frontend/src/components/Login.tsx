@@ -8,7 +8,7 @@
 import { useState, useEffect } from 'react';
 
 // chakra-ui
-import { Button, Modal, ModalOverlay, ModalContent, ModalBody, Text, useDisclosure, Spinner, VStack, Alert, AlertIcon, Box, Icon, HStack, Input, FormControl, FormLabel, IconButton } from "@chakra-ui/react";
+import { Button, Modal, ModalOverlay, ModalContent, ModalBody, Text, useDisclosure, Spinner, VStack, Alert, AlertIcon, Box, Icon, HStack, Input, FormControl, FormLabel, IconButton, ButtonProps } from "@chakra-ui/react";
 import { LockIcon, AddIcon } from '@chakra-ui/icons';
 
 // util
@@ -18,7 +18,12 @@ import { getURL } from '../utils';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 
-const Login: React.FC = () => {
+interface LoginProps {
+    buttonWidth?: ButtonProps['width'];
+    onLogoutComplete?: () => void;
+}
+
+const Login: React.FC<LoginProps> = ({ buttonWidth, onLogoutComplete }) => {
     const { isLoggedIn, isLoading: authLoading, login: onLogin, logout: onLogout } = useAuth();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isOpen: isRegisterOpen, onOpen: onRegisterOpen, onClose: onRegisterClose } = useDisclosure();
@@ -267,6 +272,7 @@ const Login: React.FC = () => {
 
     const handleLogout = async () => {
         await onLogout();
+        onLogoutComplete?.();
     };
 
     return (
@@ -277,6 +283,7 @@ const Login: React.FC = () => {
                 _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
                 _active={{ transform: 'scale(0.99)' }}
                 minWidth="70px"
+                width={buttonWidth}
                 height="40px"
                 bg={isRetro ? "black" : "transparent"}
                 border={isRetro ? "2px solid" : "none"}

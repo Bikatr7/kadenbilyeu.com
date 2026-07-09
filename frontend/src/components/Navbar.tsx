@@ -255,12 +255,13 @@ function Navbar() {
                                 )}
                             </VStack>
 
-                            {/* Resume and Login Buttons at Bottom */}
+                            {/* Login and Resume Buttons at Bottom */}
                             <VStack spacing={3} p={6}>
+                                <Login buttonWidth="full" onLogoutComplete={onClose} />
                                 <Button
                                     as="a"
                                     href={resume}
-                                    download="Kaden_Truett_Bilyeu_Resume_December_2024.pdf"
+                                    download="Kaden_Truett_Bilyeu_Resume_July_2025.pdf"
                                     w="full"
                                     bg={isRetro ? "black" : "red.900"}
                                     color={isRetro ? "purple.200" : "white"}
@@ -281,9 +282,6 @@ function Navbar() {
                                 >
                                     RESUME
                                 </Button>
-                                <Box w="full">
-                                    <Login />
-                                </Box>
                             </VStack>
                         </DrawerBody>
                     </DrawerContent>

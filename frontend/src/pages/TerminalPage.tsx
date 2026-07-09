@@ -34,6 +34,37 @@ function TerminalPage() {
     const [error, setError] = useState<string>('');
 
     useEffect(() => {
+        const { body, documentElement } = document;
+        const scrollY = window.scrollY;
+        const previousBodyOverflow = body.style.overflow;
+        const previousBodyOverscroll = body.style.overscrollBehavior;
+        const previousBodyPosition = body.style.position;
+        const previousBodyTop = body.style.top;
+        const previousBodyWidth = body.style.width;
+        const previousDocumentOverflow = documentElement.style.overflow;
+        const previousDocumentOverscroll = documentElement.style.overscrollBehavior;
+
+        body.style.overflow = 'hidden';
+        body.style.overscrollBehavior = 'none';
+        body.style.position = 'fixed';
+        body.style.top = `-${scrollY}px`;
+        body.style.width = '100%';
+        documentElement.style.overflow = 'hidden';
+        documentElement.style.overscrollBehavior = 'none';
+
+        return () => {
+            body.style.overflow = previousBodyOverflow;
+            body.style.overscrollBehavior = previousBodyOverscroll;
+            body.style.position = previousBodyPosition;
+            body.style.top = previousBodyTop;
+            body.style.width = previousBodyWidth;
+            documentElement.style.overflow = previousDocumentOverflow;
+            documentElement.style.overscrollBehavior = previousDocumentOverscroll;
+            window.scrollTo(0, scrollY);
+        };
+    }, []);
+
+    useEffect(() => {
         if (isAuthChecking || !isLoggedIn || !terminalRef.current) return;
 
         // Create terminal instance
@@ -125,14 +156,24 @@ function TerminalPage() {
             ws.close();
             term.dispose();
         };
-    }, [isAuthChecking, isLoggedIn, isRetro]);
+    }, [isAuthChecking, isLoggedIn]);
+
+    useEffect(() => {
+        if (!xtermRef.current) return;
+
+        xtermRef.current.options.theme = {
+            background: '#000000',
+            foreground: '#ffffff',
+            cursor: isRetro ? '#9333ea' : '#ffd700',
+        };
+    }, [isRetro]);
 
     if (isAuthChecking) {
         return (
             <Box
                 bg="black"
                 color="white"
-                minHeight="100vh"
+                minHeight="100dvh"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
@@ -155,7 +196,7 @@ function TerminalPage() {
                 top={{ base: '56px', md: '64px' }}
                 left={0}
                 right={0}
-                bottom={0}
+                height={{ base: 'calc(100dvh - 56px)', md: 'calc(100dvh - 64px)' }}
             >
                 <Text
                     fontSize="xl"
@@ -178,7 +219,7 @@ function TerminalPage() {
             top={{ base: '56px', md: '64px' }}
             left={0}
             right={0}
-            bottom={0}
+            height={{ base: 'calc(100dvh - 56px)', md: 'calc(100dvh - 64px)' }}
         >
             {error && (
                 <Box position="absolute" top="5rem" left="50%" transform="translateX(-50%)" zIndex={10} maxW="md">
