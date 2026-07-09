@@ -20,7 +20,7 @@ from routes.admin import router as admin_router
 from routes.webauthn import router as webauthn_router
 from routes.terminal import router as terminal_router
 
-app = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 ## Logging configuration
 import logging
