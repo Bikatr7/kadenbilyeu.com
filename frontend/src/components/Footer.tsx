@@ -17,6 +17,7 @@ import logo from '../assets/images/personals/kb.webp';
 function Footer() 
 {
     const { isRetro } = useTheme();
+    const currentYear = new Date().getFullYear();
 
     return (
         <Box
@@ -77,7 +78,7 @@ function Footer()
                         fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                         fontSize={isRetro ? { base: "10px", md: "xs" } : "inherit"}
                     >
-                        © 2024-2025 {isRetro ? 'Bikatr7' : 'Kaden Bilyeu (Bikatr7)'}. All rights reserved
+                        © 2024-{currentYear} {isRetro ? 'Bikatr7' : 'Kaden Bilyeu (Bikatr7)'}. All rights reserved
                     </Text>
                     <Image src={logo} boxSize='30px' alt="Kaden Bilyeu (Bikatr7) Logo" />
                 </Flex>
@@ -89,7 +90,7 @@ function Footer()
                         fontFamily={isRetro ? "'Press Start 2P', monospace" : "inherit"}
                         fontSize={isRetro ? "xs" : "inherit"}
                     >
-                        © 2024-2025 {isRetro ? 'Bikatr7' : 'Kaden Bilyeu (Bikatr7)'}. All rights reserved
+                        © 2024-{currentYear} {isRetro ? 'Bikatr7' : 'Kaden Bilyeu (Bikatr7)'}. All rights reserved
                     </Text>
                     <Flex gap={2}>
                         <IconButton
