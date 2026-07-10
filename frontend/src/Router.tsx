@@ -8,7 +8,7 @@
 import { createBrowserRouter, RouterProvider, Outlet, useLocation } from 'react-router-dom';
 
 // chakra-ui
-import { Container, Box, Spinner } from '@chakra-ui/react';
+import { Container, Box, Spinner, Heading, Text, VStack, Button } from '@chakra-ui/react';
 
 // components
 import Navbar from './components/Navbar';
@@ -27,6 +27,38 @@ import MinimalModePage from './pages/MinimalModePage';
 
 // contexts
 import { useSiteSettings } from './contexts/SiteSettingsContext';
+
+function UnavailablePage() {
+    return (
+        <Box
+            bg="black"
+            color="white"
+            minHeight="83vh"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            px={6}
+        >
+            <VStack spacing={5} textAlign="center" maxW="520px">
+                <Heading fontSize={{ base: "2xl", md: "3xl" }} color="yellow">
+                    Not Found
+                </Heading>
+                <Text fontSize={{ base: "md", md: "lg" }} color="gray.300" lineHeight="1.8">
+                    This page is unavailable.
+                </Text>
+                <Button
+                    as="a"
+                    href="/"
+                    rounded="full"
+                    _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
+                    _active={{ transform: 'scale(0.99)' }}
+                >
+                    Home
+                </Button>
+            </VStack>
+        </Box>
+    );
+}
 
 function MinimalModeGate({ children }: { children: JSX.Element }) {
     const { settings, isLoading } = useSiteSettings();
@@ -47,7 +79,7 @@ function MinimalModeGate({ children }: { children: JSX.Element }) {
     }
 
     if (settings.minimal_mode) {
-        return <MinimalModePage />;
+        return <UnavailablePage />;
     }
 
     return children;
