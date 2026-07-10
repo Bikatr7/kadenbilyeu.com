@@ -8,19 +8,24 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [isRetro, setIsRetro] = useState(() => {
+export function ThemeProvider({ children, forceStandardMode = false }: { children: React.ReactNode, forceStandardMode?: boolean }) {
+    const [storedRetro, setStoredRetro] = useState<boolean>(() => {
         // Initialize from localStorage or URL
         const savedRetro = localStorage.getItem('isRetro');
         return savedRetro ? JSON.parse(savedRetro) : isBikatr7URL();
     });
+    const isRetro = forceStandardMode ? false : storedRetro;
 
     useEffect(() => {
-        localStorage.setItem('isRetro', JSON.stringify(isRetro));
-    }, [isRetro]);
+        localStorage.setItem('isRetro', JSON.stringify(storedRetro));
+    }, [storedRetro]);
 
     const toggleRetro = () => {
-        setIsRetro(!isRetro);
+        if (forceStandardMode) {
+            return;
+        }
+
+        setStoredRetro(!storedRetro);
     };
 
     return (

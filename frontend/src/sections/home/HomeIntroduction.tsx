@@ -117,15 +117,6 @@ function HomeIntroduction() {
                         >
                             Feel free to reach out to me if you have any questions or would like to collaborate on a project.
                         </Text>
-                        <Text
-                            fontSize="md"
-                            marginBottom="4"
-                            color="gray.500"
-                            textAlign="left"
-                            pl={8}
-                        >
-                            I'm currently looking for New Graduate opportunities. Please contact me if I interest you. Would be especially excited for any opportunities in the defense sector, startups, or anything cool involving AI.
-                        </Text>
                     </>
                     <Stack
                         direction={{ base: 'column', md: 'row' }}

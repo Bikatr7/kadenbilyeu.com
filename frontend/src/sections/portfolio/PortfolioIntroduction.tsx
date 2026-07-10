@@ -31,10 +31,7 @@ function PortfolioIntroduction() {
                             <br />
                         </Heading>
                         <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                            Computer science senior at the University of Colorado Colorado Springs looking to utilize my skills in Cyber, AI/ML, LLMs, data science, full stack and NER/NLP into software for real-world applications.
-                        </Text>
-                        <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500">
-                            Eligible for security clearance. Proud U.S. Citizen.
+                            Recent UCCS graduate.
                         </Text>
                     </Stack>
                 </Flex>

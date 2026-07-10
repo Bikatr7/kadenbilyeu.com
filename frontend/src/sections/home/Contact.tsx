@@ -58,7 +58,7 @@ function Contact() {
             </Flex>
             <Box textAlign="center" ml={5} mr={20}>
                 <Text fontSize="md" color="gray.500" marginBottom="4">
-                    Feel free to reach out about anything! I'm always open to new opportunities and collaborations.
+                    Feel free to reach out about projects, open-source work, Japanese learning, translation, or anything else.
                 </Text>
             </Box>
             <Box textAlign="center" ml={5} mr={20} mt={4} mb={100}>

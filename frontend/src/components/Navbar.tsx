@@ -131,18 +131,20 @@ function Navbar() {
 
                 {/* Desktop Controls */}
                 <HStack spacing={3} display={{ base: "none", md: "flex" }}>
-                    <IconButton
-                        aria-label="Toggle retro theme"
-                        icon={<IconDeviceGamepad2 />}
-                        variant="ghost"
-                        onClick={toggleRetro}
-                        color={isRetro ? "purple.400" : "white"}
-                        _hover={{
-                            color: isRetro ? "purple.200" : "yellow",
-                            transform: 'scale(1.1)'
-                        }}
-                        size="sm"
-                    />
+                    {!isMinimal && (
+                        <IconButton
+                            aria-label="Toggle retro theme"
+                            icon={<IconDeviceGamepad2 />}
+                            variant="ghost"
+                            onClick={toggleRetro}
+                            color={isRetro ? "purple.400" : "white"}
+                            _hover={{
+                                color: isRetro ? "purple.200" : "yellow",
+                                transform: 'scale(1.1)'
+                            }}
+                            size="sm"
+                        />
+                    )}
 
                     <Button
                         as="a"
@@ -237,20 +239,22 @@ function Navbar() {
                             <Text fontSize={isRetro ? "sm" : "lg"}>
                                 {isRetro ? "NAVIGATION" : "Navigation"}
                             </Text>
-                            <IconButton
-                                aria-label="Toggle retro theme"
-                                icon={<IconDeviceGamepad2 />}
-                                variant="ghost"
-                                onClick={() => {
-                                    toggleRetro();
-                                }}
-                                color={isRetro ? "purple.400" : "white"}
-                                _hover={{
-                                    color: isRetro ? "purple.200" : "yellow",
-                                    transform: 'scale(1.1)'
-                                }}
-                                size="sm"
-                            />
+                            {!isMinimal && (
+                                <IconButton
+                                    aria-label="Toggle retro theme"
+                                    icon={<IconDeviceGamepad2 />}
+                                    variant="ghost"
+                                    onClick={() => {
+                                        toggleRetro();
+                                    }}
+                                    color={isRetro ? "purple.400" : "white"}
+                                    _hover={{
+                                        color: isRetro ? "purple.200" : "yellow",
+                                        transform: 'scale(1.1)'
+                                    }}
+                                    size="sm"
+                                />
+                            )}
                         </DrawerHeader>
 
                         <DrawerBody display="flex" flexDirection="column" justifyContent="space-between" p={0}>

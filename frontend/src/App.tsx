@@ -24,14 +24,16 @@ import Router from './Router.tsx';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { CacheProvider } from './contexts/CacheContext';
 import { AuthProvider } from './contexts/AuthContext';
-import { SiteSettingsProvider } from './contexts/SiteSettingsContext';
+import { SiteSettingsProvider, useSiteSettings } from './contexts/SiteSettingsContext';
 import { isBikatr7URL } from './utils';
 
-function App() {
+function AppContent() {
     const [isLoading, setIsLoading] = useState(true);
     const [showContent, setShowContent] = useState(false);
     const [contentLoaded, setContentLoaded] = useState(false);
+    const { settings, isLoading: settingsLoading } = useSiteSettings();
     const isBikatr7 = isBikatr7URL();
+    const forceStandardMode = settingsLoading || settings.minimal_mode;
 
     const handleLoadingComplete = () => {
         setIsLoading(false);
@@ -45,28 +47,34 @@ function App() {
     };
 
     return (
+        <ThemeProvider forceStandardMode={forceStandardMode}>
+            <AuthProvider>
+                <HelmetProvider>
+                    <ChakraProvider theme={theme}>
+                        <GlobalSEO />
+                        <Box bg="black" minH="100vh" display="flex" flexDirection="column">
+                            {!isBikatr7 && isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
+                            {(isBikatr7 || !isLoading) && (
+                                <Router
+                                    showContent={showContent}
+                                    toggleContent={toggleContent}
+                                    contentLoaded={contentLoaded}
+                                />
+                            )}
+                        </Box>
+                    </ChakraProvider>
+                </HelmetProvider>
+            </AuthProvider>
+        </ThemeProvider>
+    );
+}
+
+function App() {
+    return (
         <CacheProvider>
-            <ThemeProvider>
-                <AuthProvider>
-                    <SiteSettingsProvider>
-                        <HelmetProvider>
-                            <ChakraProvider theme={theme}>
-                                <GlobalSEO />
-                                <Box bg="black" minH="100vh" display="flex" flexDirection="column">
-                                    {!isBikatr7 && isLoading && <LoadingAnimation onLoadingComplete={handleLoadingComplete} />}
-                                    {(isBikatr7 || !isLoading) && (
-                                        <Router
-                                            showContent={showContent}
-                                            toggleContent={toggleContent}
-                                            contentLoaded={contentLoaded}
-                                        />
-                                    )}
-                                </Box>
-                            </ChakraProvider>
-                        </HelmetProvider>
-                    </SiteSettingsProvider>
-                </AuthProvider>
-            </ThemeProvider>
+            <SiteSettingsProvider>
+                <AppContent />
+            </SiteSettingsProvider>
         </CacheProvider>
     );
 }

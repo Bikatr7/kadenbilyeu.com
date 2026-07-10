@@ -74,14 +74,9 @@ function Preface({ showContent, toggleContent }: { showContent: boolean, toggleC
                             </Text>
                         </Box>
                     ) : (
-                        <>
-                            <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500" lineHeight="tall">
-                                Computer science senior at the University of Colorado Colorado Springs looking to utilize my skills in cyber, AI/ML, LLMs, data science, full stack and NER/NLP into software for real-world applications.
-                            </Text>
-                            <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500" mb={4}>
-                                Eligible for security clearance. Proud U.S. Citizen.
-                            </Text>
-                        </>
+                        <Text fontSize={{ base: 'md', lg: 'lg' }} color="gray.500" lineHeight="tall">
+                            Recent UCCS graduate.
+                        </Text>
                     )}
                     <Stack direction={{ base: 'column', md: 'row' }} spacing={3} wrap="wrap" justifyContent={{ base: 'center', md: 'flex-start' }}>
                         {!isRetro && (

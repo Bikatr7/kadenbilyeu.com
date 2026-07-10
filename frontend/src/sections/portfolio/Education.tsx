@@ -23,7 +23,7 @@ function Education() {
             <Card title="Education">
                 <Item
                     title="Bachelor of Science in Computer Science at the University of Colorado Colorado Springs (UCCS)"
-                    dateRange="August 2022 - Present (Expected Graduation: May 2026)"
+                    dateRange="August 2022 - May 2026"
                     sections={[
                         {
                             title: "Academic Stats",
@@ -33,7 +33,7 @@ function Education() {
                             content: [
                                 { text: "Computer Science major with Cybersecurity track focus", useBullet: true },
                                 { text: "ACM member and officer (Secretary-Treasurer since Fall 2024)", useBullet: true },
-                                { text: "Expected graduation: May 2026", useBullet: true },
+                                { text: "Graduated May 2026", useBullet: true },
                                 { text: "GPA: 3.67", useBullet: true }
                             ]
                         },
@@ -41,9 +41,9 @@ function Education() {
                             title: "The College Experience",
                             icon: <IconSchool size={16} />,
                             content: [
-                                "I've attended UCCS for a bit over 3 years now and have been working towards my degree in Computer Science. I'm expected to graduate in May 2026.",
-                                "I'm currently a member of the Association for Computing Machinery (ACM), I became an officer in the fall of 2024.",
-                                "I am focusing in a cybersecurity track. Although a lot of my relevant experience is more in AI/ML or general software engineering which is self-taught."
+                                "I graduated from UCCS in May 2026 with a degree in Computer Science.",
+                                "I was a member of the Association for Computing Machinery (ACM), and became an officer in the fall of 2024.",
+                                "My degree focused on a cybersecurity track. A lot of my relevant experience is more in AI/ML or general software engineering, which is self-taught."
                             ]
                         }
                     ]}
