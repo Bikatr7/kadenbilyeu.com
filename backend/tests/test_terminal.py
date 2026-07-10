@@ -19,8 +19,14 @@ os.environ.setdefault('ENVIRONMENT', 'testing')
 
 from auth import create_access_token
 from main import app
+from routes.terminal import build_terminal_ssh_command
 
 client = TestClient(app)
+
+
+def test_terminal_ssh_command_uses_reduced_privilege_user():
+    assert "kbssh@host.docker.internal" in build_terminal_ssh_command()
+    assert "kbilyeu@host.docker.internal" not in build_terminal_ssh_command()
 
 
 def test_terminal_websocket_rejects_non_admin_token():

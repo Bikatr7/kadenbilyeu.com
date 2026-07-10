@@ -14,6 +14,17 @@ import logging
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+TERMINAL_SSH_USER = "kbssh"
+TERMINAL_SSH_HOST = "host.docker.internal"
+
+def build_terminal_ssh_command() -> list[str]:
+    return [
+        "ssh",
+        "-o", "StrictHostKeyChecking=accept-new",
+        "-o", "UserKnownHostsFile=/dev/null",
+        "-i", "/root/.ssh/id_ed25519",
+        f"{TERMINAL_SSH_USER}@{TERMINAL_SSH_HOST}"
+    ]
 
 @router.websocket("/admin/terminal/ws")
 async def terminal_websocket(
@@ -21,7 +32,7 @@ async def terminal_websocket(
 ):
     """
     WebSocket endpoint for web-based terminal access to the homelab host.
-    Uses SSH to connect to host.docker.internal as kbilyeu user.
+    Uses SSH to connect to host.docker.internal as a reduced-privilege user.
 
     Args:
         websocket (WebSocket): The WebSocket connection
@@ -92,13 +103,7 @@ async def terminal_websocket(
     # Spawn SSH process to connect to host
     try:
         logger.info(f"[TERMINAL] Starting SSH connection to host.docker.internal")
-        ssh_command = [
-            "ssh",
-            "-o", "StrictHostKeyChecking=accept-new",
-            "-o", "UserKnownHostsFile=/dev/null",
-            "-i", "/root/.ssh/id_ed25519",
-            "kbilyeu@host.docker.internal"
-        ]
+        ssh_command = build_terminal_ssh_command()
 
         logger.debug(f"[TERMINAL] SSH command: {' '.join(ssh_command)}")
 
