@@ -18,9 +18,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useSiteSettings } from '../contexts/SiteSettingsContext';
 import Login from './Login';
-
-// assets
-import resume from '../assets/pdfs/Kaden_Truett_Bilyeu_Resume_July_2025.pdf';
+import { getURL } from '../utils';
 
 function Navbar() {
     const { isRetro, toggleRetro } = useTheme();
@@ -30,7 +28,7 @@ function Navbar() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [activeHover, setActiveHover] = useState<string | null>(null);
     const isMinimal = settingsLoading || settings.minimal_mode;
-    const resumeHref = isMinimal ? "/resume" : resume;
+    const resumeHref = isMinimal ? "/resume" : getURL("/resume.pdf");
     const resumeDownload = isMinimal ? undefined : "Kaden_Truett_Bilyeu_Resume_July_2025.pdf";
 
     const isActiveRoute = (path: string) => {

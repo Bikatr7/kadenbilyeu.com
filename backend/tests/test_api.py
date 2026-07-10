@@ -15,8 +15,17 @@ os.environ['DATABASE_URL'] = 'sqlite:///./test_api.db'
 os.environ['ENVIRONMENT'] = 'testing'
 
 from main import app
+from database import SiteSettingsUpdate, func_update_site_settings, get_db
 
 client = TestClient(app)
+
+def set_minimal_mode(enabled):
+    db = next(get_db())
+
+    try:
+        func_update_site_settings(db, SiteSettingsUpdate(minimal_mode=enabled))
+    finally:
+        db.close()
 
 
 class TestAuthEndpoints:
@@ -87,6 +96,27 @@ class TestBlogEndpoints:
         from uuid import uuid4
         response = client.delete(f"/blog/{uuid4()}")
         assert response.status_code == 401
+
+
+class TestResumeEndpoint:
+    def teardown_method(self):
+        set_minimal_mode(False)
+
+    def test_get_resume_when_minimal_mode_disabled(self):
+        set_minimal_mode(False)
+
+        response = client.get("/resume.pdf")
+
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "application/pdf"
+        assert response.content.startswith(b"%PDF")
+
+    def test_get_resume_not_found_when_minimal_mode_enabled(self):
+        set_minimal_mode(True)
+
+        response = client.get("/resume.pdf")
+
+        assert response.status_code == 404
 
 
 class TestAdminEndpoints:

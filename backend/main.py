@@ -19,6 +19,7 @@ from routes.blog import router as blog_router
 from routes.admin import router as admin_router
 from routes.webauthn import router as webauthn_router
 from routes.terminal import router as terminal_router
+from routes.resume import router as resume_router
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -112,6 +113,7 @@ app.include_router(blog_router)
 app.include_router(admin_router)
 app.include_router(webauthn_router)
 app.include_router(terminal_router)
+app.include_router(resume_router)
 
 ## Root endpoint
 @app.get("/")
