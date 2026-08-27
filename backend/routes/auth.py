@@ -19,6 +19,26 @@ from database import get_db, func_add_token_to_blacklist
 router = APIRouter()
 
 
+def _get_verified_expiry(token:str, secret:str, expected_type:str):
+    """Verify a token while allowing logout to revoke a just-expired credential."""
+    import jwt
+    from datetime import datetime, timezone
+    from config import JWT_AUDIENCE, JWT_ISSUER, TOKEN_ALGORITHM
+
+    payload = jwt.decode(
+        token,
+        secret,
+        algorithms=[TOKEN_ALGORITHM],
+        audience=JWT_AUDIENCE,
+        issuer=JWT_ISSUER,
+        options={"verify_exp": False},
+    )
+    if(payload.get("token_type") != expected_type or payload.get("sub") != ADMIN_USER):
+        raise jwt.InvalidTokenError("Unexpected token claims")
+
+    return datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
+
+
 @router.get("/auth/check")
 async def check_auth(request: Request, access_token: str = Cookie(None, alias="access_token")):
     """
@@ -66,22 +86,18 @@ async def logout(
     Returns:
     JSONResponse: Success message with cleared cookies
     """
-    import jwt
-    from datetime import datetime, timezone
-    from config import ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, TOKEN_ALGORITHM
+    from config import ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET
 
     if access_token:
         try:
-            payload = jwt.decode(access_token, ACCESS_TOKEN_SECRET, algorithms=[TOKEN_ALGORITHM], options={"verify_signature": False})
-            exp = datetime.fromtimestamp(payload.get('exp', 0), tz=timezone.utc)
+            exp = _get_verified_expiry(access_token, ACCESS_TOKEN_SECRET, "access")
             func_add_token_to_blacklist(db, access_token, exp)
         except Exception:
             pass
 
     if refresh_token:
         try:
-            payload = jwt.decode(refresh_token, REFRESH_TOKEN_SECRET, algorithms=[TOKEN_ALGORITHM], options={"verify_signature": False})
-            exp = datetime.fromtimestamp(payload.get('exp', 0), tz=timezone.utc)
+            exp = _get_verified_expiry(refresh_token, REFRESH_TOKEN_SECRET, "refresh")
             func_add_token_to_blacklist(db, refresh_token, exp)
         except Exception:
             pass

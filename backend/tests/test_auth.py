@@ -23,6 +23,9 @@ from database import TokenData, func_add_token_to_blacklist, get_db, Blacklisted
 from fastapi import HTTPException
 from datetime import datetime, timedelta, timezone
 
+import auth
+import maintenance
+
 
 class TestTokenFunctions:
     def test_create_access_token(self):
@@ -121,6 +124,40 @@ class TestTokenExtraction:
             get_token_from_cookie("blacklisted_token")
         assert exc_info.value.status_code == 401
         assert "Token has been revoked" in str(exc_info.value.detail)
+
+    def test_cookie_blacklist_lookup_is_skipped_during_maintenance(
+        self,
+        tmp_path,
+        monkeypatch,
+    ):
+        blacklist_lookups = []
+        monkeypatch.setattr(
+            maintenance,
+            "MAINTENANCE_MARKER_PATH",
+            tmp_path / "maintenance",
+        )
+        monkeypatch.setattr(
+            maintenance,
+            "MAINTENANCE_LOCK_PATH",
+            tmp_path / "maintenance.lock",
+        )
+        monkeypatch.setattr(
+            maintenance,
+            "DATABASE_ACTIVITY_LOCK_PATH",
+            tmp_path / "database.lock",
+        )
+        monkeypatch.setattr(
+            auth,
+            "is_token_blacklisted",
+            lambda token: blacklist_lookups.append(token),
+        )
+
+        with maintenance.maintenance_window():
+            with pytest.raises(HTTPException) as exc_info:
+                auth.get_token_from_cookie("valid-token")
+
+        assert exc_info.value.status_code == 503
+        assert blacklist_lookups == []
 
 
 class TestUserAuthentication:

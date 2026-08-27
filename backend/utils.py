@@ -4,8 +4,11 @@
 
 import os
 import shutil
+import sqlite3
+import tempfile
 import zipfile
 import smtplib
+from pathlib import Path
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -16,6 +19,15 @@ from gnupg import GPG
 
 from config import ENVIRONMENT, BACKUP_LOGS_DIR
 from database import get_envs
+from maintenance import (
+    BackupBusyError,
+    MaintenanceBusyError,
+    acquire_scheduler_leadership,
+    backup_operation_window,
+    database_activity_window,
+    is_maintenance_active,
+    release_scheduler_leadership,
+)
 import logging
 
 logger = logging.getLogger(__name__)
@@ -39,7 +51,12 @@ def export_db(db_path:str, export_path:str) -> str:
     export_path (str): The path to the exported SQLite database file
     """
 
-    shutil.copy(db_path, export_path)
+    with sqlite3.connect(db_path, timeout=30) as source:
+        source.execute("PRAGMA busy_timeout=30000")
+        with sqlite3.connect(export_path, timeout=30) as destination:
+            destination.execute("PRAGMA busy_timeout=30000")
+            source.backup(destination)
+    os.chmod(export_path, 0o600)
     return export_path
 
 def encrypt_file(file_path:str, passphrase:str) -> str:
@@ -69,6 +86,7 @@ def encrypt_file(file_path:str, passphrase:str) -> str:
     if(not status.ok):
         raise ValueError(f'Failed to encrypt the file: {status.stderr}')
 
+    os.chmod(encrypted_path, 0o600)
     return encrypted_path
 
 def decrypt_file(file_path:str, passphrase:str) -> str:
@@ -113,6 +131,7 @@ def compress_file(file_path:str) -> str:
     with zipfile.ZipFile(compressed_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
         zipf.write(file_path, os.path.basename(file_path))
 
+    os.chmod(compressed_path, 0o600)
     return compressed_path
 
 def decompress_file(file_path:str, decompressed_path:str) -> str:
@@ -178,56 +197,71 @@ def send_email(subject:str, body:str, to_email:str, attachment_path:str, from_em
         part.add_header('Content-Disposition', f"attachment; filename={os.path.basename(attachment_path)}")
         msg.attach(part)
 
-    server = smtplib.SMTP(smtp_server, smtp_port)
-    server.starttls()
-    server.login(smtp_user, smtp_password)
-    text = msg.as_string()
-    server.sendmail(from_email, to_email, text)
-    server.quit()
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_user, smtp_password)
+        text = msg.as_string()
+        server.sendmail(from_email, to_email, text)
+
+class BackupDisabledError(RuntimeError):
+    pass
+
 
 def perform_backup() -> None:
     """
     Perform the backup process
     """
 
-    try:
+    with backup_operation_window():
         ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL, enable_emails = get_envs()
 
         if not enable_emails:
-            logger.info("Backup disabled (ENABLE_BACKUP_EMAILS is set to false)")
-            return
+            raise BackupDisabledError("Backup email is disabled")
 
         from config import DATABASE_PATH
 
-        # Export the database
-        export_path = export_db(DATABASE_PATH, f"{DATABASE_PATH}.backup")
+        database_directory = Path(DATABASE_PATH).resolve().parent
+        database_directory.mkdir(mode=0o750, parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(
+            prefix=".kadenbilyeu-backup-",
+            dir=database_directory,
+        ) as temp_dir:
+            os.chmod(temp_dir, 0o700)
+            export_path = os.path.join(temp_dir, "blog.db.backup")
 
-        # Compress the exported database
-        compressed_path = compress_file(export_path)
+            # Block restore only while taking the consistent SQLite snapshot.
+            with database_activity_window():
+                if is_maintenance_active():
+                    raise MaintenanceBusyError("Database maintenance is in progress")
+                export_path = export_db(DATABASE_PATH, export_path)
+                os.chmod(export_path, 0o600)
 
-        # Encrypt the compressed database
-        encrypted_path = encrypt_file(compressed_path, ENCRYPTION_KEY)
+            compressed_path = compress_file(export_path)
+            os.chmod(compressed_path, 0o600)
 
-        # Send the encrypted backup via email
-        subject = "Database Backup"
-        body = "Attached is the encrypted database backup."
-        send_email(subject, body, TO_EMAIL, encrypted_path, FROM_EMAIL, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD)
+            encrypted_path = encrypt_file(compressed_path, ENCRYPTION_KEY)
+            os.chmod(encrypted_path, 0o600)
 
-        # Clean up temporary files
-        os.remove(export_path)
-        os.remove(compressed_path)
-        os.remove(encrypted_path)
+            subject = "Database Backup"
+            body = "Attached is the encrypted database backup."
+            send_email(subject, body, TO_EMAIL, encrypted_path, FROM_EMAIL, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD)
 
-        logger.info("Backup completed successfully")
-
-    except Exception as e:
-        logger.exception(f"Backup failed: {str(e)}")
+            logger.info("Backup completed successfully")
 
 def perform_backup_scheduled() -> None:
     """
     Perform the backup process on a scheduled interval
     """
-    perform_backup()
+    try:
+        perform_backup()
+    except BackupBusyError:
+        logger.info("Skipping duplicate scheduled backup")
+    except MaintenanceBusyError:
+        logger.info("Skipping scheduled backup during database maintenance")
+    except BackupDisabledError:
+        logger.info("Skipping scheduled backup because backup email is disabled")
+    except Exception:
+        logger.error("Scheduled database backup failed")
 
 def start_scheduler():
     try:
@@ -236,9 +270,17 @@ def start_scheduler():
             logger.info("Backup scheduler disabled (ENABLE_BACKUP_EMAILS is set to false)")
             return
 
-        scheduler = BackgroundScheduler()
-        scheduler.add_job(perform_backup_scheduled, 'interval', hours=24)  # Backup every 24 hours
-        scheduler.start()
+        if not acquire_scheduler_leadership():
+            logger.info("Backup scheduler is owned by another worker")
+            return
+
+        try:
+            scheduler = BackgroundScheduler()
+            scheduler.add_job(perform_backup_scheduled, 'interval', hours=24)  # Backup every 24 hours
+            scheduler.start()
+        except Exception:
+            release_scheduler_leadership()
+            raise
 
         logger.info("Backup scheduler started")
 

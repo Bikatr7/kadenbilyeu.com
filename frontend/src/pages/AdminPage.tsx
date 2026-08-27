@@ -30,6 +30,7 @@ const AdminPage: React.FC = () => {
     const navigate = useNavigate();
     const toast = useToast();
     const [isUpdatingMinimalMode, setIsUpdatingMinimalMode] = useState(false);
+    const [isRestoringDatabase, setIsRestoringDatabase] = useState(false);
 
     // Redirect if not logged in
     if (!isLoggedIn) {
@@ -76,51 +77,50 @@ const AdminPage: React.FC = () => {
     };
 
     const handleFileUpload = async (file: File) => {
-        const formData = new FormData();
-        formData.append('file', file);
+        if (!window.confirm('Replace the live database with this encrypted backup?')) {
+            return;
+        }
 
+        setIsRestoringDatabase(true);
         try {
-            const response = await authenticatedFetch(getURL('/replace-database/'),
-                {
-                    method: 'POST',
-                    body: formData
-                });
+            const response = await authenticatedFetch(getURL('/replace-database'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/pgp-encrypted' },
+                body: file,
+            });
 
-            if (response.ok) {
-                toast({
-                    title: "Database replaced.",
-                    description: "The database has been successfully replaced.",
-                    status: "success",
-                    duration: 5000,
-                    isClosable: true,
-                });
-            }
-            else {
+            if (!response.ok) {
                 const errorData = await response.json();
-                toast({
-                    title: "Error replacing database.",
-                    description: errorData.detail,
-                    status: "error",
-                    duration: 5000,
-                    isClosable: true,
-                });
+                throw new Error(errorData.detail || 'Database restore failed');
             }
+
+            toast({
+                title: "Database replaced.",
+                description: "The encrypted backup was validated and restored.",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+            });
         }
         catch (error) {
             toast({
                 title: "Error replacing database.",
-                description: "An error occurred while uploading the file.",
+                description: error instanceof Error ? error.message : "The backup could not be restored.",
                 status: "error",
                 duration: 5000,
                 isClosable: true,
             });
         }
+        finally {
+            setIsRestoringDatabase(false);
+        }
     };
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
+        event.target.value = '';
         if (file) {
-            handleFileUpload(file);
+            await handleFileUpload(file);
         }
     };
 
@@ -332,10 +332,19 @@ const AdminPage: React.FC = () => {
                                 color: isRetro ? 'purple.400' : 'yellow',
                                 transform: 'scale(1.01)'
                             }}
-                            cursor="pointer"
+                            cursor={isRestoringDatabase ? "not-allowed" : "pointer"}
+                            isDisabled={isRestoringDatabase}
                         >
-                            {isRetro ? "UPLOAD DATABASE" : "Upload Database"}
-                            <input type="file" accept=".pgp" style={{ display: 'none' }} onChange={handleFileChange} />
+                            {isRestoringDatabase
+                                ? (isRetro ? "RESTORING..." : "Restoring...")
+                                : (isRetro ? "UPLOAD DATABASE" : "Upload Database")}
+                            <input
+                                type="file"
+                                accept=".pgp,application/pgp-encrypted"
+                                disabled={isRestoringDatabase}
+                                style={{ display: 'none' }}
+                                onChange={handleFileChange}
+                            />
                         </Button>
                     </VStack>
                 </Box>

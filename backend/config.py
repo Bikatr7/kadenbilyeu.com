@@ -3,7 +3,6 @@
 ## license that can be found in the LICENSE file.
 
 import os
-import threading
 
 # Rate limiting configuration
 from slowapi import Limiter
@@ -24,10 +23,6 @@ def get_env_variables() -> None:
             os.environ[key] = value
 
 get_env_variables()
-
-# Global variables
-maintenance_mode = False
-maintenance_lock = threading.Lock()
 
 # Environment variables
 ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
@@ -76,4 +71,3 @@ assert ENCRYPTION_KEY, "ENCRYPTION_KEY environment variable not set"
 assert WEBAUTHN_REGISTER_SECRET, "WEBAUTHN_REGISTER_SECRET environment variable not set"
 assert JWT_ISSUER, "JWT_ISSUER environment variable not set"
 assert JWT_AUDIENCE, "JWT_AUDIENCE environment variable not set"
-

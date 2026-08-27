@@ -18,6 +18,11 @@ from config import (
     JWT_ISSUER, JWT_AUDIENCE
 )
 from database import TokenData, get_db, func_is_token_blacklisted
+from maintenance import (
+    MaintenanceBusyError,
+    database_activity_window,
+    is_maintenance_active,
+)
 
 def is_token_blacklisted(token: str) -> bool:
     """
@@ -55,7 +60,24 @@ def get_token_from_cookie(access_token: str = Cookie(None, alias="access_token")
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    if is_token_blacklisted(access_token):
+    if is_maintenance_active():
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database maintenance is in progress",
+        )
+
+    try:
+        with database_activity_window():
+            if is_maintenance_active():
+                raise MaintenanceBusyError("Database maintenance is in progress")
+            blacklisted = is_token_blacklisted(access_token)
+    except MaintenanceBusyError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database maintenance is in progress",
+        ) from exc
+
+    if blacklisted:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token has been revoked",
@@ -151,10 +173,15 @@ def _decode_token(token:str, secret:str, expected_type:str) -> TokenData:
     username:str = payload.get("sub")
     token_type = payload.get("token_type")
 
+    try:
+        expires_at = datetime.fromtimestamp(float(payload["exp"]), tz=timezone.utc)
+    except (KeyError, TypeError, ValueError, OverflowError):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
     if username is None or token_type != expected_type:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-    return TokenData(username=username)
+    return TokenData(username=username, expires_at=expires_at)
 
 def verify_token(token:str) -> TokenData:
     """Verify an access token."""

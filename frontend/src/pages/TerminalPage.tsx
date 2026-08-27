@@ -107,6 +107,11 @@ function TerminalPage() {
             console.log('[TERMINAL] WebSocket connected');
             setIsConnected(true);
             setError('');
+            ws.send(JSON.stringify({
+                type: 'resize',
+                rows: term.rows,
+                cols: term.cols
+            }));
             term.focus(); // Focus again after connection
         };
 

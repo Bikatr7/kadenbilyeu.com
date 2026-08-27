@@ -4,7 +4,6 @@
 
 import typing
 import os
-import shutil
 import re
 
 from uuid import UUID as schemaUUID, uuid4
@@ -30,6 +29,7 @@ class LoginToken(BaseModel):
 
 class TokenData(BaseModel):
     username:str
+    expires_at:typing.Optional[datetime] = None
 
 class BlogPostBase(BaseModel):
     title:str
@@ -257,28 +257,6 @@ def get_envs() -> typing.Tuple[str, str, int, str, str, str, str, bool]:
     assert(TO_EMAIL != ""), "TO_EMAIL is required"
 
     return ENCRYPTION_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL, enable_emails
-
-def replace_sqlite_db(extracted_db_path:str, current_db_path:str) -> None:
-    """
-    Replace the current SQLite database with the extracted SQLite database.
-
-    Args:
-    extracted_db_path (str): The path to the extracted SQLite database
-    current_db_path (str): The path to the current SQLite database
-    """
-
-    global engine, SessionLocal
-
-    close_all_sessions()
-
-    engine.dispose()
-
-    shutil.move(extracted_db_path, current_db_path)
-
-    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-    migrate_database(engine)
 
 def get_db() -> typing.Generator[Session, None, None]:
     """

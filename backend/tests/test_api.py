@@ -34,6 +34,11 @@ class TestAuthEndpoints:
         assert response.status_code == 200
         assert response.json() == {"message": "API is running"}
 
+    def test_health_check(self):
+        response = client.get("/healthz")
+        assert response.status_code == 200
+        assert response.json() == {"status": "ok"}
+
     def test_auth_check_unauthenticated(self):
         response = client.get("/auth/check")
         assert response.status_code == 200
@@ -138,3 +143,15 @@ class TestCORS:
 
         assert "access-control-allow-origin" in response.headers
         assert "access-control-allow-credentials" in response.headers
+
+    def test_status_subdomains_are_not_credentialed_origins(self):
+        for origin in (
+            "https://status.kadenbilyeu.com",
+            "https://status.bikatr7.com",
+        ):
+            response = client.options("/", headers={
+                "Origin": origin,
+                "Access-Control-Request-Method": "GET",
+            })
+
+            assert "access-control-allow-origin" not in response.headers

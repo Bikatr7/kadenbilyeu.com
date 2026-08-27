@@ -41,6 +41,7 @@ const BlogPage: React.FC = () => {
     const navigate = useNavigate();
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isRestoringDatabase, setIsRestoringDatabase] = useState(false);
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, postId: string | null }>({ x: 0, y: 0, postId: null });
     const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
     const contextMenuRef = useRef<HTMLDivElement | null>(null);
@@ -149,58 +150,6 @@ const BlogPage: React.FC = () => {
         setContextMenu({ x: 0, y: 0, postId: null });
     };
 
-    const handleFileUpload = async (file: File) => {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        try {
-            const response = await authenticatedFetch(getURL('/replace-database/'),
-                {
-                    method: 'POST',
-                    body: formData
-                });
-
-            if (response.ok) {
-                console.log('Database replaced successfully');
-                toast({
-                    title: "Database replaced.",
-                    description: "The database has been successfully replaced.",
-                    status: "success",
-                    duration: 5000,
-                    isClosable: true,
-                });
-            }
-            else {
-                const errorData = await response.json();
-                console.error('Error replacing database:', errorData.detail);
-                toast({
-                    title: "Error replacing database.",
-                    description: errorData.detail,
-                    status: "error",
-                    duration: 5000,
-                    isClosable: true,
-                });
-            }
-        }
-        catch (error) {
-            console.error('An error occurred while uploading the file:', error);
-            toast({
-                title: "Error replacing database.",
-                description: "An error occurred while uploading the file.",
-                status: "error",
-                duration: 5000,
-                isClosable: true,
-            });
-        }
-    };
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            handleFileUpload(file);
-        }
-    };
-
     const handleForceBackup = async () => {
         try {
             const response = await authenticatedFetch(getURL('/force-backup'),
@@ -242,6 +191,57 @@ const BlogPage: React.FC = () => {
         }
     };
 
+    const handleFileUpload = async (file: File) => {
+        if (!window.confirm('Replace the live database with this encrypted backup?')) {
+            return;
+        }
+
+        setIsRestoringDatabase(true);
+        try {
+            const response = await authenticatedFetch(getURL('/replace-database'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/pgp-encrypted' },
+                body: file,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Database restore failed');
+            }
+
+            localStorage.removeItem('blogPageBlogPosts');
+            localStorage.removeItem('blogPageBlogPosts_timestamp');
+            await fetchBlogPosts();
+            toast({
+                title: "Database replaced.",
+                description: "The encrypted backup was validated and restored.",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+            });
+        }
+        catch (error) {
+            toast({
+                title: "Error replacing database.",
+                description: error instanceof Error ? error.message : "The backup could not be restored.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+        }
+        finally {
+            setIsRestoringDatabase(false);
+        }
+    };
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+        if (file) {
+            await handleFileUpload(file);
+        }
+    };
+
     return (
         <Box
             bg="transparent"
@@ -277,9 +277,21 @@ const BlogPage: React.FC = () => {
                     >
                         Force Backup
                     </Button>
-                    <Button as="label" _hover={{ color: 'yellow', transform: 'scale(1.01)' }} _active={{ transform: 'scale(0.99)' }}>
-                        Upload Database
-                        <input type="file" accept=".pgp" style={{ display: 'none' }} onChange={handleFileChange} />
+                    <Button
+                        as="label"
+                        isDisabled={isRestoringDatabase}
+                        cursor={isRestoringDatabase ? "not-allowed" : "pointer"}
+                        _hover={{ color: 'yellow', transform: 'scale(1.01)' }}
+                        _active={{ transform: 'scale(0.99)' }}
+                    >
+                        {isRestoringDatabase ? "Restoring..." : "Upload Database"}
+                        <input
+                            type="file"
+                            accept=".pgp,application/pgp-encrypted"
+                            disabled={isRestoringDatabase}
+                            style={{ display: 'none' }}
+                            onChange={handleFileChange}
+                        />
                     </Button>
                 </Flex>
             )}
